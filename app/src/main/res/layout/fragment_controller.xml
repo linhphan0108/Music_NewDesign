@@ -1,0 +1,137 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.linhphan.music.fragment.ControllerFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <SeekBar
+            android:id="@+id/sb_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="-15dp"
+            android:layout_weight="1"
+            android:indeterminate="false"
+            android:max="100"
+            android:maxHeight="3dp"
+            android:minHeight="3dp"
+            android:progress="0" />
+
+
+        <TextView
+            android:id="@+id/txt_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="04:05"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/abc_action_bar_overflow_padding_start_material">
+
+
+        <FrameLayout
+            android:id="@+id/frame_layout_song_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/txt_current_song_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="tinh yeu than thoai"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+                <TextView
+                    android:id="@+id/txt_current_artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="Dan truong"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+            </LinearLayout>
+
+
+            <ProgressBar
+                android:id="@+id/small_pb_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal">
+
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_previous"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"-->
+                <!--android:clickable="true"-->
+                <!--android:background="@drawable/bg_media_button_controller"-->
+                <!--android:src="@drawable/ic_previous" />-->
+
+
+            <ImageButton
+                android:id="@+id/btn_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"
+                android:src="@drawable/ic_pause"
+                android:background="@drawable/bg_media_button_controller"
+                android:visibility="gone" />
+
+
+            <ImageButton
+                android:id="@+id/btn_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"
+                android:background="@drawable/bg_media_button_controller"
+                android:src="@drawable/ic_button_play" />
+
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_next"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:clickable="true"-->
+                <!--android:background="@drawable/bg_media_button_controller"-->
+                <!--android:src="@drawable/ic_next" />-->
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>
