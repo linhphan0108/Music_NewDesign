@@ -19,7 +19,7 @@
                         android:title="@string/music_type_rap"
                         android:icon="@drawable/ic_vietnam_flag"/>
                     <item
-                        android:id="@+id/menu_item_dance_vi"
+                        android:id="@+id/menu_item_country_vi"
                         android:title="@string/music_type_country"
                         android:icon="@drawable/ic_vietnam_flag"/>
                 </group>

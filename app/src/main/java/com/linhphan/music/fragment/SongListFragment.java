@@ -16,6 +16,9 @@ import com.linhphan.music.adapter.SongListAdapter;
 import com.linhphan.music.common.AsyncTaskCallback;
 import com.linhphan.music.common.ContentManager;
 import com.linhphan.music.common.GetSongListWorker;
+import com.linhphan.music.common.Logger;
+import com.linhphan.music.common.MusicCategories;
+import com.linhphan.music.common.UrlProvider;
 import com.linhphan.music.model.SongModel;
 import com.linhphan.music.service.MusicService;
 
@@ -37,6 +40,7 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
     private static final String ARG_PARAM1 = "url";
 
     private String mUrl;
+    private MusicCategories mCategory;
 
     private OnFragmentInteractionListener mListener;
 
@@ -52,10 +56,10 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
     private SongListAdapter mAdapter;
     private ArrayList<SongModel> mSongList;
 
-    public static SongListFragment newInstance(String param1) {
+    public static SongListFragment newInstance(MusicCategories param1) {
         SongListFragment fragment = new SongListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putSerializable(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,8 +76,11 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mUrl = getArguments().getString(ARG_PARAM1);
-            (new GetSongListWorker(getContext(), mUrl, this)).execute();
+            mCategory = (MusicCategories) getArguments().getSerializable(ARG_PARAM1);
+            mUrl = UrlProvider.getUrl(mCategory);
+            if (mCategory != ContentManager.getInstance().getCurrentCategory()) {
+                (new GetSongListWorker(getContext(), mUrl, mCategory, this)).execute();
+            }
         }
         mAdapter = new SongListAdapter(getActivity(), ContentManager.getInstance().getCurrentSongList());
     }
@@ -89,6 +96,8 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+
+        setSelectedItem(ContentManager.getInstance().getCurrentSongPosition());
 
         return view;
     }
@@ -134,6 +143,25 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
         }
     }
 
+    public void setSelectedItem(int position) {
+        mListView.setItemChecked(position, true);
+        if (!isItemVisible(position))
+            mListView.setSelection(position);
+        Logger.d(getTag(), "change the selected item in list view");
+    }
+
+    /**
+     * determine whether the item in list view is visible or not
+     *
+     * @param position the position of item in list view which will be determined
+     * @return true if the item is visible whereas return false
+     */
+    public boolean isItemVisible(int position) {
+        int firstItemVisible = mListView.getFirstVisiblePosition();
+        int lastItemVisible = mListView.getChildCount();
+        return (position >= firstItemVisible) && (position <= lastItemVisible);
+    }
+
     //===================== get song list callback
     @Override
     public void onDoingBackground() {
@@ -167,7 +195,6 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
     }
 

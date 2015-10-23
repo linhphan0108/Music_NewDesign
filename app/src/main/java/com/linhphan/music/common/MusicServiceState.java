@@ -4,7 +4,6 @@ package com.linhphan.music.common;
  * Created by linhphan on 10/22/15.
  */
 public enum MusicServiceState {
-    bound,// service has been bound
     idle,// media player has ben initialized
     retrieving, // the service is looking up the url of the song from server which selected.
     initialized,//media player has been set data source.
@@ -21,6 +20,5 @@ public enum MusicServiceState {
     stopped, // media player is stopped and not prepared to play
     error,
     end,
-    unbound,
     destroy
 }

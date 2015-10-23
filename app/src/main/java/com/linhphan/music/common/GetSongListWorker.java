@@ -19,13 +19,15 @@ import java.util.ArrayList;
 public class GetSongListWorker extends AsyncTask<Void, Void, ArrayList<SongModel>> {
     private Context context;
     private String mUrl;
+    private MusicCategories mCategory;
     private AsyncTaskCallback callback;
     private IOException ex;
 
-    public GetSongListWorker(Context context, String url, AsyncTaskCallback callback) {
+    public GetSongListWorker(Context context, String url, MusicCategories category, AsyncTaskCallback callback) {
         this.context = context;
         this.mUrl = url;
         this.callback = callback;
+        this.mCategory = category;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class GetSongListWorker extends AsyncTask<Void, Void, ArrayList<SongModel
                 String[] arr = originPath.split("/");
                 if (arr.length > 4) {
                     String downloadPath = arr[4];
-                    downloadPath = UrlProvider.REFIX_DOWNLOAD_PATH + downloadPath.substring(0, downloadPath.length() - 5) + UrlProvider.SURFIX_DOWNLOAD_PATH;
+                    downloadPath = UrlProvider.PREFIX_DOWNLOAD_PATH + downloadPath.substring(0, downloadPath.length() - 5) + UrlProvider.SURfFIX_DOWNLOAD_PATH;
                     SongModel songModel = new SongModel(songName, artist, downloadPath, originPath);
 
                     links.add(songModel);
@@ -66,7 +68,7 @@ public class GetSongListWorker extends AsyncTask<Void, Void, ArrayList<SongModel
         }
 
         ContentManager contentManager = ContentManager.getInstance();
-        contentManager.setCurrentSongList(links);
+        contentManager.setCurrentSongList(links, mCategory);
         return links;
     }
 

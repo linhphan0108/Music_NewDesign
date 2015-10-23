@@ -1,14 +1,20 @@
 package com.linhphan.music.fragment;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.linhphan.music.R;
+import com.linhphan.music.common.ContentManager;
+import com.linhphan.music.common.Logger;
+import com.linhphan.music.common.Utils;
+import com.linhphan.music.model.SongModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,27 +24,27 @@ import com.linhphan.music.R;
  * Use the {@link ControllerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ControllerFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
+public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
+
+    private SeekBar mSeekBar;
+    private TextView mTxtDuration;
+    private TextView mTxtCurrentTitle;
+    private TextView mTxtCurrentArtistName;
+    private ImageButton mImgButtonPlay;
+    private ImageButton mImgButtonPaused;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     * @param param1 Parameter 1.
+     *
      * @return A new instance of fragment ControllerFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ControllerFragment newInstance(String param1) {
+    public static ControllerFragment newInstance() {
         ControllerFragment fragment = new ControllerFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+//        args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,7 +57,7 @@ public class ControllerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+//            mParam1 = getArguments().getString(ARG_PARAM1);
         }
     }
 
@@ -63,20 +69,115 @@ public class ControllerFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        getWidgets(getView());
+        registerEventHandlers();
+        getAndDisplayCurrentSongInfo();
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-//        try {
-//            mListener = (OnFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    //=============== click event of views is handled here
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.img_btn_play:
+                mListener.play();
+                updatePausedOrPlayingButton(false);
+                break;
+            case R.id.img_btn_pause:
+                mListener.pause();
+                updatePausedOrPlayingButton(true);
+                break;
+        }
+    }
+
+    //=============== SeekBar callback handlers ====================================================
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        mListener.seekTo(seekBar.getProgress());
+    }
+    //==============================================================================================
+
+
+    private void getWidgets(View root) {
+        if (root == null) return;
+        mSeekBar = (SeekBar) root.findViewById(R.id.sb_loading);
+        mTxtDuration = (TextView) root.findViewById(R.id.txt_duration);
+        mTxtCurrentTitle = (TextView) root.findViewById(R.id.txt_current_song_title);
+        mTxtCurrentArtistName = (TextView) root.findViewById(R.id.txt_current_artist);
+        mImgButtonPlay = (ImageButton) root.findViewById(R.id.img_btn_play);
+        mImgButtonPaused = (ImageButton) root.findViewById(R.id.img_btn_pause);
+    }
+
+    private void registerEventHandlers() {
+        mSeekBar.setOnSeekBarChangeListener(this);
+        mImgButtonPaused.setOnClickListener(this);
+        mImgButtonPlay.setOnClickListener(this);
+    }
+
+    private void getAndDisplayCurrentSongInfo(){
+        ContentManager contentManager = ContentManager.getInstance();
+        SongModel songModel = contentManager.getCurrentSong();
+        if (songModel == null) return;
+        updateArtistAndTitle(songModel.getTitle(), songModel.getArtist());
+    }
+
+    public void updateSeekBarAndTimer(int position, int duration) {
+        mSeekBar.setProgress(Utils.calculatePercentage(position, duration));
+        mTxtDuration.setText(Utils.convertTime2String(duration));
+    }
+
+    public void updateBuffer(int percentage) {
+        mSeekBar.setSecondaryProgress(percentage);
+        Logger.d(getTag(), "buffering " + percentage);
+    }
+
+    public void updateArtistAndTitle(String title, String artistName) {
+        mTxtCurrentTitle.setText(title);
+        mTxtCurrentArtistName.setText(artistName);
+    }
+
+    /**
+     * update paused or playing buttons
+     *
+     * @param paused true if media player is paused
+     */
+    public void updatePausedOrPlayingButton(boolean paused) {
+        if (paused) {
+            mImgButtonPaused.setVisibility(View.GONE);
+            mImgButtonPlay.setVisibility(View.VISIBLE);
+        } else {
+            mImgButtonPaused.setVisibility(View.VISIBLE);
+            mImgButtonPlay.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -90,8 +191,10 @@ public class ControllerFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }
+        void seekTo(int position);
 
+        void play();
+
+        void pause();
+    }
 }

@@ -16,28 +16,37 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SeekBar;
 
 import com.linhphan.music.R;
+import com.linhphan.music.common.ContentManager;
 import com.linhphan.music.common.Logger;
-import com.linhphan.music.common.UrlProvider;
+import com.linhphan.music.common.MessageCode;
+import com.linhphan.music.common.MusicCategories;
 import com.linhphan.music.fragment.ControllerFragment;
 import com.linhphan.music.fragment.SongListFragment;
+import com.linhphan.music.model.SongModel;
 import com.linhphan.music.service.MusicService;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements ControllerFragment.OnFragmentInteractionListener,
+        View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
+    private SeekBar seekBar;
 
-    private MusicService musicSrv;
+    private MusicService mMusicSrv;
     private boolean isServiceBound;
-    public MyHandler handler = new MyHandler();
+    private MyHandler handler = new MyHandler();
+    private SongListFragment mContentFragment;
+    private ControllerFragment mControllerFragment;
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            if (musicSrv == null)
-                musicSrv = ((MusicService.MusicBinder) service).getMusicService();
-            musicSrv.setupHandler(handler);
+            if (mMusicSrv == null)
+                mMusicSrv = ((MusicService.MusicBinder) service).getMusicService();
+            mMusicSrv.onBind();
+            mMusicSrv.setupHandler(handler);
             isServiceBound = true;
             Logger.d(getTag(), "service is connected");
         }
@@ -46,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onServiceDisconnected(ComponentName name) {
             Logger.d(getTag(), "service is disconnected");
             isServiceBound = false;
+            mMusicSrv.onUnbind();
         }
     };
 
@@ -61,11 +71,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //open default fragment in the first time the main activity is opened
         if (savedInstanceState == null) {
-            openFragment(SongListFragment.newInstance(UrlProvider.getHotMusicViUrl()));
+            mContentFragment = SongListFragment.newInstance(MusicCategories.VI_HOT);
+            openFragment(mContentFragment);
         }
 
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.controllers, ControllerFragment.newInstance("10")).commit();
+        mControllerFragment = ControllerFragment.newInstance();
+        fm.beginTransaction().replace(R.id.controllers, mControllerFragment).commit();
 
 
     }
@@ -74,13 +86,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         Intent musicServiceIntent = new Intent(this, MusicService.class);
-        bindService(musicServiceIntent, serviceConnection, BIND_AUTO_CREATE);
+        boolean isBound = bindService(musicServiceIntent, serviceConnection, BIND_AUTO_CREATE);
         startService(musicServiceIntent);
+
+        if (isBound) {
+            Logger.d(getTag(), "binding service return true");
+        } else {
+            Logger.d(getTag(), "binding service return false");
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mMusicSrv.onUnbind();
         unbindService(serviceConnection);
     }
 
@@ -117,53 +136,89 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onNavigationItemSelected(MenuItem menuItem) {
 
         drawerLayout.closeDrawers();
-        SongListFragment fragment;
+        SongListFragment fragment = null;
         switch (menuItem.getItemId()) {
             //vietnamese music
             case R.id.menu_item_hot_vi:
-                fragment = SongListFragment.newInstance(UrlProvider.getHotMusicViUrl());
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.VI_HOT);
+                break;
             case R.id.menu_item_remix_vi:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.VI_REMIX);
+                break;
             case R.id.menu_item_rap_vi:
-                return true;
-            case R.id.menu_item_dance_vi:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.VI_RAP);
+                break;
+            case R.id.menu_item_country_vi:
+                fragment = SongListFragment.newInstance(MusicCategories.VI_COUNTRY);
+                break;
 
-            //english music
+                //english music
             case R.id.menu_item_pop_en:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.EN_POP);
+                break;
             case R.id.menu_item_remix_en:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.EN_REMIX);
+                break;
             case R.id.menu_item_rap_en:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.EN_RAP);
+                break;
             case R.id.menu_item_dance_en:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.EN_DANCE);
+                break;
 
             //korean music
             case R.id.menu_item_pop_korea:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_POP);
+                break;
             case R.id.menu_item_remix_korea:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_REMIX);
+                break;
             case R.id.menu_item_rap_korea:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_RAP);
+                break;
             case R.id.menu_item_dance_korea:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_DANCE);
+                break;
 
             //chinese music
             case R.id.menu_item_pop_china:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.CHINESE_POP);
+                break;
             case R.id.menu_item_remix_china:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_REMIX);
+                break;
             case R.id.menu_item_rap_china:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.CHINESE_RAP);
+                break;
             case R.id.menu_item_dance_china:
-                return true;
+                fragment = SongListFragment.newInstance(MusicCategories.CHINESE_DANCE);
+                break;
 
             default:
                 return false;
         }
+
+        openFragment(fragment);
+        return true;
     }
+
+    //================ ControllerFragment callback =================================================
+    @Override
+    public void seekTo(int position) {
+        mMusicSrv.seekTo(position);
+    }
+
+    @Override
+    public void play() {
+        mMusicSrv.play();
+    }
+
+    @Override
+    public void pause() {
+        mMusicSrv.pause();
+    }
+    //==============================================================================================
+
 
     private void setupToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -192,7 +247,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getAllWidget() {
-
     }
 
     private void registerEventHandler() {
@@ -208,15 +262,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return getClass().getName();
     }
 
-    public MusicService getBoundServiceInstance(){
-        return musicSrv;
+    public MusicService getBoundServiceInstance() {
+        return mMusicSrv;
     }
 
-    public class MyHandler extends Handler{
+
+    public class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            int what = msg.what;
+            if (msg.what == MessageCode.SONG_CHANGED.ordinal()) {
+                //==set the selected item in list view in ContentFragment
+                ContentManager contentManager = ContentManager.getInstance();
+                mContentFragment.setSelectedItem(contentManager.getCurrentSongPosition());
+
+                //==update the displayed title and artist name ControllerFragment
+                SongModel currentSong = contentManager.getCurrentSong();
+                mControllerFragment.updateArtistAndTitle(currentSong.getTitle(), currentSong.getArtist());
+
+                //==update the paused or playing button in ControllerFragment
+                boolean paused = false;
+                mControllerFragment.updatePausedOrPlayingButton(paused);
+
+                Logger.d(getTag(), "the current song has been changed");
+
+            } else if (msg.what == MessageCode.TIMING.ordinal()) {
+                String data = (String) msg.obj;
+                if (data == null || data.isEmpty()) return;
+                Logger.d(getTag(), "receive data from handler " + data);
+                String[] arr = data.split("-");
+                try {
+                    int position = Integer.parseInt(arr[0]);
+                    int duration = Integer.parseInt(arr[1]);
+                    mControllerFragment.updateSeekBarAndTimer(position, duration);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            } else if (msg.what == MessageCode.BUFFERING.ordinal()) {
+                mControllerFragment.updateBuffer((Integer) msg.obj);
+
+            } else if (msg.what == MessageCode.PAUSED.ordinal()) {
+                mControllerFragment.updatePausedOrPlayingButton(true);
+
+            } else if (msg.what == MessageCode.PLAYING.ordinal()) {
+                mControllerFragment.updatePausedOrPlayingButton(false);
+
+            } else if (msg.what == MessageCode.DESTROYED.ordinal()) {
+                finish();
+            }
         }
     }
 }

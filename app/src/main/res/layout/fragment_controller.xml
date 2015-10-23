@@ -49,7 +49,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:orientation="vertical">
 
 
@@ -102,7 +103,7 @@
 
 
             <ImageButton
-                android:id="@+id/btn_pause"
+                android:id="@+id/img_btn_pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"
@@ -112,7 +113,7 @@
 
 
             <ImageButton
-                android:id="@+id/btn_play"
+                android:id="@+id/img_btn_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"
