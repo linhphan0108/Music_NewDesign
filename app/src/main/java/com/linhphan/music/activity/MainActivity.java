@@ -19,10 +19,12 @@ import android.view.View;
 import android.widget.SeekBar;
 
 import com.linhphan.music.R;
+import com.linhphan.music.common.Constants;
 import com.linhphan.music.common.ContentManager;
 import com.linhphan.music.common.Logger;
 import com.linhphan.music.common.MessageCode;
 import com.linhphan.music.common.MusicCategories;
+import com.linhphan.music.common.Utils;
 import com.linhphan.music.fragment.ControllerFragment;
 import com.linhphan.music.fragment.SongListFragment;
 import com.linhphan.music.model.SongModel;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
         View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private Toolbar toolbar;
     private SeekBar seekBar;
 
@@ -94,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
         } else {
             Logger.d(getTag(), "binding service return false");
         }
+
+        int selectedMenuItem = Utils.getIntFromSharedPreferences(this, Constants.SELECTED_MENU_ITEM_KEY, R.id.menu_item_hot_vi);
+        navigationView.setCheckedItem(selectedMenuItem);
     }
 
     @Override
@@ -199,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
         }
 
         openFragment(fragment);
+        Utils.putIntToSharedPreferences(this, Constants.SELECTED_MENU_ITEM_KEY, menuItem.getItemId());
         return true;
     }
 
@@ -226,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
     }
 
     private void setupNavigationView() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Initializing Drawer Layout and ActionBarToggle

@@ -40,7 +40,7 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
     private static final String ARG_PARAM1 = "url";
 
     private String mUrl;
-    private MusicCategories mCategory;
+    private int mCategory;
 
     private OnFragmentInteractionListener mListener;
 
@@ -76,7 +76,7 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mCategory = (MusicCategories) getArguments().getSerializable(ARG_PARAM1);
+            mCategory = getArguments().getInt(ARG_PARAM1, R.id.menu_item_hot_vi);
             mUrl = UrlProvider.getUrl(mCategory);
             if (mCategory != ContentManager.getInstance().getCurrentCategory()) {
                 (new GetSongListWorker(getContext(), mUrl, mCategory, this)).execute();

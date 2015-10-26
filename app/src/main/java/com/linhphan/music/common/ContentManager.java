@@ -8,14 +8,17 @@ import java.util.ArrayList;
  * Created by linhphan on 10/22/15.
  */
 public class ContentManager {
-    private static ArrayList<SongModel> mCurrentSongList;
+    private ArrayList<SongModel> mCurrentPlayingList;
+    private ArrayList<SongModel> mCurrentDisplayedList;
     private static ContentManager mContentManager;
-    private int mCurrentSongPosition;//the song's index in mCurrentSongList which is playing
+    private int mCurrentSongPosition;//the song's index in mCurrentPlayingList which is playing
     private int mCurrentTimePosition;
-    private MusicCategories mCurrentCategory;
+    private int mCurrentPlayingCategory;
+    private int mCurrentDisplayedCategory;
 
     public ContentManager() {
-        mCurrentSongList = new ArrayList<>();
+        mCurrentPlayingList = new ArrayList<>();
+        mCurrentDisplayedList = new ArrayList<>();
     }
 
     public static ContentManager getInstance() {
@@ -24,34 +27,44 @@ public class ContentManager {
         return mContentManager;
     }
 
-    public MusicCategories getCurrentCategory() {
-        return mCurrentCategory;
+    public int getCurrentCategory() {
+        return mCurrentPlayingCategory;
     }
 
-    public void setCurrentCategory(MusicCategories currentCategory) {
-        this.mCurrentCategory = currentCategory;
+    public void setCurrentCategory(int currentCategory) {
+        this.mCurrentPlayingCategory = currentCategory;
     }
+
+    public void setmCurrentDisplayedList(ArrayList<SongModel> list){
+        mCurrentPlayingList = new ArrayList<>();
+        mCurrentPlayingList.addAll(list);
+    }
+
 
     public ArrayList<SongModel> getCurrentSongList() {
-        return mCurrentSongList;
+        return mCurrentPlayingList;
     }
 
-    public void setCurrentSongList(ArrayList<SongModel> list, MusicCategories category) {
-        if (category == mCurrentCategory)
+    public ArrayList<SongModel> getCurrentDisplayedList(){
+        return mCurrentDisplayedList;
+    }
+
+    public void setCurrentSongList(ArrayList<SongModel> list, int category) {
+        if (category == mCurrentPlayingCategory)
             return;
-        mCurrentSongList.clear();
-        mCurrentSongList.addAll(list);
-        mCurrentCategory = category;
+        mCurrentPlayingList.clear();
+        mCurrentPlayingList.addAll(list);
+        mCurrentPlayingCategory = category;
     }
 
     public SongModel getSongAt(int position) {
-        if (mCurrentSongList == null || mCurrentSongList.size() <= position)
+        if (mCurrentPlayingList == null || mCurrentPlayingList.size() <= position)
             return null;
-        else return mCurrentSongList.get(position);
+        else return mCurrentPlayingList.get(position);
     }
 
     /**
-     * set the duration of the song in mCurrentSongList at special position
+     * set the duration of the song in mCurrentPlayingList at special position
      *
      * @param position
      */
@@ -65,14 +78,14 @@ public class ContentManager {
     }
 
     public SongModel getCurrentSong() {
-        if (mCurrentSongList == null || mCurrentSongPosition >= mCurrentSongList.size())
+        if (mCurrentPlayingList == null || mCurrentSongPosition >= mCurrentPlayingList.size())
             return null;
-        return mCurrentSongList.get(mCurrentSongPosition);
+        return mCurrentPlayingList.get(mCurrentSongPosition);
     }
 
     public int getNextSong() {
         int next;
-        if (mCurrentSongPosition + 1 < mCurrentSongList.size()) {
+        if (mCurrentSongPosition + 1 < mCurrentPlayingList.size()) {
             next = mCurrentSongPosition + 1;
         } else {
             next = 0;
@@ -85,7 +98,7 @@ public class ContentManager {
         if (mCurrentSongPosition -1 >= 0){
             pre = mCurrentSongPosition - 1;
         }else{
-            pre = mCurrentSongList.size() - 1;
+            pre = mCurrentPlayingList.size() - 1;
         }
         return pre;
     }

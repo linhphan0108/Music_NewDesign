@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.linhphan.music.R;
 import com.linhphan.music.activity.MainActivity;
 import com.linhphan.music.common.AsyncTaskCallback;
+import com.linhphan.music.common.Constants;
 import com.linhphan.music.common.ContentManager;
 import com.linhphan.music.common.GetDownloadSongLinkWorker;
 import com.linhphan.music.common.Logger;
@@ -128,6 +129,8 @@ public class MusicService extends Service implements AsyncTaskCallback, MediaPla
         mp.release();
         mServiceState = MusicServiceState.destroy;
         unregisterReceiver(notificationBroadcast);
+        //reset the first category which is showed in MainContent
+        Utils.putIntToSharedPreferences(getBaseContext(), Constants.SELECTED_MENU_ITEM_KEY, R.id.menu_item_hot_vi);
         Logger.d(getTag(), "the service is destroyed");
     }
 

@@ -19,11 +19,11 @@ import java.util.ArrayList;
 public class GetSongListWorker extends AsyncTask<Void, Void, ArrayList<SongModel>> {
     private Context context;
     private String mUrl;
-    private MusicCategories mCategory;
+    private int mCategory;
     private AsyncTaskCallback callback;
     private IOException ex;
 
-    public GetSongListWorker(Context context, String url, MusicCategories category, AsyncTaskCallback callback) {
+    public GetSongListWorker(Context context, String url, int category, AsyncTaskCallback callback) {
         this.context = context;
         this.mUrl = url;
         this.callback = callback;
