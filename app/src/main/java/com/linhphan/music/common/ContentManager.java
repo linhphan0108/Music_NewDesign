@@ -41,20 +41,31 @@ public class ContentManager {
     }
 
 
-    public ArrayList<SongModel> getCurrentSongList() {
+    public ArrayList<SongModel> getCurrentPlayingSongList() {
         return mCurrentPlayingList;
+    }
+
+    /**
+     * set the current displayed song list to the current displayed song list.
+     */
+    public void setupCurrentPlayingSongList() {
+        if (mCurrentDisplayedList == null || mCurrentDisplayedList.size() <= 0)
+            return;
+        mCurrentPlayingList = null;
+        mCurrentPlayingList = new ArrayList<>();
+        mCurrentPlayingCategory = mCurrentDisplayedCategory;
+        mCurrentPlayingList.addAll(mCurrentDisplayedList);
     }
 
     public ArrayList<SongModel> getCurrentDisplayedList(){
         return mCurrentDisplayedList;
     }
 
-    public void setCurrentSongList(ArrayList<SongModel> list, int category) {
-        if (category == mCurrentPlayingCategory)
-            return;
-        mCurrentPlayingList.clear();
-        mCurrentPlayingList.addAll(list);
-        mCurrentPlayingCategory = category;
+    public void setCurrentDisplayedSongList(ArrayList<SongModel> list, int category){
+        this.mCurrentDisplayedList = null;
+        this.mCurrentDisplayedList = new ArrayList<>();
+        this.mCurrentDisplayedCategory = category;
+        this.mCurrentDisplayedList.addAll(list);
     }
 
     public SongModel getSongAt(int position) {
@@ -65,7 +76,6 @@ public class ContentManager {
 
     /**
      * set the duration of the song in mCurrentPlayingList at special position
-     *
      * @param position
      */
     public void setDurationAt(int position, int duration) {

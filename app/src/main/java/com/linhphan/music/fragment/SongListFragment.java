@@ -56,10 +56,10 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
     private SongListAdapter mAdapter;
     private ArrayList<SongModel> mSongList;
 
-    public static SongListFragment newInstance(MusicCategories param1) {
+    public static SongListFragment newInstance(int param1) {
         SongListFragment fragment = new SongListFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PARAM1, param1);
+        args.putInt(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,7 +82,7 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
                 (new GetSongListWorker(getContext(), mUrl, mCategory, this)).execute();
             }
         }
-        mAdapter = new SongListAdapter(getActivity(), ContentManager.getInstance().getCurrentSongList());
+        mAdapter = new SongListAdapter(getActivity(), ContentManager.getInstance().getCurrentDisplayedList());
     }
 
     @Override
@@ -126,6 +126,9 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
 
         MusicService musicService = mainActivity.getBoundServiceInstance();
         if (musicService == null) return;
+
+        ContentManager contentManager = ContentManager.getInstance();
+        contentManager.setupCurrentPlayingSongList();
 
         musicService.play(position);
     }

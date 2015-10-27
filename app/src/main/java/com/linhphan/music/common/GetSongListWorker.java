@@ -68,7 +68,7 @@ public class GetSongListWorker extends AsyncTask<Void, Void, ArrayList<SongModel
         }
 
         ContentManager contentManager = ContentManager.getInstance();
-        contentManager.setCurrentSongList(links, mCategory);
+        contentManager.setCurrentDisplayedSongList(links, mCategory);
         return links;
     }
 

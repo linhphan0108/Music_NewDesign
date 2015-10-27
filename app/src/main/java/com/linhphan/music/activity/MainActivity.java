@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
 
         //open default fragment in the first time the main activity is opened
         if (savedInstanceState == null) {
-            mContentFragment = SongListFragment.newInstance(MusicCategories.VI_HOT);
+            mContentFragment = SongListFragment.newInstance(R.id.menu_item_hot_vi);
             openFragment(mContentFragment);
         }
 
@@ -146,58 +146,58 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
         switch (menuItem.getItemId()) {
             //vietnamese music
             case R.id.menu_item_hot_vi:
-                fragment = SongListFragment.newInstance(MusicCategories.VI_HOT);
+                fragment = SongListFragment.newInstance(R.id.menu_item_hot_vi);
                 break;
             case R.id.menu_item_remix_vi:
-                fragment = SongListFragment.newInstance(MusicCategories.VI_REMIX);
+                fragment = SongListFragment.newInstance(R.id.menu_item_remix_vi);
                 break;
             case R.id.menu_item_rap_vi:
-                fragment = SongListFragment.newInstance(MusicCategories.VI_RAP);
+                fragment = SongListFragment.newInstance(R.id.menu_item_rap_vi);
                 break;
             case R.id.menu_item_country_vi:
-                fragment = SongListFragment.newInstance(MusicCategories.VI_COUNTRY);
+                fragment = SongListFragment.newInstance(R.id.menu_item_country_vi);
                 break;
 
                 //english music
             case R.id.menu_item_pop_en:
-                fragment = SongListFragment.newInstance(MusicCategories.EN_POP);
+                fragment = SongListFragment.newInstance(R.id.menu_item_pop_en);
                 break;
             case R.id.menu_item_remix_en:
-                fragment = SongListFragment.newInstance(MusicCategories.EN_REMIX);
+                fragment = SongListFragment.newInstance(R.id.menu_item_remix_en);
                 break;
             case R.id.menu_item_rap_en:
-                fragment = SongListFragment.newInstance(MusicCategories.EN_RAP);
+                fragment = SongListFragment.newInstance(R.id.menu_item_rap_en);
                 break;
             case R.id.menu_item_dance_en:
-                fragment = SongListFragment.newInstance(MusicCategories.EN_DANCE);
+                fragment = SongListFragment.newInstance(R.id.menu_item_dance_en);
                 break;
 
             //korean music
             case R.id.menu_item_pop_korea:
-                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_POP);
+                fragment = SongListFragment.newInstance(R.id.menu_item_pop_korea);
                 break;
             case R.id.menu_item_remix_korea:
-                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_REMIX);
+                fragment = SongListFragment.newInstance(R.id.menu_item_remix_korea);
                 break;
             case R.id.menu_item_rap_korea:
-                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_RAP);
+                fragment = SongListFragment.newInstance(R.id.menu_item_rap_korea);
                 break;
             case R.id.menu_item_dance_korea:
-                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_DANCE);
+                fragment = SongListFragment.newInstance(R.id.menu_item_dance_korea);
                 break;
 
             //chinese music
             case R.id.menu_item_pop_china:
-                fragment = SongListFragment.newInstance(MusicCategories.CHINESE_POP);
+                fragment = SongListFragment.newInstance(R.id.menu_item_pop_china);
                 break;
             case R.id.menu_item_remix_china:
-                fragment = SongListFragment.newInstance(MusicCategories.KOREAN_REMIX);
+                fragment = SongListFragment.newInstance(R.id.menu_item_remix_china);
                 break;
             case R.id.menu_item_rap_china:
-                fragment = SongListFragment.newInstance(MusicCategories.CHINESE_RAP);
+                fragment = SongListFragment.newInstance(R.id.menu_item_rap_china);
                 break;
             case R.id.menu_item_dance_china:
-                fragment = SongListFragment.newInstance(MusicCategories.CHINESE_DANCE);
+                fragment = SongListFragment.newInstance(R.id.menu_item_dance_china);
                 break;
 
             default:
