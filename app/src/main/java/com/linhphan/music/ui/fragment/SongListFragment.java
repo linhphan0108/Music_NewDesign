@@ -15,9 +15,9 @@ import com.linhphan.music.R;
 import com.linhphan.music.ui.activity.MainActivity;
 import com.linhphan.music.adapter.SongListAdapter;
 import com.linhphan.music.api.parser.JSoupSongListParser;
-import com.linhphan.music.common.ContentManager;
+import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
-import com.linhphan.music.common.UrlProvider;
+import com.linhphan.music.util.UrlProvider;
 import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.service.MusicService;
 

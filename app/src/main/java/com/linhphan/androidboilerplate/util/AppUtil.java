@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
@@ -17,6 +18,45 @@ import java.security.NoSuchAlgorithmException;
  * Created by linhphan on 11/11/15.
  */
 public class AppUtil {
+
+    //== version
+    public static boolean hasFroyo() {
+        // Can use static final constants like FROYO, declared in later versions
+        // of the OS since they are inlined at compile time. This is guaranteed behavior.
+        return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
+    }
+
+
+    public static boolean hasGingerbread() {
+        return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
+    }
+
+
+    public static boolean hasHoneycomb() {
+        return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    }
+
+
+    public static boolean hasHoneycombMR1() {
+        return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
+    }
+
+
+    public static boolean hasJellyBean() {
+        return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+
+    public static boolean hasKitKat() {
+        return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
+
+    public static boolean isSupportBigNotification(){
+        return hasJellyBean();
+    }
+
+
     /**
      * determine whether an application is installed or not
      *

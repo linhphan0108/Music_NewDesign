@@ -1,7 +1,7 @@
 package com.linhphan.music.api.parser;
 
 import com.linhphan.androidboilerplate.api.Parser.IParser;
-import com.linhphan.music.common.UrlProvider;
+import com.linhphan.music.util.UrlProvider;
 import com.linhphan.music.data.model.SongModel;
 
 import org.jsoup.nodes.Document;

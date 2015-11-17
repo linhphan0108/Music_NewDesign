@@ -24,15 +24,16 @@ import android.widget.Toast;
 
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
+import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupDownloadSongParser;
 import com.linhphan.music.ui.activity.MainActivity;
-import com.linhphan.music.common.Constants;
-import com.linhphan.music.common.ContentManager;
+import com.linhphan.music.util.Constants;
+import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
-import com.linhphan.music.common.MessageCode;
-import com.linhphan.music.common.MusicServiceState;
-import com.linhphan.music.common.Utils;
+import com.linhphan.music.util.MessageCode;
+import com.linhphan.music.util.MusicServiceState;
+import com.linhphan.music.util.Utils;
 import com.linhphan.music.data.model.SongModel;
 
 import java.io.IOException;
@@ -333,7 +334,6 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         ContentManager contentManager = ContentManager.getInstance();
         SongModel songModel = contentManager.getSongAt(position);
         if (songModel != null) {
-//            (new GetDownloadSongLinkWorker(getApplicationContext(), songModel.getPath(), this)).execute();
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getApplicationContext(), this);
             worker.setParser(new JSoupDownloadSongParser())
                     .execute( songModel.getPath());
@@ -427,7 +427,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(currentSong.getTitle()).build();
 
-        if (Utils.isSupportBigNotification()) {
+        if (AppUtil.isSupportBigNotification()) {
             setListeners(bigView);
             notification.bigContentView = bigView;
             notification.bigContentView.setImageViewResource(R.id.img_notification, R.mipmap.ic_launcher);

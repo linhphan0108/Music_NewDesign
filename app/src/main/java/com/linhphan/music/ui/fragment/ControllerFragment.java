@@ -1,6 +1,6 @@
 package com.linhphan.music.ui.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,10 +10,11 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.linhphan.androidboilerplate.util.TimerUtil;
 import com.linhphan.music.R;
-import com.linhphan.music.common.ContentManager;
+import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
-import com.linhphan.music.common.Utils;
+import com.linhphan.music.util.Utils;
 import com.linhphan.music.data.model.SongModel;
 
 /**
@@ -77,13 +78,13 @@ public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarCha
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFragmentInteractionListener) context;
 
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -152,7 +153,7 @@ public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarCha
 
     public void updateSeekBarAndTimer(int position, int duration) {
         mSeekBar.setProgress(Utils.calculatePercentage(position, duration));
-        mTxtDuration.setText(Utils.convertTime2String(duration));
+        mTxtDuration.setText(TimerUtil.convertTime2String(duration));
     }
 
     public void updateBuffer(int percentage) {

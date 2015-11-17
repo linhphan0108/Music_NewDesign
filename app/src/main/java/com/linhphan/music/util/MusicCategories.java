@@ -1,4 +1,4 @@
-package com.linhphan.music.common;
+package com.linhphan.music.util;
 
 import java.io.Serializable;
 

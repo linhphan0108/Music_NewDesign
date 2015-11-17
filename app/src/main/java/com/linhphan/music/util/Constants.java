@@ -1,4 +1,4 @@
-package com.linhphan.music.common;
+package com.linhphan.music.util;
 
 /**
  * Created by linh on 24/10/2015.

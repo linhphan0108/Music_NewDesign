@@ -1,4 +1,4 @@
-package com.linhphan.music.common;
+package com.linhphan.music.util;
 
 import com.linhphan.music.data.model.SongModel;
 

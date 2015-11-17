@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;
-import com.linhphan.music.common.ContentManager;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
