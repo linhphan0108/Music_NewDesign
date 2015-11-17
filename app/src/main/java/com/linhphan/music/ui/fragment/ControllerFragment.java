@@ -1,4 +1,4 @@
-package com.linhphan.music.fragment;
+package com.linhphan.music.ui.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.linhphan.music.R;
 import com.linhphan.music.common.ContentManager;
-import com.linhphan.music.common.Logger;
+import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.common.Utils;
-import com.linhphan.music.model.SongModel;
+import com.linhphan.music.data.model.SongModel;
 
 /**
  * A simple {@link Fragment} subclass.

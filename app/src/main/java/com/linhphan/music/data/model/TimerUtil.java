@@ -1,4 +1,4 @@
-package com.linhphan.music.model;
+package com.linhphan.music.data.model;
 
 /**
  * Created by linhphan on 10/23/15.

@@ -1,4 +1,4 @@
-package com.linhphan.music.model;
+package com.linhphan.music.data.model;
 
 import java.io.Serializable;
 

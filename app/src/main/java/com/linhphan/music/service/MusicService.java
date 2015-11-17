@@ -1,6 +1,5 @@
 package com.linhphan.music.service;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -23,25 +22,25 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
+import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.music.R;
-import com.linhphan.music.activity.MainActivity;
-import com.linhphan.music.common.AsyncTaskCallback;
+import com.linhphan.music.api.parser.JSoupDownloadSongParser;
+import com.linhphan.music.ui.activity.MainActivity;
 import com.linhphan.music.common.Constants;
 import com.linhphan.music.common.ContentManager;
-import com.linhphan.music.common.GetDownloadSongLinkWorker;
-import com.linhphan.music.common.Logger;
+import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.common.MessageCode;
 import com.linhphan.music.common.MusicServiceState;
 import com.linhphan.music.common.Utils;
-import com.linhphan.music.model.SongModel;
+import com.linhphan.music.data.model.SongModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by linhphan on 10/22/15.
  */
-public class MusicService extends Service implements AsyncTaskCallback, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
+public class MusicService extends Service implements DownloadCallback, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, AudioManager.OnAudioFocusChangeListener {
     public static final String MUSIC_SERVICE_BROADCAST_NOTIFICATION = "uit.linh.services";
     final private static int NOTIFY_ID = 11111;
@@ -177,22 +176,18 @@ public class MusicService extends Service implements AsyncTaskCallback, MediaPla
     }
 
     //================== AsyncTask callback ========================================================
+
     @Override
-    public void onDoingBackground() {
+    public void onDownloadSuccessfully(Object data) {
+        if (data instanceof String){
+            String url = (String) data;
+            play(url);
+        }
+
     }
 
     @Override
-    public void onDownloadSuccessfully(ArrayList<SongModel> list) {
-
-    }
-
-    @Override
-    public void onDownloadSuccessfully(String url) {
-        play(url);
-    }
-
-    @Override
-    public void onDownloadError(IOException ex, String url) {
+    public void onDownloadFailed(Exception e) {
 
     }
 
@@ -338,7 +333,10 @@ public class MusicService extends Service implements AsyncTaskCallback, MediaPla
         ContentManager contentManager = ContentManager.getInstance();
         SongModel songModel = contentManager.getSongAt(position);
         if (songModel != null) {
-            (new GetDownloadSongLinkWorker(getApplicationContext(), songModel.getPath(), this)).execute();
+//            (new GetDownloadSongLinkWorker(getApplicationContext(), songModel.getPath(), this)).execute();
+            JSoupDownloadWorker worker = new JSoupDownloadWorker(getApplicationContext(), this);
+            worker.setParser(new JSoupDownloadSongParser())
+                    .execute( songModel.getPath());
             contentManager.setCurrentSongPosition(position);
             notifyCurrentSongHasChanged();
         }

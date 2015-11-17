@@ -7,6 +7,8 @@ import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
+import com.linhphan.androidboilerplate.util.Logger;
+
 /**
  * Created by linhphan on 10/22/15.
  */

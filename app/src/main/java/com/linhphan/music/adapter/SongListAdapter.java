@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.linhphan.music.R;
-import com.linhphan.music.model.SongModel;
+import com.linhphan.music.data.model.SongModel;
 
 import java.util.ArrayList;
 
@@ -23,6 +23,11 @@ public class SongListAdapter extends BaseAdapter {
     public SongListAdapter(Context context, ArrayList<SongModel> songs) {
         this.songs = songs;
         this.context = context;
+    }
+
+    public void resetList(ArrayList<SongModel> newList){
+        songs = newList;
+        this.notifyDataSetChanged();
     }
 
     @Override

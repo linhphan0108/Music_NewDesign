@@ -1,6 +1,6 @@
 package com.linhphan.music.common;
 
-import com.linhphan.music.model.SongModel;
+import com.linhphan.music.data.model.SongModel;
 
 import java.util.ArrayList;
 

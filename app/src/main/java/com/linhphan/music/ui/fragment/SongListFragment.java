@@ -1,8 +1,6 @@
-package com.linhphan.music.fragment;
+package com.linhphan.music.ui.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,39 +8,29 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
+import com.linhphan.androidboilerplate.callback.DownloadCallback;
+import com.linhphan.androidboilerplate.ui.fragment.BaseFragment;
 import com.linhphan.music.R;
-import com.linhphan.music.activity.MainActivity;
+import com.linhphan.music.ui.activity.MainActivity;
 import com.linhphan.music.adapter.SongListAdapter;
-import com.linhphan.music.common.AsyncTaskCallback;
+import com.linhphan.music.api.parser.JSoupSongListParser;
 import com.linhphan.music.common.ContentManager;
-import com.linhphan.music.common.GetSongListWorker;
-import com.linhphan.music.common.Logger;
-import com.linhphan.music.common.MusicCategories;
+import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.common.UrlProvider;
-import com.linhphan.music.model.SongModel;
+import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.service.MusicService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
- */
-public class SongListFragment extends Fragment implements AbsListView.OnItemClickListener, AsyncTaskCallback {
+public class SongListFragment extends BaseFragment implements AbsListView.OnItemClickListener, DownloadCallback {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "url";
+    public static final String ARGUMENT_KEY_MENU_ITEM_ID =  "ARGUMENT_KEY_MENU_ITEM_ID";
 
     private String mUrl;
     private int mCategory;
 
-    private OnFragmentInteractionListener mListener;
 
     /**
      * The fragment's ListView/GridView.
@@ -56,14 +44,6 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
     private SongListAdapter mAdapter;
     private ArrayList<SongModel> mSongList;
 
-    public static SongListFragment newInstance(int param1) {
-        SongListFragment fragment = new SongListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -76,12 +56,18 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mCategory = getArguments().getInt(ARG_PARAM1, R.id.menu_item_hot_vi);
-            mUrl = UrlProvider.getUrl(mCategory);
-            if (mCategory != ContentManager.getInstance().getCurrentCategory()) {
-                (new GetSongListWorker(getContext(), mUrl, mCategory, this)).execute();
-            }
+            mCategory = getArguments().getInt(ARGUMENT_KEY_MENU_ITEM_ID, R.id.menu_item_hot_vi);
+//            if (mCategory != ContentManager.getInstance().getCurrentCategory()) {
+//                (new GetSongListWorker(getContext(), mUrl, mCategory, this)).execute();
+//            }
         }
+        if (mCategory == 0)
+            mCategory = R.id.menu_item_hot_vi;//2131493013
+        mUrl = UrlProvider.getUrl(mCategory);
+        JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
+        worker.setParser(new JSoupSongListParser())
+                .showProgressbar(true, false)
+                .execute(mUrl);
         mAdapter = new SongListAdapter(getActivity(), ContentManager.getInstance().getCurrentDisplayedList());
     }
 
@@ -103,20 +89,8 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-//        try {
-//            mListener = (OnFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -167,38 +141,17 @@ public class SongListFragment extends Fragment implements AbsListView.OnItemClic
 
     //===================== get song list callback
     @Override
-    public void onDoingBackground() {
-
+    public void onDownloadSuccessfully(Object data) {
+        ArrayList<SongModel> songList = (ArrayList<SongModel>) data;
+        ContentManager contentManager = ContentManager.getInstance();
+        contentManager.setCurrentDisplayedSongList(songList, mCategory);
+        mAdapter.resetList(songList);
     }
 
     @Override
-    public void onDownloadSuccessfully(ArrayList<SongModel> list) {
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onDownloadSuccessfully(String url) {
-
-    }
-
-    @Override
-    public void onDownloadError(IOException ex, String url) {
+    public void onDownloadFailed(Exception e) {
 
     }
     //===================== end
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        public void onFragmentInteraction(String id);
-    }
 
 }

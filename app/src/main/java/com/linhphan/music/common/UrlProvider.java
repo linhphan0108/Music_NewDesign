@@ -1,7 +1,6 @@
 package com.linhphan.music.common;
 
 import com.linhphan.music.R;
-import com.linhphan.music.fragment.SongListFragment;
 
 /**
  * Created by linhphan on 10/22/15.

@@ -1,4 +1,4 @@
-package com.linhphan.music.activity;
+package com.linhphan.music.ui.activity;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -10,7 +10,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,19 +17,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
 
+import com.linhphan.androidboilerplate.ui.activity.BaseActivity;
+import com.linhphan.androidboilerplate.ui.fragment.BaseFragment;
 import com.linhphan.music.R;
 import com.linhphan.music.common.Constants;
 import com.linhphan.music.common.ContentManager;
-import com.linhphan.music.common.Logger;
+import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.common.MessageCode;
-import com.linhphan.music.common.MusicCategories;
 import com.linhphan.music.common.Utils;
-import com.linhphan.music.fragment.ControllerFragment;
-import com.linhphan.music.fragment.SongListFragment;
-import com.linhphan.music.model.SongModel;
+import com.linhphan.music.ui.fragment.ControllerFragment;
+import com.linhphan.music.ui.fragment.SongListFragment;
+import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.service.MusicService;
 
-public class MainActivity extends AppCompatActivity implements ControllerFragment.OnFragmentInteractionListener,
+public class MainActivity extends BaseActivity implements ControllerFragment.OnFragmentInteractionListener,
         View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
@@ -72,10 +72,20 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
         getAllWidget();
         registerEventHandler();
 
+        mContainerResource = R.id.main_content;
+
         //open default fragment in the first time the main activity is opened
         if (savedInstanceState == null) {
-            mContentFragment = SongListFragment.newInstance(R.id.menu_item_hot_vi);
-            openFragment(mContentFragment);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, R.id.menu_item_hot_vi);
+            Message message = mBaseHandler.obtainMessage();
+            message.what = REPLACING_FRAGMENT;
+            mContentFragment = (SongListFragment) BaseFragment.newInstance(SongListFragment.class, bundle);
+            message.obj = mContentFragment;
+            mBaseHandler.sendMessage(message);
+
+//            mContentFragment = SongListFragment.newInstance(R.id.menu_item_hot_vi);
+//            openFragment(mContentFragment);
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -142,69 +152,14 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
     public boolean onNavigationItemSelected(MenuItem menuItem) {
 
         drawerLayout.closeDrawers();
-        SongListFragment fragment = null;
-        switch (menuItem.getItemId()) {
-            //vietnamese music
-            case R.id.menu_item_hot_vi:
-                fragment = SongListFragment.newInstance(R.id.menu_item_hot_vi);
-                break;
-            case R.id.menu_item_remix_vi:
-                fragment = SongListFragment.newInstance(R.id.menu_item_remix_vi);
-                break;
-            case R.id.menu_item_rap_vi:
-                fragment = SongListFragment.newInstance(R.id.menu_item_rap_vi);
-                break;
-            case R.id.menu_item_country_vi:
-                fragment = SongListFragment.newInstance(R.id.menu_item_country_vi);
-                break;
 
-                //english music
-            case R.id.menu_item_pop_en:
-                fragment = SongListFragment.newInstance(R.id.menu_item_pop_en);
-                break;
-            case R.id.menu_item_remix_en:
-                fragment = SongListFragment.newInstance(R.id.menu_item_remix_en);
-                break;
-            case R.id.menu_item_rap_en:
-                fragment = SongListFragment.newInstance(R.id.menu_item_rap_en);
-                break;
-            case R.id.menu_item_dance_en:
-                fragment = SongListFragment.newInstance(R.id.menu_item_dance_en);
-                break;
-
-            //korean music
-            case R.id.menu_item_pop_korea:
-                fragment = SongListFragment.newInstance(R.id.menu_item_pop_korea);
-                break;
-            case R.id.menu_item_remix_korea:
-                fragment = SongListFragment.newInstance(R.id.menu_item_remix_korea);
-                break;
-            case R.id.menu_item_rap_korea:
-                fragment = SongListFragment.newInstance(R.id.menu_item_rap_korea);
-                break;
-            case R.id.menu_item_dance_korea:
-                fragment = SongListFragment.newInstance(R.id.menu_item_dance_korea);
-                break;
-
-            //chinese music
-            case R.id.menu_item_pop_china:
-                fragment = SongListFragment.newInstance(R.id.menu_item_pop_china);
-                break;
-            case R.id.menu_item_remix_china:
-                fragment = SongListFragment.newInstance(R.id.menu_item_remix_china);
-                break;
-            case R.id.menu_item_rap_china:
-                fragment = SongListFragment.newInstance(R.id.menu_item_rap_china);
-                break;
-            case R.id.menu_item_dance_china:
-                fragment = SongListFragment.newInstance(R.id.menu_item_dance_china);
-                break;
-
-            default:
-                return false;
-        }
-
-        openFragment(fragment);
+        Bundle bundle = new Bundle();
+        bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, menuItem.getItemId());
+        Message message = mBaseHandler.obtainMessage();
+        message.what = REPLACING_FRAGMENT;
+        mContentFragment = (SongListFragment) BaseFragment.newInstance(SongListFragment.class, bundle);
+        message.obj = mContentFragment;
+        mBaseHandler.sendMessage(message);
         Utils.putIntToSharedPreferences(this, Constants.SELECTED_MENU_ITEM_KEY, menuItem.getItemId());
         return true;
     }
@@ -257,12 +212,6 @@ public class MainActivity extends AppCompatActivity implements ControllerFragmen
     }
 
     private void registerEventHandler() {
-    }
-
-    private void openFragment(SongListFragment fragment) {
-        if (fragment == null) return;
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.main_content, fragment).commit();
     }
 
     private String getTag() {
