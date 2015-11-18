@@ -99,7 +99,7 @@
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_pause"
+                    android:id="@+id/img_btn_pause"
                     android:src="@drawable/ic_pause"
                     android:background="@drawable/bg_media_button_controller"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -109,7 +109,7 @@
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_play"
+                    android:id="@+id/img_btn_play"
                     android:src="@drawable/ic_button_play"
                     android:background="@drawable/bg_media_button_controller"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -120,7 +120,7 @@
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_next"
+                    android:id="@+id/img_btn_next"
                     android:src="@drawable/ic_next"
                     android:background="@drawable/bg_media_button_controller" />
             </LinearLayout>

@@ -1,5 +1,6 @@
 package com.linhphan.music.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,23 +11,25 @@ import android.widget.TextView;
 
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
-import com.linhphan.androidboilerplate.ui.fragment.BaseFragment;
 import com.linhphan.music.R;
-import com.linhphan.music.ui.activity.MainActivity;
-import com.linhphan.music.adapter.SongListAdapter;
+import com.linhphan.music.ui.activity.HomeActivity;
+import com.linhphan.music.ui.activity.PlayerActivity;
+import com.linhphan.music.ui.adapter.SongListAdapter;
 import com.linhphan.music.api.parser.JSoupSongListParser;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
+import com.linhphan.music.util.DrawerNavigationUtil;
 import com.linhphan.music.util.UrlProvider;
 import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.service.MusicService;
+import com.linhphan.music.util.Utils;
 
 import java.util.ArrayList;
 
-public class SongListFragment extends BaseFragment implements AbsListView.OnItemClickListener, DownloadCallback {
+public class SongListFragment extends BaseFragment implements AbsListView.OnItemClickListener, DownloadCallback{
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String ARGUMENT_KEY_MENU_ITEM_ID =  "ARGUMENT_KEY_MENU_ITEM_ID";
+    public static final String ARGUMENT_KEY_MENU_ITEM_ID = "ARGUMENT_KEY_MENU_ITEM_ID";
 
     private String mUrl;
     private int mCategory;
@@ -42,7 +45,6 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
      * Views.
      */
     private SongListAdapter mAdapter;
-    private ArrayList<SongModel> mSongList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -83,7 +85,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
 
-        setSelectedItem(ContentManager.getInstance().getCurrentSongPosition());
+        setSelectedItem(ContentManager.getInstance().getCurrentPlayingSongPosition());
 
         return view;
     }
@@ -95,16 +97,23 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        MainActivity mainActivity = (MainActivity) getActivity();
+        HomeActivity mainActivity = (HomeActivity) getActivity();
         if (mainActivity == null) return;
 
         MusicService musicService = mainActivity.getBoundServiceInstance();
         if (musicService == null) return;
 
         ContentManager contentManager = ContentManager.getInstance();
-        contentManager.setupCurrentPlayingSongList();
-
+        contentManager.setupCurrentPlayingFromDisplayed();
         musicService.play(position);
+
+        // store the playing category
+        int index = DrawerNavigationUtil.getMenuItemPosition(mCategory);
+        Utils.putIntToSharedPreferences(getContext(), Utils.CURRENT_PLAYING_CATEGORY, index);
+
+        //== go to player activity
+        Intent intent = new Intent(getActivity(), PlayerActivity.class);
+        getContext().startActivity(intent);
     }
 
     /**
@@ -121,10 +130,12 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     }
 
     public void setSelectedItem(int position) {
-        mListView.setItemChecked(position, true);
-        if (!isItemVisible(position))
-            mListView.setSelection(position);
-        Logger.d(getTag(), "change the selected item in list view");
+        if (mCategory == ContentManager.getInstance().getCurrentPlayingCategory()) {
+            mListView.setItemChecked(position, true);
+            if (!isItemVisible(position))
+                mListView.setSelection(position);
+            Logger.d(getTag(), "change the selected item in list view");
+        }
     }
 
     /**
@@ -139,12 +150,12 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
         return (position >= firstItemVisible) && (position <= lastItemVisible);
     }
 
-    //===================== get song list callback
+    //===================== get song list callback =================================================
     @Override
     public void onDownloadSuccessfully(Object data) {
         ArrayList<SongModel> songList = (ArrayList<SongModel>) data;
         ContentManager contentManager = ContentManager.getInstance();
-        contentManager.setCurrentDisplayedSongList(songList, mCategory);
+        contentManager.setCurrentDisplayed(songList, mCategory);
         mAdapter.resetList(songList);
     }
 
@@ -152,6 +163,4 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     public void onDownloadFailed(Exception e) {
 
     }
-    //===================== end
-
 }

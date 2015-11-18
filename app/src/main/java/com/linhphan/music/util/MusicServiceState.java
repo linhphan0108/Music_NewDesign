@@ -17,7 +17,7 @@ public enum MusicServiceState {
     seekToCompleted,
     paused, // playback paused (media player ready!)
     completed,
-    stopped, // media player is stopped and not prepared to play
+    stopped, // media player is stopped and not prepared to onPlay
     error,
     end,
     destroy

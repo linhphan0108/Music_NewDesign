@@ -25,11 +25,11 @@ import com.linhphan.music.data.model.SongModel;
  * Use the {@link ControllerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
-    private SeekBar mSeekBar;
+    private SeekBar mSbLoading;
     private TextView mTxtDuration;
     private TextView mTxtCurrentTitle;
     private TextView mTxtCurrentArtistName;
@@ -100,11 +100,11 @@ public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarCha
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.img_btn_play:
-                mListener.play();
+                mListener.onControlPlay();
                 updatePausedOrPlayingButton(false);
                 break;
             case R.id.img_btn_pause:
-                mListener.pause();
+                mListener.onControlPaused();
                 updatePausedOrPlayingButton(true);
                 break;
         }
@@ -123,14 +123,14 @@ public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarCha
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        mListener.seekTo(seekBar.getProgress());
+        mListener.onControlSeekTo(seekBar.getProgress());
     }
     //==============================================================================================
 
 
     private void getWidgets(View root) {
         if (root == null) return;
-        mSeekBar = (SeekBar) root.findViewById(R.id.sb_loading);
+        mSbLoading = (SeekBar) root.findViewById(R.id.sb_loading);
         mTxtDuration = (TextView) root.findViewById(R.id.txt_duration);
         mTxtCurrentTitle = (TextView) root.findViewById(R.id.txt_current_song_title);
         mTxtCurrentArtistName = (TextView) root.findViewById(R.id.txt_current_artist);
@@ -139,25 +139,25 @@ public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarCha
     }
 
     private void registerEventHandlers() {
-        mSeekBar.setOnSeekBarChangeListener(this);
+        mSbLoading.setOnSeekBarChangeListener(this);
         mImgButtonPaused.setOnClickListener(this);
         mImgButtonPlay.setOnClickListener(this);
     }
 
     private void getAndDisplayCurrentSongInfo(){
         ContentManager contentManager = ContentManager.getInstance();
-        SongModel songModel = contentManager.getCurrentSong();
+        SongModel songModel = contentManager.getCurrentPlayingSong();
         if (songModel == null) return;
         updateArtistAndTitle(songModel.getTitle(), songModel.getArtist());
     }
 
     public void updateSeekBarAndTimer(int position, int duration) {
-        mSeekBar.setProgress(Utils.calculatePercentage(position, duration));
+        mSbLoading.setProgress(Utils.calculatePercentage(position, duration));
         mTxtDuration.setText(TimerUtil.convertTime2String(duration));
     }
 
     public void updateBuffer(int percentage) {
-        mSeekBar.setSecondaryProgress(percentage);
+        mSbLoading.setSecondaryProgress(percentage);
         Logger.d(getTag(), "buffering " + percentage);
     }
 
@@ -168,7 +168,6 @@ public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarCha
 
     /**
      * update paused or playing buttons
-     *
      * @param paused true if media player is paused
      */
     public void updatePausedOrPlayingButton(boolean paused) {
@@ -192,10 +191,10 @@ public class ControllerFragment extends Fragment implements SeekBar.OnSeekBarCha
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void seekTo(int position);
+        void onControlSeekTo(int position);
 
-        void play();
+        void onControlPlay();
 
-        void pause();
+        void onControlPaused();
     }
 }

@@ -22,7 +22,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Anomymous"
+        android:text="Online Music"
         android:textSize="14sp"
         android:textColor="#FFF"
         android:textStyle="bold"
@@ -37,7 +37,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="abcxyz@abc.xxx"
+        android:text="Playing Music Wherever You are"
         android:id="@+id/email"
         android:gravity="left"
         android:layout_marginBottom="8dp"

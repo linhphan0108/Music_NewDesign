@@ -9,19 +9,19 @@
                     <item
                         android:id="@+id/menu_item_hot_vi"
                         android:title="@string/music_type_hot"
-                        android:icon="@mipmap/ic_launcher"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_remix_vi"
                         android:title="@string/music_type_remix"
-                        android:icon="@drawable/ic_vietnam_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_rap_vi"
                         android:title="@string/music_type_rap"
-                        android:icon="@drawable/ic_vietnam_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_country_vi"
                         android:title="@string/music_type_country"
-                        android:icon="@drawable/ic_vietnam_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                 </group>
             </menu>
         </item>
@@ -33,19 +33,19 @@
                     <item
                         android:id="@+id/menu_item_pop_en"
                         android:title="@string/music_type_pop"
-                        android:icon="@drawable/ic_usa_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_remix_en"
                         android:title="@string/music_type_remix"
-                        android:icon="@drawable/ic_usa_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_rap_en"
                         android:title="@string/music_type_rap"
-                        android:icon="@drawable/ic_usa_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_dance_en"
                         android:title="@string/music_type_dance"
-                        android:icon="@drawable/ic_usa_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                 </group>
             </menu>
         </item>
@@ -57,19 +57,19 @@
                     <item
                         android:id="@+id/menu_item_pop_korea"
                         android:title="@string/music_type_pop"
-                        android:icon="@drawable/ic_korea_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_remix_korea"
                         android:title="@string/music_type_remix"
-                        android:icon="@drawable/ic_korea_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_rap_korea"
                         android:title="@string/music_type_rap"
-                        android:icon="@drawable/ic_korea_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_dance_korea"
                         android:title="@string/music_type_dance"
-                        android:icon="@drawable/ic_korea_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                 </group>
             </menu>
         </item>
@@ -81,19 +81,19 @@
                     <item
                         android:id="@+id/menu_item_pop_china"
                         android:title="@string/music_type_pop"
-                        android:icon="@drawable/ic_china_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_remix_china"
                         android:title="@string/music_type_remix"
-                        android:icon="@drawable/ic_china_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_rap_china"
                         android:title="@string/music_type_rap"
-                        android:icon="@drawable/ic_china_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_dance_china"
                         android:title="@string/music_type_dance"
-                        android:icon="@drawable/ic_china_flag"/>
+                        android:icon="@drawable/ic_menu_star"/>
                 </group>
             </menu>
         </item>

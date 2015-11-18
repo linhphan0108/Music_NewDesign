@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -13,9 +13,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".ui.activity.MainActivity"
-            android:launchMode="singleTop"
-            android:label="@string/app_name" >
+            android:name=".ui.activity.HomeActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,10 +23,13 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.MusicService"
+        <service
+            android:name=".service.MusicService"
             android:enabled="true"
             android:exported="false" />
 
+        <activity android:name=".ui.activity.PlayerActivity" >
+        </activity>
     </application>
 
 </manifest>

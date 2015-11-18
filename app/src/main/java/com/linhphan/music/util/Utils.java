@@ -11,6 +11,9 @@ public class Utils {
 
     private static String SHARED_PREFERENCES_FILE_NAME = "shared_preferences_common";
 
+    //== keys
+    public static String CURRENT_PLAYING_CATEGORY = "CURRENT_PLAYING_CATEGORY";
+
     public static int calculatePercentage(int numerator, int denominator){
         return (numerator * 100)/denominator;
     }

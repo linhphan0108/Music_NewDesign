@@ -1,4 +1,4 @@
-package com.linhphan.music.adapter;
+package com.linhphan.music.ui.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

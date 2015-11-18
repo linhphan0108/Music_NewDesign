@@ -1,20 +1,19 @@
-package com.linhphan.androidboilerplate.ui.fragment;
+package com.linhphan.music.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 
-import com.linhphan.androidboilerplate.ui.activity.BaseActivity;
+import com.linhphan.music.ui.activity.BaseActivity;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Created by linhphan on 11/13/15.
+ * Created by linhphan on 11/18/15.
  */
 public class BaseFragment extends Fragment {
-
     protected Handler mBaseHandler;//this mHandler will be gotten from an activity which this fragment is attached
 
     public static BaseFragment newInstance(Class<?> c, Bundle bundle){

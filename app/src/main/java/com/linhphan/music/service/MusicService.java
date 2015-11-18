@@ -27,7 +27,7 @@ import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupDownloadSongParser;
-import com.linhphan.music.ui.activity.MainActivity;
+import com.linhphan.music.ui.activity.HomeActivity;
 import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
@@ -47,8 +47,8 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     final private static int NOTIFY_ID = 11111;
     public static final String NOTIFY_PREVIOUS = "uit.linh.online.music.previous";
     public static final String NOTIFY_REMOVE = "uit.linh.online.music.delete";
-    public static final String NOTIFY_PAUSE = "uit.linh.online.music.pause";
-    public static final String NOTIFY_PLAY = "uit.linh.online.music.play";
+    public static final String NOTIFY_PAUSE = "uit.linh.online.music.onPause";
+    public static final String NOTIFY_PLAY = "uit.linh.online.music.onPlay";
     public static final String NOTIFY_NEXT = "uit.linh.online.music.next";
     public static final String NOTIFY_OPEN_MAIN_ACTIVITY = "uit.linh.online.music.open.main";
     private final NotificationBroadcast notificationBroadcast = new NotificationBroadcast();
@@ -165,7 +165,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             mp.start();
             mServiceState = MusicServiceState.playing;
             ContentManager contentManager = ContentManager.getInstance();
-            contentManager.setDurationAt(contentManager.getCurrentSongPosition(), mp.getDuration());
+            contentManager.setDurationAt(contentManager.getCurrentPlayingSongPosition(), mp.getDuration());
             retrieveElapseTimePeriodically();
             showCustomNotification(getApplicationContext());
         }
@@ -180,7 +180,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
     @Override
     public void onDownloadSuccessfully(Object data) {
-        if (data instanceof String){
+        if (data instanceof String) {
             String url = (String) data;
             play(url);
         }
@@ -231,7 +231,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     public void setupHandler(Handler handler) {
         this.mHandler = handler;
         ContentManager contentManager = ContentManager.getInstance();
-        Logger.d(getTag(), "the current position song: " + contentManager.getCurrentSongPosition());
+        Logger.d(getTag(), "the current position song: " + contentManager.getCurrentPlayingSongPosition());
         retrieveElapseTimePeriodically();
     }
 
@@ -265,6 +265,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     private void notifyMediaPlayerPaused(boolean paused) {
+        if (mHandler == null) return;
         Message message = mHandler.obtainMessage();
         if (paused)
             message.what = MessageCode.PAUSED.ordinal();
@@ -272,7 +273,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         mHandler.sendMessage(message);
     }
 
-    private void next() {
+    public void next() {
         ContentManager contentManager = ContentManager.getInstance();
         int nextPosition = contentManager.getNextSong();
         play(nextPosition);
@@ -321,7 +322,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             showCustomNotification(getApplicationContext());
         } else {
             ContentManager contentManager = ContentManager.getInstance();
-            play(contentManager.getCurrentSongPosition());
+            play(contentManager.getCurrentPlayingSongPosition());
         }
     }
 
@@ -336,7 +337,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         if (songModel != null) {
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getApplicationContext(), this);
             worker.setParser(new JSoupDownloadSongParser())
-                    .execute( songModel.getPath());
+                    .execute(songModel.getPath());
             contentManager.setCurrentSongPosition(position);
             notifyCurrentSongHasChanged();
         }
@@ -417,11 +418,12 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     private void showCustomNotification(Context context) {
+        if (context == null) return;
         RemoteViews smallView = new RemoteViews(getApplication().getPackageName(), R.layout.small_notificattion);
         RemoteViews bigView = new RemoteViews(getApplication().getPackageName(), R.layout.big_notification);
 
         ContentManager contentManager = ContentManager.getInstance();
-        SongModel currentSong = contentManager.getCurrentSong();
+        SongModel currentSong = contentManager.getCurrentPlayingSong();
 
         Notification notification = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -435,12 +437,12 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             notification.bigContentView.setTextViewText(R.id.txt_artist, currentSong.getArtist());
 
             if (mServiceState == MusicServiceState.prepared || mServiceState == MusicServiceState.playing) {
-                notification.bigContentView.setViewVisibility(R.id.btn_play, View.GONE);
-                notification.bigContentView.setViewVisibility(R.id.btn_pause, View.VISIBLE);
+                notification.bigContentView.setViewVisibility(R.id.img_btn_play, View.GONE);
+                notification.bigContentView.setViewVisibility(R.id.img_btn_pause, View.VISIBLE);
 
             } else {
-                notification.bigContentView.setViewVisibility(R.id.btn_play, View.VISIBLE);
-                notification.bigContentView.setViewVisibility(R.id.btn_pause, View.GONE);
+                notification.bigContentView.setViewVisibility(R.id.img_btn_play, View.VISIBLE);
+                notification.bigContentView.setViewVisibility(R.id.img_btn_pause, View.GONE);
             }
 
         } else {
@@ -451,11 +453,11 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             notification.contentView.setTextViewText(R.id.txt_artist, currentSong.getArtist());
 
             if (mServiceState == MusicServiceState.prepared || mServiceState == MusicServiceState.playing) {
-                notification.contentView.setViewVisibility(R.id.btn_play, View.GONE);
-                notification.contentView.setViewVisibility(R.id.btn_pause, View.VISIBLE);
+                notification.contentView.setViewVisibility(R.id.img_btn_play, View.GONE);
+                notification.contentView.setViewVisibility(R.id.img_btn_pause, View.VISIBLE);
             } else {
-                notification.contentView.setViewVisibility(R.id.btn_play, View.VISIBLE);
-                notification.contentView.setViewVisibility(R.id.btn_pause, View.GONE);
+                notification.contentView.setViewVisibility(R.id.img_btn_play, View.VISIBLE);
+                notification.contentView.setViewVisibility(R.id.img_btn_pause, View.GONE);
             }
         }
 
@@ -480,13 +482,13 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         view.setOnClickPendingIntent(R.id.btn_remove, pRemove);
 
         PendingIntent pPause = PendingIntent.getBroadcast(getApplicationContext(), 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btn_pause, pPause);
+        view.setOnClickPendingIntent(R.id.img_btn_pause, pPause);
 
         PendingIntent pNext = PendingIntent.getBroadcast(getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btn_next, pNext);
+        view.setOnClickPendingIntent(R.id.img_btn_next, pNext);
 
         PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btn_play, pPlay);
+        view.setOnClickPendingIntent(R.id.img_btn_play, pPlay);
 
         PendingIntent pOpen = PendingIntent.getBroadcast(getApplicationContext(), 0, openMainActivity, PendingIntent.FLAG_UPDATE_CURRENT);
         view.setOnClickPendingIntent(R.id.img_notification, pOpen);
@@ -538,7 +540,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                     Intent i = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);// close the status bar
                     context.sendBroadcast(i);
 
-                    Intent in = new Intent(context, MainActivity.class);
+                    Intent in = new Intent(context, HomeActivity.class);
                     in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(in);
                 }

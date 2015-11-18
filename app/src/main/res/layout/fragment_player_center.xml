@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="6dp"
+    tools:context="com.linhphan.music.ui.fragment.CenterPlayerFragment">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/ic_recordring"
+            android:id="@+id/img_rotation"
+            android:touchscreenBlocksFocus="false"
+            android:layout_gravity="center_horizontal"/>
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_download"
+            android:src="@drawable/ic_download"
+            android:background="@drawable/bg_media_button_controller"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="100dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginTop="20dp" />
+
+</LinearLayout>
