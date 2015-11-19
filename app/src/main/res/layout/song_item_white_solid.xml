@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/abc_action_bar_overflow_padding_end_material"
+    android:background="@android:color/white">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingLeft="0dp"
+        android:paddingStart="0dp"
+        android:paddingRight="@dimen/abc_action_bar_overflow_padding_end_material"
+        android:paddingEnd="@dimen/abc_action_bar_overflow_padding_end_material">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:src="@drawable/ic_blue_music"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:layout_weight="1">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:duplicateParentState="true"
+            android:id="@+id/txt_song_title"
+            android:singleLine="true"
+            android:textColor="@drawable/color_text_black" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:duplicateParentState="true"
+            android:id="@+id/txt_artist_name"
+            android:textColor="@drawable/color_text_black" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,17 +1,20 @@
 package com.linhphan.music.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.linhphan.androidboilerplate.util.TimerUtil;
 import com.linhphan.music.R;
+import com.linhphan.music.ui.activity.PlayerActivity;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.util.Utils;
@@ -35,6 +38,7 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
     private TextView mTxtCurrentArtistName;
     private ImageButton mImgButtonPlay;
     private ImageButton mImgButtonPaused;
+    private FrameLayout mFrmSongInfo;
 
     /**
      * Use this factory method to create a new instance of
@@ -107,6 +111,11 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
                 mListener.onControlPaused();
                 updatePausedOrPlayingButton(true);
                 break;
+            case R.id.frame_layout_song_info:
+                Intent intent = new Intent(getActivity(), PlayerActivity.class);
+                getContext().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.animation_sliding_up, R.anim.no_sliding);
+                break;
         }
     }
 
@@ -136,12 +145,14 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
         mTxtCurrentArtistName = (TextView) root.findViewById(R.id.txt_current_artist);
         mImgButtonPlay = (ImageButton) root.findViewById(R.id.img_btn_play);
         mImgButtonPaused = (ImageButton) root.findViewById(R.id.img_btn_pause);
+        mFrmSongInfo = (FrameLayout) root.findViewById(R.id.frame_layout_song_info);
     }
 
     private void registerEventHandlers() {
         mSbLoading.setOnSeekBarChangeListener(this);
         mImgButtonPaused.setOnClickListener(this);
         mImgButtonPlay.setOnClickListener(this);
+        mFrmSongInfo.setOnClickListener(this);
     }
 
     private void getAndDisplayCurrentSongInfo(){

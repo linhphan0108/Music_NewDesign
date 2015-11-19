@@ -21,6 +21,8 @@ public class JSoupDownloadWorker extends BaseDownloadWorker {
 
     @Override
     protected Object doInBackground(String... params) {
+        if (params.length <= 0) return null;
+
         String url = params[0];
         if (url == null || url.isEmpty()) return null;
 

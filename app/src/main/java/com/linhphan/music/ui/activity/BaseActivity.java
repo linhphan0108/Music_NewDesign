@@ -3,13 +3,18 @@ package com.linhphan.music.ui.activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageButton;
 
 import com.linhphan.androidboilerplate.util.Logger;
+import com.linhphan.music.R;
 import com.linhphan.music.service.MusicService;
+import com.linhphan.music.util.RepeatMode;
+import com.linhphan.music.util.Utils;
 
 /**
  * Created by linhphan on 11/18/15.
@@ -102,5 +107,94 @@ public class BaseActivity extends AppCompatActivity {
     public void seekTo(int position) {
         if (mMusicSrv != null)
             mMusicSrv.seekTo(position);
+    }
+
+    public boolean isMediaPlayerPlaying() {
+        return mMusicSrv.isPlaying();
+    }
+
+    protected void openVolumeSystem() {
+        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int currentVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, AudioManager.FLAG_SHOW_UI);
+    }
+
+    protected RepeatMode onRepeatButtonClicked() {
+        int repeat = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
+        RepeatMode repeatMode = Utils.convertRepeatMode(repeat);
+        switch (repeatMode) {
+            case REPEAT_ALL:
+                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ONE.getValue());
+                return RepeatMode.REPEAT_ONE;
+
+            case REPEAT_ONE:
+                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_NONE.getValue());
+                return RepeatMode.REPEAT_NONE;
+
+            case REPEAT_NONE:
+                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
+                return RepeatMode.REPEAT_ALL;
+
+            default:
+                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
+                return RepeatMode.REPEAT_ALL;
+        }
+    }
+
+    /**
+     * change the image of repeat button
+     * @param isActionbar whether change the repeat button on tool bar
+     */
+    protected void setupRepeatButton(ImageButton btn, RepeatMode repeatMode, boolean isActionbar) {
+        if (btn == null) return;
+        switch (repeatMode) {
+            case REPEAT_ALL:
+                if (isActionbar)
+                    btn.setImageResource(R.drawable.ic_action_repeat_all);
+                else
+                    btn.setImageResource(R.drawable.ic_button_repeat_all);
+                break;
+
+            case REPEAT_ONE:
+                if (isActionbar)
+                    btn.setImageResource(R.drawable.ic_action_repeat_one);
+                else
+                    btn.setImageResource(R.drawable.ic_button_repeat_one);
+                break;
+
+            case REPEAT_NONE:
+                if (isActionbar)
+                    btn.setImageResource(R.drawable.ic_action_repeat_disable);
+                else
+                    btn.setImageResource(R.drawable.ic_button_repeat_all);
+                break;
+
+            default:
+                if (isActionbar)
+                    btn.setImageResource(R.drawable.ic_action_repeat_all);
+                else
+                    btn.setImageResource(R.drawable.ic_button_repeat_all);
+                break;
+        }
+    }
+
+    protected boolean onShuffleButtonClicked(){
+        boolean isShuffle = Utils.getBoleanFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
+        Utils.putBoleanToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, !isShuffle);
+        return !isShuffle;
+    }
+
+    protected void setupShuffleButton(ImageButton btn, boolean isShuffle, boolean isActionbar){
+        if (isShuffle){
+            if (isActionbar)
+                btn.setImageResource(R.drawable.ic_action_shuffle);
+            else
+                btn.setImageResource(R.drawable.ic_button_shuffle);
+        }else{
+            if (isActionbar)
+                btn.setImageResource(R.drawable.ic_action_repeat_disable);
+            else
+                btn.setImageResource(R.drawable.ic_action_shuffle_disable);
+        }
     }
 }

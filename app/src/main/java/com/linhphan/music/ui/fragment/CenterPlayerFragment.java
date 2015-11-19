@@ -15,10 +15,6 @@ public class CenterPlayerFragment extends BaseFragment {
 
     CircleImageView mCrlImgRotation;
 
-    public static CenterPlayerFragment newInstance(String param1, String param2) {
-        return new CenterPlayerFragment();
-    }
-
     public CenterPlayerFragment() {
         // Required empty public constructor
     }

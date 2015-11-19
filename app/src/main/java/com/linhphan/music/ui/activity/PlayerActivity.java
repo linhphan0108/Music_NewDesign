@@ -15,20 +15,28 @@ import com.linhphan.androidboilerplate.util.TimerUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.ui.adapter.ViewPagerPlayerAdapter;
+import com.linhphan.music.ui.fragment.LeftPlayerFragment;
+import com.linhphan.music.ui.fragment.SongListFragment;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.music.util.MessageCode;
+import com.linhphan.music.util.RepeatMode;
 import com.linhphan.music.util.Utils;
 
 import me.relex.circleindicator.CircleIndicator;
 
-public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChangeListener, Handler.Callback, View.OnClickListener {
+public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChangeListener, Handler.Callback, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private ViewPager mViewPager;
+    ViewPagerPlayerAdapter mAdapter;
     private CircleIndicator mCircleIndicator;
     private SeekBar mSbLoading;
     private TextView mTxtTimer;
     private ImageButton mImgButtonPlay;
     private ImageButton mImgButtonPaused;
+    private ImageButton mImgButtonNext;
+    private ImageButton mImgButtonPre;
+    private ImageButton mImgButtonRepeat;
+    private ImageButton mImgButtonShuffle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +52,13 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String title = ContentManager.getInstance().getCurrentPlayingSong().getTitle();
+        setTitle(title);
+    }
+
     private void getWidgets() {
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mCircleIndicator = (CircleIndicator) findViewById(R.id.tab_indicator);
@@ -51,15 +66,24 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         mTxtTimer = (TextView) findViewById(R.id.txt_timer);
         mImgButtonPlay = (ImageButton) findViewById(R.id.img_btn_play);
         mImgButtonPaused = (ImageButton) findViewById(R.id.img_btn_pause);
+        mImgButtonNext = (ImageButton) findViewById(R.id.img_btn_next);
+        mImgButtonPre = (ImageButton) findViewById(R.id.img_btn_previous);
+        mImgButtonRepeat = (ImageButton) findViewById(R.id.img_btn_repeat);
+        mImgButtonShuffle = (ImageButton) findViewById(R.id.img_btn_shuffle);
     }
 
     private void registerEventHandler() {
         mImgButtonPlay.setOnClickListener(this);
         mImgButtonPaused.setOnClickListener(this);
+        mSbLoading.setOnSeekBarChangeListener(this);
+        mImgButtonNext.setOnClickListener(this);
+        mImgButtonPre.setOnClickListener(this);
+        mImgButtonRepeat.setOnClickListener(this);
+        mImgButtonShuffle.setOnClickListener(this);
     }
 
     private void setupViewPager() {
-        ViewPagerPlayerAdapter mAdapter = new ViewPagerPlayerAdapter(getSupportFragmentManager());
+        mAdapter = new ViewPagerPlayerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.addOnPageChangeListener(this);
         mCircleIndicator.setViewPager(mViewPager);
@@ -77,7 +101,7 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         overridePendingTransition(R.anim.no_sliding, R.anim.animation_sliding_down);
     }
 
-    //========= view pager callback
+    //========= view pager callback ================================================================
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -92,7 +116,21 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
     public void onPageScrollStateChanged(int state) {
 
     }
-    //========= end view pager callback
+
+    //======== seek_bar's callback =================================================================
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        seekTo(seekBar.getProgress());
+    }
 
     //== mHandler's callback
     @Override
@@ -100,10 +138,22 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         if (msg.what == MessageCode.SONG_CHANGED.ordinal()) {
             //==set the selected item in list view in ContentFragment
             ContentManager contentManager = ContentManager.getInstance();
-
-            //==update the displayed title and artist name ControllerFragment
             SongModel currentSong = contentManager.getCurrentPlayingSong();
 
+            //set new selected item in list view
+            SongListFragment rightPlayerFragment = (SongListFragment) mAdapter.getRightPlayerFragment();
+            if (rightPlayerFragment != null){
+                rightPlayerFragment.setSelectedItem(contentManager.getCurrentPlayingSongPosition());
+            }
+
+            //load new song info
+            LeftPlayerFragment leftPlayerFragment = (LeftPlayerFragment) mAdapter.getLeftPlayerFragment();
+            if (leftPlayerFragment != null){
+                leftPlayerFragment.checkAndShowSongInfo(currentSong);
+            }
+
+            //==update the displayed title and artist name ControllerFragment
+            setTitle(currentSong.getTitle());
             //==update the paused or playing button in ControllerFragment
             updatePausedOrPlayingButton(false);
 
@@ -172,6 +222,18 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
             case R.id.img_btn_previous:
                 pre();
                 break;
+
+            case R.id.img_btn_repeat:
+                RepeatMode repeatMode = onRepeatButtonClicked();
+                setupRepeatButton(mImgButtonRepeat, repeatMode, false);
+                break;
+
+            case R.id.img_btn_shuffle:
+                boolean isShuffle = onShuffleButtonClicked();
+                setupShuffleButton(mImgButtonShuffle, isShuffle, false);
+                break;
         }
     }
+
+
 }

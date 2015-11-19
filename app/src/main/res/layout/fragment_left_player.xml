@@ -1,10 +1,233 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.linhphan.music.ui.fragment.LeftPlayerFragment">
+    android:layout_height="match_parent" tools:context="uit.linh.ui.InfoFragment"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <FrameLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingLeft="@dimen/abc_action_bar_overflow_padding_end_material"
+            android:paddingStart="@dimen/abc_action_bar_overflow_padding_end_material"
+            android:paddingRight="@dimen/abc_action_bar_overflow_padding_end_material"
+            android:paddingEnd="@dimen/abc_action_bar_overflow_padding_end_material">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/txt_title"
+                        android:textColor="@color/PrimaryDarkColor"
+                        android:singleLine="false"
+                        android:capitalize="words"
+                        android:textStyle="bold"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginBottom="6dp" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView4"
+                                    android:src="@drawable/ic_micro"
+                                    android:background="@drawable/bg_media_button_controller"
+                                    android:layout_gravity="start|center_vertical" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:id="@+id/txt_artists"
+                                    android:textColor="@color/PrimaryColor"
+                                    android:capitalize="words"
+                                    android:textStyle="italic"
+                                    android:inputType="textNoSuggestions|textCapWords|none" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView6"
+                                    android:src="@drawable/ic_edit"
+                                    android:background="@drawable/bg_media_button_controller"
+                                    android:layout_gravity="start|center_vertical" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:id="@+id/txt_composer"
+                                    android:textColor="@color/PrimaryColor"
+                                    android:textStyle="italic"
+                                    android:inputType="textNoSuggestions" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView7"
+                                    android:src="@drawable/ic_movie"
+                                    android:background="@drawable/bg_media_button_controller"
+                                    android:visibility="visible"
+                                    android:layout_gravity="start|center_vertical" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:id="@+id/txt_album"
+                                    android:textColor="@color/PrimaryColor"
+                                    android:textStyle="italic"
+                                    android:inputType="textNoSuggestions" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView5"
+                                    android:src="@drawable/ic_time"
+                                    android:background="@drawable/bg_media_button_controller"
+                                    android:layout_gravity="start|center_vertical" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:id="@+id/txt_year"
+                                    android:textColor="@color/PrimaryColor"
+                                    android:textStyle="italic" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/ic_view"
+                                    android:background="@drawable/bg_media_button_controller"
+                                    android:layout_gravity="start|center_vertical" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceLarge"
+                                    android:id="@+id/txt_viewed"
+                                    android:textColor="@color/color_accent" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView2"
+                                    android:src="@drawable/ic_download"
+                                    android:background="@drawable/bg_media_button_controller"
+                                    android:layout_gravity="start|center_vertical" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceLarge"
+                                    android:id="@+id/txt_downloaded"
+                                    android:visibility="visible"
+                                    android:textColor="@color/color_accent" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="top|end"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="150dp"
+                                android:layout_height="150dp"
+                                android:id="@+id/img_cover"
+                                android:layout_gravity="top|center_horizontal|end" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="6dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/edt_lyrics"
+                    android:focusable="false"
+                    android:clickable="false"
+                    android:gravity="top|start"
+                    android:inputType="textNoSuggestions|textCapSentences|none|textMultiLine"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:background="@null"/>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+</ScrollView>

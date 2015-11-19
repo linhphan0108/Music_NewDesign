@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.linhphan.music.R;
 import com.linhphan.music.ui.fragment.BaseFragment;
@@ -52,7 +53,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
 
         //open default fragment in the first time the main activity is opened
         if (savedInstanceState == null) {
-            int index = Utils.getIntFromSharedPreferences(this, Utils.CURRENT_PLAYING_CATEGORY, 0);
+            int index = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
             Bundle bundle = new Bundle();
             bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, DrawerNavigationUtil.getMenuItemId(index));
             mContentFragment = (SongListFragment) BaseFragment.newInstance(SongListFragment.class, bundle);
@@ -65,8 +66,6 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         FragmentManager fm = getSupportFragmentManager();
         mControllerFragment = ControllerFragment.newInstance();
         fm.beginTransaction().replace(R.id.controllers, mControllerFragment).commit();
-
-
     }
 
     @Override
@@ -75,18 +74,27 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         //== set selected item in drawer navigation
         int selectedMenuItem;
         if (isNewCreated) {
-            int index = Utils.getIntFromSharedPreferences(this, Utils.CURRENT_PLAYING_CATEGORY, 0);
+            int index = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
             selectedMenuItem = DrawerNavigationUtil.getMenuItemId(index);
             isNewCreated = false;
         } else {
             selectedMenuItem = ContentManager.getInstance().getCurrentDisplayedCategory();
         }
         if (selectedMenuItem == 0) {
-            int index = Utils.getIntFromSharedPreferences(this, Utils.CURRENT_PLAYING_CATEGORY, 0);
+            int index = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
             selectedMenuItem = DrawerNavigationUtil.getMenuItemId(index);
         }
         navigationView.setCheckedItem(selectedMenuItem);
         setTitle(DrawerNavigationUtil.getTitle(this, selectedMenuItem));
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && isMediaPlayerPlaying()) {
+            final FrameLayout frControllers = (FrameLayout) findViewById(R.id.controllers);
+            frControllers.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -101,11 +109,11 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_volume:
+                openVolumeSystem();
+                break;
         }
 
         return super.onOptionsItemSelected(item);

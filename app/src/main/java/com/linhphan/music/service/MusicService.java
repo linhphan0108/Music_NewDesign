@@ -33,6 +33,7 @@ import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.util.MessageCode;
 import com.linhphan.music.util.MusicServiceState;
+import com.linhphan.music.util.RepeatMode;
 import com.linhphan.music.util.Utils;
 import com.linhphan.music.data.model.SongModel;
 
@@ -43,7 +44,6 @@ import java.io.IOException;
  */
 public class MusicService extends Service implements DownloadCallback, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, AudioManager.OnAudioFocusChangeListener {
-    public static final String MUSIC_SERVICE_BROADCAST_NOTIFICATION = "uit.linh.services";
     final private static int NOTIFY_ID = 11111;
     public static final String NOTIFY_PREVIOUS = "uit.linh.online.music.previous";
     public static final String NOTIFY_REMOVE = "uit.linh.online.music.delete";
@@ -58,7 +58,6 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     private MusicServiceState mServiceState;
     private boolean isBound = false;
     private Handler mHandler;
-    private Thread thread;//the thread which run to get periodically time position of the song
     private CustomRunnable runnable;
 
     public class MusicBinder extends Binder {
@@ -144,7 +143,27 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     @Override
     public void onCompletion(MediaPlayer mp) {
         mServiceState = MusicServiceState.completed;
-        next();
+        int repeatMode = Utils.getIntFromSharedPreferences(getApplicationContext(), Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
+        RepeatMode mRepeatMode = Utils.convertRepeatMode(repeatMode);
+        switch (mRepeatMode){
+            case REPEAT_ALL:
+                next();
+                break;
+            case REPEAT_ONE:
+                mp.seekTo(0);
+                mp.start();
+                break;
+            case REPEAT_NONE:
+                ContentManager contentManager = ContentManager.getInstance();
+                int current = contentManager.getCurrentPlayingSongPosition();
+                int size = contentManager.getCurrentPlayingList().size();
+                if (current + 1 < size)
+                    next();
+                break;
+            default:
+                next();
+                break;
+        }
     }
 
     @Override
@@ -242,6 +261,10 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     public void onUnbind() {
         isBound = false;
         terminateThread();
+    }
+
+    public boolean isPlaying(){
+        return mServiceState == MusicServiceState.playing;
     }
 
     private void notifyCurrentSongHasChanged() {
@@ -377,7 +400,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         if (runnable == null)
             runnable = new CustomRunnable();
         runnable.terminate(false);
-        thread = new Thread(runnable);
+        Thread thread = new Thread(runnable);//the thread which run to get periodically time position of the song
         thread.start();
     }
 
@@ -424,7 +447,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
         ContentManager contentManager = ContentManager.getInstance();
         SongModel currentSong = contentManager.getCurrentPlayingSong();
-
+        if (currentSong == null) return;
         Notification notification = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(currentSong.getTitle()).build();

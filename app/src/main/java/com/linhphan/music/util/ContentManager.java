@@ -122,4 +122,15 @@ public class ContentManager {
     public void setCurrentSongPosition(int index) {
         this.mCurrentPlaying.setIndex(index);
     }
+
+    public ArrayList<SongModel> getSongListByCategory(int category){
+        if (category == mCurrentDisplayed.getCategory()){
+            return mCurrentDisplayed.getSongList();
+        }
+
+        if (category == mCurrentPlaying.getCategory()){
+            return mCurrentPlaying.getSongList();
+        }
+        return new ArrayList<>();
+    }
 }

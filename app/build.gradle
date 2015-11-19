@@ -25,4 +25,5 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:1.2.2'
     compile 'com.android.support:design:23.0.1'
     compile 'me.relex:circleindicator:1.1.5@aar'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

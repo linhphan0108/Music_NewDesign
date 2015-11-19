@@ -50,7 +50,7 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_shuffle"
+                android:id="@+id/img_btn_shuffle"
                 android:src="@drawable/ic_action_shuffle_disable"
                 android:background="@drawable/bg_media_button_controller"
                 android:layout_marginRight="10dp"
@@ -119,7 +119,7 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_repeate"
+                android:id="@+id/img_btn_repeat"
                 android:src="@drawable/ic_button_repeat_all"
                 android:background="@drawable/bg_media_button_controller" />
 

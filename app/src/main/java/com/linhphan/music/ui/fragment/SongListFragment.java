@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.music.R;
-import com.linhphan.music.ui.activity.HomeActivity;
+import com.linhphan.music.ui.activity.BaseActivity;
 import com.linhphan.music.ui.activity.PlayerActivity;
 import com.linhphan.music.ui.adapter.SongListAdapter;
 import com.linhphan.music.api.parser.JSoupSongListParser;
@@ -26,10 +26,11 @@ import com.linhphan.music.util.Utils;
 
 import java.util.ArrayList;
 
-public class SongListFragment extends BaseFragment implements AbsListView.OnItemClickListener, DownloadCallback{
+public class SongListFragment extends BaseFragment implements AbsListView.OnItemClickListener, DownloadCallback {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARGUMENT_KEY_MENU_ITEM_ID = "ARGUMENT_KEY_MENU_ITEM_ID";
+    public static final String ARGUMENT_KEY_LAYOUT_RESOURCE_ID = "ARGUMENT_KEY_LAYOUT_RESOURCE_ID";
 
     private String mUrl;
     private int mCategory;
@@ -57,37 +58,34 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        int layoutResource = R.layout.song_item_black_transparent;
         if (getArguments() != null) {
             mCategory = getArguments().getInt(ARGUMENT_KEY_MENU_ITEM_ID, R.id.menu_item_hot_vi);
-//            if (mCategory != ContentManager.getInstance().getCurrentCategory()) {
-//                (new GetSongListWorker(getContext(), mUrl, mCategory, this)).execute();
-//            }
+            layoutResource = getArguments().getInt(ARGUMENT_KEY_LAYOUT_RESOURCE_ID, R.layout.song_item_black_transparent);
         }
         if (mCategory == 0)
             mCategory = R.id.menu_item_hot_vi;//2131493013
-        mUrl = UrlProvider.getUrl(mCategory);
-        JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
-        worker.setParser(new JSoupSongListParser())
-                .showProgressbar(true, false)
-                .execute(mUrl);
-        mAdapter = new SongListAdapter(getActivity(), ContentManager.getInstance().getCurrentDisplayedList());
+        ArrayList<SongModel> songList = ContentManager.getInstance().getSongListByCategory(mCategory);
+        if (songList == null || songList.size() <= 0) {
+            mUrl = UrlProvider.getUrl(mCategory);
+            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
+            worker.setParser(new JSoupSongListParser())
+                    .showProgressbar(true, false)
+                    .execute(mUrl);
+        }
+        mAdapter = new SongListAdapter(getActivity(), layoutResource, songList);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
+        return inflater.inflate(R.layout.fragment_item, container, false);
+    }
 
-        // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
-        mListView.setAdapter(mAdapter);
-
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
-
-        setSelectedItem(ContentManager.getInstance().getCurrentPlayingSongPosition());
-
-        return view;
+    @Override
+    public void onStart() {
+        super.onStart();
+        getWidgets(getView());
     }
 
     @Override
@@ -97,7 +95,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        HomeActivity mainActivity = (HomeActivity) getActivity();
+        BaseActivity mainActivity = (BaseActivity) getActivity();
         if (mainActivity == null) return;
 
         MusicService musicService = mainActivity.getBoundServiceInstance();
@@ -109,11 +107,27 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
 
         // store the playing category
         int index = DrawerNavigationUtil.getMenuItemPosition(mCategory);
-        Utils.putIntToSharedPreferences(getContext(), Utils.CURRENT_PLAYING_CATEGORY, index);
+        Utils.putIntToSharedPreferences(getContext(), Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, index);
 
         //== go to player activity
-        Intent intent = new Intent(getActivity(), PlayerActivity.class);
-        getContext().startActivity(intent);
+        if (!(getActivity() instanceof PlayerActivity)) {//if the hosting activity of this fragment isn't PlayerActivity then go to it
+            BaseActivity activity = (BaseActivity) getActivity();
+            if (!activity.isMediaPlayerPlaying()) {//if the music is playing then do nothing
+                Intent intent = new Intent(getActivity(), PlayerActivity.class);
+                getContext().startActivity(intent);
+            }
+        }
+    }
+
+    private void getWidgets(View root) {
+        // Set the adapter
+        mListView = (AbsListView) root.findViewById(android.R.id.list);
+        mListView.setAdapter(mAdapter);
+
+        // Set OnItemClickListener so we can be notified on item clicks
+        mListView.setOnItemClickListener(this);
+
+        setSelectedItem(ContentManager.getInstance().getCurrentPlayingSongPosition());
     }
 
     /**
@@ -144,7 +158,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
      * @param position the position of item in list view which will be determined
      * @return true if the item is visible whereas return false
      */
-    public boolean isItemVisible(int position) {
+    private boolean isItemVisible(int position) {
         int firstItemVisible = mListView.getFirstVisiblePosition();
         int lastItemVisible = mListView.getChildCount();
         return (position >= firstItemVisible) && (position <= lastItemVisible);

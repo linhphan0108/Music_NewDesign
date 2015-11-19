@@ -19,10 +19,12 @@ public class SongListAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<SongModel> songs;
+    private int mResourceId;
 
-    public SongListAdapter(Context context, ArrayList<SongModel> songs) {
+    public SongListAdapter(Context context, int resource, ArrayList<SongModel> songs) {
         this.songs = songs;
         this.context = context;
+        this.mResourceId = resource;
     }
 
     public void resetList(ArrayList<SongModel> newList){
@@ -59,7 +61,7 @@ public class SongListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if (convertView == null){
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_item, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(mResourceId, parent, false);
             holder = new ViewHolder();
             holder.txtSongTitle = (TextView) convertView.findViewById(R.id.txt_song_title);
             holder.txtArtistName = (TextView) convertView.findViewById(R.id.txt_artist_name);
