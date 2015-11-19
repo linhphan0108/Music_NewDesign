@@ -21,7 +21,7 @@ public class JSoupSongInfoParser implements IParser {
             //String lyrics = root.select("#fulllyric > p.genmed").get(0).html().replaceAll("(?i)<br[^>]*>", "br2n");
             String lyrics = root.select("#fulllyric > p.genmed").html();
             if (lyrics != null) {
-                lyrics = lyrics.replaceAll("(?i)<br>", "\n").replaceAll("<span.*</span>", "");
+                lyrics = " " + lyrics.replaceAll("(?i)<br>", "\n").replaceAll("<span.*</span>", "");
             }else{
                 lyrics = "not found";
             }
