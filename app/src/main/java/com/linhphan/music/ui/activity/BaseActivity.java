@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageButton;
 
 import com.linhphan.androidboilerplate.util.Logger;
@@ -63,6 +65,28 @@ public class BaseActivity extends AppCompatActivity {
         super.onPause();
         mMusicSrv.onUnbind();
         unbindService(serviceConnection);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        switch (item.getItemId()) {
+            case R.id.action_volume:
+                openVolumeSystem();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     protected String getTag() {
@@ -124,14 +148,14 @@ public class BaseActivity extends AppCompatActivity {
         RepeatMode repeatMode = Utils.convertRepeatMode(repeat);
         switch (repeatMode) {
             case REPEAT_ALL:
+                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT.getValue());
+                return RepeatMode.REPEAT;
+
+            case REPEAT:
                 Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ONE.getValue());
                 return RepeatMode.REPEAT_ONE;
 
             case REPEAT_ONE:
-                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_NONE.getValue());
-                return RepeatMode.REPEAT_NONE;
-
-            case REPEAT_NONE:
                 Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
                 return RepeatMode.REPEAT_ALL;
 
@@ -155,18 +179,18 @@ public class BaseActivity extends AppCompatActivity {
                     btn.setImageResource(R.drawable.ic_button_repeat_all);
                 break;
 
+            case REPEAT:
+                if (isActionbar)
+                    btn.setImageResource(R.drawable.ic_action_repeat_disable);
+                else
+                    btn.setImageResource(R.drawable.ic_button_repeat);
+                break;
+
             case REPEAT_ONE:
                 if (isActionbar)
                     btn.setImageResource(R.drawable.ic_action_repeat_one);
                 else
                     btn.setImageResource(R.drawable.ic_button_repeat_one);
-                break;
-
-            case REPEAT_NONE:
-                if (isActionbar)
-                    btn.setImageResource(R.drawable.ic_action_repeat_disable);
-                else
-                    btn.setImageResource(R.drawable.ic_button_repeat_all);
                 break;
 
             default:
@@ -179,8 +203,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected boolean onShuffleButtonClicked(){
-        boolean isShuffle = Utils.getBoleanFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
-        Utils.putBoleanToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, !isShuffle);
+        boolean isShuffle = Utils.getBooleanFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
+        Utils.putBooleanToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, !isShuffle);
         return !isShuffle;
     }
 

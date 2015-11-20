@@ -32,15 +32,18 @@ public class JSoupSongListParser implements IParser {
                 String songName = songElement.select("a[class=txtsp1]").text();
                 String artist = songElement.select("p[class=spd1]").text();
                 String originPath = songElement.select("a").attr("abs:href");
+                String downloadPath = originPath.substring(0, originPath.length() - 5) + UrlProvider.SURfFIX_DOWNLOAD_PATH;
+                SongModel songModel = new SongModel(songName, artist, downloadPath, originPath);
+                links.add(songModel);
                 //http://playlist.chiasenhac.com/nhac-hot-2/hoa-tuyet-trang~phuong-nhung-zj~1435091.html
-                String[] arr = originPath.split("/");
-                if (arr.length > 4) {
-                    String downloadPath = arr[4];
-                    downloadPath = UrlProvider.PREFIX_DOWNLOAD_PATH + downloadPath.substring(0, downloadPath.length() - 5) + UrlProvider.SURfFIX_DOWNLOAD_PATH;
-                    SongModel songModel = new SongModel(songName, artist, downloadPath, originPath);
-
-                    links.add(songModel);
-                }
+//                String[] arr = originPath.split("/");
+//                if (arr.length > 4) {
+//                    String downloadPath = arr[4];
+//                    downloadPath = UrlProvider.PREFIX_DOWNLOAD_PATH + downloadPath.substring(0, downloadPath.length() - 5) + UrlProvider.SURfFIX_DOWNLOAD_PATH;
+//                    SongModel songModel = new SongModel(songName, artist, downloadPath, originPath);
+//
+//                    links.add(songModel);
+//                }
             }
         }
 

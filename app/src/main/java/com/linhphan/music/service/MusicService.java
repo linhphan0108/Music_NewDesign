@@ -28,6 +28,7 @@ import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupDownloadSongParser;
 import com.linhphan.music.ui.activity.HomeActivity;
+import com.linhphan.music.ui.activity.PlayerActivity;
 import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
@@ -143,27 +144,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     @Override
     public void onCompletion(MediaPlayer mp) {
         mServiceState = MusicServiceState.completed;
-        int repeatMode = Utils.getIntFromSharedPreferences(getApplicationContext(), Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
-        RepeatMode mRepeatMode = Utils.convertRepeatMode(repeatMode);
-        switch (mRepeatMode){
-            case REPEAT_ALL:
-                next();
-                break;
-            case REPEAT_ONE:
-                mp.seekTo(0);
-                mp.start();
-                break;
-            case REPEAT_NONE:
-                ContentManager contentManager = ContentManager.getInstance();
-                int current = contentManager.getCurrentPlayingSongPosition();
-                int size = contentManager.getCurrentPlayingList().size();
-                if (current + 1 < size)
-                    next();
-                break;
-            default:
-                next();
-                break;
-        }
+        next();
     }
 
     @Override
@@ -263,10 +244,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         terminateThread();
     }
 
-    public boolean isPlaying(){
-        return mServiceState == MusicServiceState.playing;
-    }
-
+    //==============================================================================================
     private void notifyCurrentSongHasChanged() {
         Message message = mHandler.obtainMessage();
         message.what = MessageCode.SONG_CHANGED.ordinal();
@@ -296,16 +274,58 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         mHandler.sendMessage(message);
     }
 
+    //==============================================================================================
     public void next() {
         ContentManager contentManager = ContentManager.getInstance();
-        int nextPosition = contentManager.getNextSong();
-        play(nextPosition);
+        int repeat = Utils.getIntFromSharedPreferences(getApplicationContext(), Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
+        RepeatMode repeatMode = Utils.convertRepeatMode(repeat);
+        boolean isShuffle = Utils.getBooleanFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
+        switch (repeatMode) {
+            case REPEAT_ALL:
+                if (isShuffle) {
+                    int position = contentManager.getRandom();
+                    play(position);
+                } else {
+                    int position = contentManager.getNextSong();
+                    play(position);
+                }
+                break;
+
+            case REPEAT:
+                if (isShuffle) {
+                    int position = contentManager.getRandom();
+                    play(position);
+                } else {
+                    int current = contentManager.getCurrentPlayingSongPosition();
+                    int size = contentManager.getCurrentPlayingList().size();
+                    if (current + 1 < size) {
+                        int position = contentManager.getNextSong();
+                        play(position);
+                    }
+                }
+                break;
+
+            case REPEAT_ONE:
+                mp.seekTo(0);
+                mp.start();
+                retrieveElapseTimePeriodically();
+                mServiceState = MusicServiceState.playing;
+                break;
+
+        }
     }
 
     public void pre() {
-        ContentManager contentManager = ContentManager.getInstance();
-        int previousPosition = contentManager.getPreviousSong();
-        play(previousPosition);
+        boolean isShuffle = Utils.getBooleanFromSharedPreferences(getApplicationContext(), Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
+        if (isShuffle) {
+            ContentManager contentManager = ContentManager.getInstance();
+            int rand = contentManager.getRandom();
+            play(rand);
+        } else {
+            ContentManager contentManager = ContentManager.getInstance();
+            int previousPosition = contentManager.getPreviousSong();
+            play(previousPosition);
+        }
     }
 
     public void pause() {
@@ -392,6 +412,12 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         }
 
     }
+
+    public boolean isPlaying() {
+        return mServiceState == MusicServiceState.playing;
+    }
+
+    //==============================================================================================
 
     /**
      * create a new thread to retrieve the timing of the playing media player
@@ -563,7 +589,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                     Intent i = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);// close the status bar
                     context.sendBroadcast(i);
 
-                    Intent in = new Intent(context, HomeActivity.class);
+                    Intent in = new Intent(context, PlayerActivity.class);
                     in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(in);
                 }

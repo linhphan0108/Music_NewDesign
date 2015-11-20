@@ -48,6 +48,10 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         setupToolbar();
         setupViewPager();
 
+        int repeat = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
+        RepeatMode repeatMode = Utils.convertRepeatMode(repeat);
+        setupRepeatButton(mImgButtonRepeat, repeatMode, false);
+
         mBaseHandler = new Handler(this);
 
     }

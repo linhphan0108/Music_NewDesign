@@ -3,6 +3,7 @@ package com.linhphan.androidboilerplate.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 /**
@@ -32,5 +33,11 @@ public class ViewUtil {
     public static void hideKeyBoard(Activity activity){
         InputMethodManager manager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+    }
+
+    public void showSoftKeyboard(Activity activity, View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        view.requestFocus();
+        inputMethodManager.showSoftInput(view, 0);
     }
 }

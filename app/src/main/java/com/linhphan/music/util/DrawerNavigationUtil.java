@@ -8,6 +8,9 @@ import com.linhphan.music.R;
  * Created by linhphan on 11/18/15.
  */
 public class DrawerNavigationUtil {
+    public static final int DEFAULT_CATEGORY_CDE = 0;
+    public static final int SEARCH_CATEGORY_CODE = 99999;
+
     public static int getMenuItemId(int position) {
         switch (position) {
             //vietnamese music
@@ -51,11 +54,11 @@ public class DrawerNavigationUtil {
                 return R.id.menu_item_dance_china;
 
             default:
-                return R.id.menu_item_hot_vi;
+                return -1;
         }
     }
 
-    public static int getMenuItemPosition(int menuItemId) {
+    public static int getCategoryCode(int menuItemId) {
         switch (menuItemId) {
             //vietnamese music
             case R.id.menu_item_hot_vi:
@@ -98,51 +101,54 @@ public class DrawerNavigationUtil {
                 return 15;
 
             default:
-                return 0;
+                return -1;
         }
     }
 
-    public static String getTitle(Context context, int menuItemId) {
-        switch (menuItemId) {
+    public static String getTitle(Context context, int categoryCode) {
+        switch (categoryCode) {
             //vietnamese music
-            case R.id.menu_item_hot_vi:
+            case 0:
                 return context.getString(R.string.music_type_hot);
-            case R.id.menu_item_remix_vi:
+            case 1:
                 return context.getString(R.string.music_type_remix);
-            case R.id.menu_item_rap_vi:
+            case 2:
                 return context.getString(R.string.music_type_rap);
-            case R.id.menu_item_country_vi:
+            case 3:
                 return context.getString(R.string.music_type_country);
 
             //english music
-            case R.id.menu_item_pop_en:
+            case 4:
                 return context.getString(R.string.music_type_pop);
-            case R.id.menu_item_remix_en:
+            case 5:
                 return context.getString(R.string.music_type_remix);
-            case R.id.menu_item_rap_en:
+            case 6:
                 return context.getString(R.string.music_type_rap);
-            case R.id.menu_item_dance_en:
+            case 7:
                 return context.getString(R.string.music_type_dance);
 
             //korean music
-            case R.id.menu_item_pop_korea:
+            case 8:
                 return context.getString(R.string.music_type_pop);
-            case R.id.menu_item_remix_korea:
+            case 9:
                 return context.getString(R.string.music_type_remix);
-            case R.id.menu_item_rap_korea:
+            case 10:
                 return context.getString(R.string.music_type_rap);
-            case R.id.menu_item_dance_korea:
+            case 11:
                 return context.getString(R.string.music_type_dance);
 
             //chinese music
-            case R.id.menu_item_pop_china:
+            case 12:
                 return context.getString(R.string.music_type_pop);
-            case R.id.menu_item_remix_china:
+            case 13:
                 return context.getString(R.string.music_type_remix);
-            case R.id.menu_item_rap_china:
+            case 14:
                 return context.getString(R.string.music_type_rap);
-            case R.id.menu_item_dance_china:
+            case 15:
                 return context.getString(R.string.music_type_dance);
+
+            case SEARCH_CATEGORY_CODE:
+                return context.getString(R.string.music_type_search_result);
 
             default:
                 return "unknown";

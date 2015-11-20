@@ -40,4 +40,12 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/drawer_navigation_header"
         app:menu="@menu/drawer_navigation_item"/>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        app:headerLayout="@layout/drawer_navigation_header"
+        app:menu="@menu/drawer_navigation_item"/>
 </android.support.v4.widget.DrawerLayout>

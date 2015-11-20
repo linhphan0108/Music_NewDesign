@@ -9,6 +9,12 @@ public class UrlProvider {
 
     public static final String PREFIX_DOWNLOAD_PATH = "http://download.chiasenhac.com/mp3/vietnam/";
     public static final String SURfFIX_DOWNLOAD_PATH = "_download.html";
+    public static final String SEARCH_PATH = "http://search.chiasenhac.com/search.php?s=";
+
+    public static String getUrlFromCategoryCode(int categoryCode){
+        int category = DrawerNavigationUtil.getMenuItemId(categoryCode);
+        return getUrl(category);
+    }
 
     public static String getUrl(int category) {
         switch (category) {

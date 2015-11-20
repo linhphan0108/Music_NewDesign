@@ -83,7 +83,7 @@ public class ContentManager {
     }
 
     public void setupCurrentPlayingFromDisplayed() {
-        if (mCurrentDisplayed.getCategory() != mCurrentPlaying.getCategory()) {
+        if (mCurrentDisplayed.getSongList() != mCurrentPlaying.getSongList()) {
             mCurrentPlaying.setSongList(mCurrentDisplayed.getSongList());
             mCurrentPlaying.setCategory(mCurrentDisplayed.getCategory());
         }
@@ -113,6 +113,10 @@ public class ContentManager {
 
     public int getNextSong() {
         return mCurrentPlaying.nextSongPosition();
+    }
+
+    public int getRandom(){
+        return mCurrentPlaying.getRandom();
     }
 
     public int getPreviousSong() {

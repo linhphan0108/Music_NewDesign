@@ -21,24 +21,24 @@ public class Utils {
         return (numerator * 100)/denominator;
     }
 
-    public static void putIntToSharedPreferences(Context context, String key, int value){
+    public synchronized static void putIntToSharedPreferences(Context context, String key, int value){
         SharedPreferences.Editor editor = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Activity.MODE_PRIVATE).edit();
         editor.putInt(key, value);
         editor.apply();
     }
 
-    public static int getIntFromSharedPreferences(Context context, String key, int defaultValue){
+     public synchronized static int  getIntFromSharedPreferences (Context context, String key, int defaultValue){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Activity.MODE_PRIVATE);
         return sharedPreferences.getInt(key, defaultValue);
     }
 
-    public static void putBoleanToSharedPreferences(Context context, String key, boolean value){
+    public static void putBooleanToSharedPreferences(Context context, String key, boolean value){
         SharedPreferences.Editor editor = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Activity.MODE_PRIVATE).edit();
         editor.putBoolean(key, value);
         editor.apply();
     }
 
-    public static boolean getBoleanFromSharedPreferences(Context context, String key, boolean defaultValue){
+    public static boolean getBooleanFromSharedPreferences(Context context, String key, boolean defaultValue){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Activity.MODE_PRIVATE);
         return sharedPreferences.getBoolean(key, defaultValue);
     }
@@ -48,9 +48,9 @@ public class Utils {
             case 1:
                 return RepeatMode.REPEAT_ALL;
             case 2:
-                return RepeatMode.REPEAT_ONE;
+                return RepeatMode.REPEAT;
             case 3:
-                return RepeatMode.REPEAT_NONE;
+                return RepeatMode.REPEAT_ONE;
             default:
                 return RepeatMode.REPEAT_ALL;
         }

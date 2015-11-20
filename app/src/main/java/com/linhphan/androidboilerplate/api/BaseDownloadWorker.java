@@ -62,7 +62,7 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
      * @param horizontal if this parameter is true then the progressbar will showed in horizontal style, otherwise the progressbar will be showed in spinner style
      * @return JsonDownloadWorker object
      */
-    public BaseDownloadWorker showProgressbar(boolean isShow, boolean horizontal) {
+    public BaseDownloadWorker   showProgressbar(boolean isShow, boolean horizontal) {
         mIsShowProgressbar = isShow;
         this.mIsProgressbarHorizontal = horizontal;
         return this;

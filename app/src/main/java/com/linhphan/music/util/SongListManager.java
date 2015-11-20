@@ -10,16 +10,16 @@ import java.util.ArrayList;
  */
 public class SongListManager {
     private ArrayList<SongModel> mSongList;
-    private int mCategory;
+    private int mCategoryCode;
     private int mIndex;
 
     public SongListManager() {
         mSongList = new ArrayList<>();
     }
 
-    public SongListManager(ArrayList<SongModel> mSongList, int mCategory) {
+    public SongListManager(ArrayList<SongModel> mSongList, int category) {
         this.mSongList = mSongList;
-        this.mCategory = mCategory;
+        this.mCategoryCode = category;
     }
 
     public ArrayList<SongModel> getSongList() {
@@ -31,11 +31,11 @@ public class SongListManager {
     }
 
     public int getCategory() {
-        return mCategory;
+        return mCategoryCode;
     }
 
     public void setCategory(int category) {
-        this.mCategory = category;
+        this.mCategoryCode = category;
     }
 
     public int getIndex() {
@@ -66,6 +66,10 @@ public class SongListManager {
             next = 0;
         }
         return next;
+    }
+
+    public int getRandom() {
+        return (int) Math.floor(mSongList.size() * Math.random());
     }
 
     public int getPreviousSongPosition() {

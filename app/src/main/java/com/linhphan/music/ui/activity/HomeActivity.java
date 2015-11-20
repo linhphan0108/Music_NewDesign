@@ -53,14 +53,14 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
 
         //open default fragment in the first time the main activity is opened
         if (savedInstanceState == null) {
-            int index = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
+            int categoryCode = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
             Bundle bundle = new Bundle();
-            bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, DrawerNavigationUtil.getMenuItemId(index));
+            bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, categoryCode);
             mContentFragment = (SongListFragment) BaseFragment.newInstance(SongListFragment.class, bundle);
             openContentFragment(mContentFragment);
             isNewCreated = true;
 
-            Logger.d(getClass().getName(), "selected category index: " + index + " will be resumed");
+            Logger.d(getClass().getName(), "selected category index: " + categoryCode + " will be resumed");
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -73,19 +73,23 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         super.onResume();
         //== set selected item in drawer navigation
         int selectedMenuItem;
+        int categoryCode;
         if (isNewCreated) {
-            int index = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
-            selectedMenuItem = DrawerNavigationUtil.getMenuItemId(index);
+            categoryCode = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
+            selectedMenuItem = DrawerNavigationUtil.getMenuItemId(categoryCode);
             isNewCreated = false;
         } else {
-            selectedMenuItem = ContentManager.getInstance().getCurrentDisplayedCategory();
+            categoryCode = ContentManager.getInstance().getCurrentDisplayedCategory();
+            selectedMenuItem = DrawerNavigationUtil.getMenuItemId(categoryCode);
+//            if (selectedMenuItem == -1) {
+//                index = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
+//                selectedMenuItem = DrawerNavigationUtil.getMenuItemId(index);
+//            }
         }
-        if (selectedMenuItem == 0) {
-            int index = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
-            selectedMenuItem = DrawerNavigationUtil.getMenuItemId(index);
-        }
-        navigationView.setCheckedItem(selectedMenuItem);
-        setTitle(DrawerNavigationUtil.getTitle(this, selectedMenuItem));
+
+        if (selectedMenuItem != -1)
+            navigationView.setCheckedItem(selectedMenuItem);
+        setTitle(DrawerNavigationUtil.getTitle(this, categoryCode));
     }
 
     @Override
@@ -100,23 +104,14 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_home_activity, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        switch (item.getItemId()) {
-            case R.id.action_volume:
-                openVolumeSystem();
-                break;
-        }
-
         return super.onOptionsItemSelected(item);
+
     }
 
     //called is a view is clicked
@@ -132,12 +127,13 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         drawerLayout.closeDrawers();
 
         Bundle bundle = new Bundle();
-        bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, menuItem.getItemId());
+        int categoryCode = DrawerNavigationUtil.getCategoryCode(menuItem.getItemId());
+        bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, categoryCode);
         mContentFragment = (SongListFragment) BaseFragment.newInstance(SongListFragment.class, bundle);
         openContentFragment(mContentFragment);
 
         Utils.putIntToSharedPreferences(this, Constants.SELECTED_MENU_ITEM_KEY, menuItem.getItemId());
-        setTitle(DrawerNavigationUtil.getTitle(this, menuItem.getItemId()));
+        setTitle(DrawerNavigationUtil.getTitle(this, categoryCode));
         return true;
     }
 
