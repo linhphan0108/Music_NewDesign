@@ -27,14 +27,15 @@ import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupDownloadSongParser;
-import com.linhphan.music.ui.activity.HomeActivity;
 import com.linhphan.music.ui.activity.PlayerActivity;
 import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.util.MessageCode;
 import com.linhphan.music.util.MusicServiceState;
+import com.linhphan.music.util.NoInternetConnectionException;
 import com.linhphan.music.util.RepeatMode;
+import com.linhphan.music.util.UserSetting;
 import com.linhphan.music.util.Utils;
 import com.linhphan.music.data.model.SongModel;
 
@@ -189,7 +190,8 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
     @Override
     public void onDownloadFailed(Exception e) {
-
+        if (e instanceof NoInternetConnectionException)
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     //================== audio manager callback ====================================================
@@ -277,8 +279,8 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     //==============================================================================================
     public void next() {
         ContentManager contentManager = ContentManager.getInstance();
-        int repeat = Utils.getIntFromSharedPreferences(getApplicationContext(), Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
-        RepeatMode repeatMode = Utils.convertRepeatMode(repeat);
+        UserSetting userSetting = UserSetting.getInstance();
+        RepeatMode repeatMode = userSetting.getRepeatMode(getApplicationContext());
         boolean isShuffle = Utils.getBooleanFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
         switch (repeatMode) {
             case REPEAT_ALL:
@@ -478,7 +480,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(currentSong.getTitle()).build();
 
-        if (AppUtil.isSupportBigNotification()) {
+        if (AppUtil.getInstance().isSupportBigNotification()) {
             setListeners(bigView);
             notification.bigContentView = bigView;
             notification.bigContentView.setImageViewResource(R.id.img_notification, R.mipmap.ic_launcher);

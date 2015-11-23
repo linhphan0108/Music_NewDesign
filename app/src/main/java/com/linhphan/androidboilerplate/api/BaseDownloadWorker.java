@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import com.linhphan.androidboilerplate.api.Parser.IParser;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;
+import com.linhphan.androidboilerplate.util.NetworkUtil;
+import com.linhphan.music.util.NoInternetConnectionException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -71,6 +73,12 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
+        if (NetworkUtil.isNetworkConnected(mContext)) {//determine whether internet connection is available
+            this.mException = new NoInternetConnectionException();
+            return;
+        }
+
         if (mIsShowProgressbar) {
             mProgressbar = new ProgressDialog(mContext);
 

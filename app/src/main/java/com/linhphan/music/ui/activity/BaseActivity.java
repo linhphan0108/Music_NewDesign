@@ -12,10 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 
+import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.R;
 import com.linhphan.music.service.MusicService;
 import com.linhphan.music.util.RepeatMode;
+import com.linhphan.music.util.UserSetting;
 import com.linhphan.music.util.Utils;
 
 /**
@@ -82,7 +84,7 @@ public class BaseActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_volume:
-                openVolumeSystem();
+                AppUtil.getInstance().openVolumeSystem(this);
                 break;
         }
 
@@ -137,36 +139,34 @@ public class BaseActivity extends AppCompatActivity {
         return mMusicSrv.isPlaying();
     }
 
-    protected void openVolumeSystem() {
-        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
-        int currentVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, AudioManager.FLAG_SHOW_UI);
-    }
-
     protected RepeatMode onRepeatButtonClicked() {
-        int repeat = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
-        RepeatMode repeatMode = Utils.convertRepeatMode(repeat);
+        UserSetting userSetting = UserSetting.getInstance();
+        RepeatMode repeatMode = userSetting.getRepeatMode(this);
+        RepeatMode newMode;
         switch (repeatMode) {
             case REPEAT_ALL:
-                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT.getValue());
-                return RepeatMode.REPEAT;
+                newMode = RepeatMode.REPEAT;
+                break;
 
             case REPEAT:
-                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ONE.getValue());
-                return RepeatMode.REPEAT_ONE;
+                newMode = RepeatMode.REPEAT_ONE;
+                break;
 
             case REPEAT_ONE:
-                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
-                return RepeatMode.REPEAT_ALL;
+                newMode = RepeatMode.REPEAT_ALL;
+                break;
 
             default:
-                Utils.putIntToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
-                return RepeatMode.REPEAT_ALL;
+                newMode = RepeatMode.REPEAT_ALL;
         }
+
+        userSetting.setRepeatMode(this, newMode);
+        return newMode;
     }
 
     /**
      * change the image of repeat button
+     *
      * @param isActionbar whether change the repeat button on tool bar
      */
     protected void setupRepeatButton(ImageButton btn, RepeatMode repeatMode, boolean isActionbar) {
@@ -202,19 +202,18 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected boolean onShuffleButtonClicked(){
-        boolean isShuffle = Utils.getBooleanFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
-        Utils.putBooleanToSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, !isShuffle);
-        return !isShuffle;
+    protected boolean onShuffleButtonClicked() {
+        UserSetting userSetting = UserSetting.getInstance();
+        return userSetting.setShuffleMode(this);
     }
 
-    protected void setupShuffleButton(ImageButton btn, boolean isShuffle, boolean isActionbar){
-        if (isShuffle){
+    protected void setupShuffleButton(ImageButton btn, boolean isShuffle, boolean isActionbar) {
+        if (isShuffle) {
             if (isActionbar)
                 btn.setImageResource(R.drawable.ic_action_shuffle);
             else
                 btn.setImageResource(R.drawable.ic_button_shuffle);
-        }else{
+        } else {
             if (isActionbar)
                 btn.setImageResource(R.drawable.ic_action_repeat_disable);
             else

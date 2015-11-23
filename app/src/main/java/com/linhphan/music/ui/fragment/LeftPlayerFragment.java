@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
@@ -15,6 +16,7 @@ import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupSongInfoParser;
 import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.util.ContentManager;
+import com.linhphan.music.util.NoInternetConnectionException;
 import com.squareup.picasso.Picasso;
 
 public class LeftPlayerFragment extends BaseFragment implements DownloadCallback {
@@ -57,7 +59,8 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
 
     @Override
     public void onDownloadFailed(Exception e) {
-
+        if (e instanceof NoInternetConnectionException)
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
     }
     //====
 

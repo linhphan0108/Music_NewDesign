@@ -42,17 +42,4 @@ public class Utils {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Activity.MODE_PRIVATE);
         return sharedPreferences.getBoolean(key, defaultValue);
     }
-
-    public static RepeatMode convertRepeatMode(int value){
-        switch (value){
-            case 1:
-                return RepeatMode.REPEAT_ALL;
-            case 2:
-                return RepeatMode.REPEAT;
-            case 3:
-                return RepeatMode.REPEAT_ONE;
-            default:
-                return RepeatMode.REPEAT_ALL;
-        }
-    }
 }

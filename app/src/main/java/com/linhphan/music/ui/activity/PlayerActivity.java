@@ -20,6 +20,7 @@ import com.linhphan.music.ui.fragment.SongListFragment;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.music.util.MessageCode;
 import com.linhphan.music.util.RepeatMode;
+import com.linhphan.music.util.UserSetting;
 import com.linhphan.music.util.Utils;
 
 import me.relex.circleindicator.CircleIndicator;
@@ -48,8 +49,8 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         setupToolbar();
         setupViewPager();
 
-        int repeat = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT_ALL.getValue());
-        RepeatMode repeatMode = Utils.convertRepeatMode(repeat);
+        UserSetting userSetting = UserSetting.getInstance();
+        RepeatMode repeatMode = userSetting.getRepeatMode(this);
         setupRepeatButton(mImgButtonRepeat, repeatMode, false);
 
         mBaseHandler = new Handler(this);
@@ -209,7 +210,8 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
     }
 
     @Override
-    public void onClick(View v) {
+    public void
+    onClick(View v) {
         switch (v.getId()) {
             case R.id.img_btn_play:
                 play();

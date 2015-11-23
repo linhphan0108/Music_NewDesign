@@ -18,6 +18,9 @@ public class JsonDownloadWorker extends BaseDownloadWorker {
 
     @Override
     protected Object doInBackground(String... params) {
+        if (mException != null)
+            return null;
+
         String url = params[0];
         String data;
         try {

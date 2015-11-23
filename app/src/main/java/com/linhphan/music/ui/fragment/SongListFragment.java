@@ -27,6 +27,7 @@ import com.linhphan.music.api.parser.JSoupSongListParser;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.util.DrawerNavigationUtil;
+import com.linhphan.music.util.NoInternetConnectionException;
 import com.linhphan.music.util.UrlProvider;
 import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.service.MusicService;
@@ -200,7 +201,8 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
 
     @Override
     public void onDownloadFailed(Exception e) {
-
+        if (e instanceof NoInternetConnectionException)
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     //======================= search view callbacks ================================================
