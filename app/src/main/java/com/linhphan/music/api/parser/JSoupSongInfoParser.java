@@ -18,7 +18,6 @@ public class JSoupSongInfoParser implements IParser {
             Element root = (Element) data;
             String coverPath = root.select("head > meta:nth-child(12)").attr("content");
             Elements tops = root.select("body > div.mu-wrapper > div > div.m-left > div:nth-child(1) > div > div.pad > div > div.pl_top > div.datelast > span");
-            //String lyrics = root.select("#fulllyric > p.genmed").get(0).html().replaceAll("(?i)<br[^>]*>", "br2n");
             String lyrics = root.select("#fulllyric > p.genmed").html();
             if (lyrics != null) {
                 lyrics = " " + lyrics.replaceAll("(?i)<br>", "\n").replaceAll("<span.*</span>", "");
@@ -34,8 +33,13 @@ public class JSoupSongInfoParser implements IParser {
 
             songModel = ContentManager.getInstance().getCurrentPlayingSong();
             songModel.setCoverPath(coverPath);
-            songModel.setViewed(tops.get(1).text());
-            songModel.setDownloaded(tops.get(2).text());
+            if (tops.size() > 2) {
+                songModel.setViewed(tops.get(1).text());
+                songModel.setDownloaded(tops.get(2).text());
+            }else{
+                songModel.setViewed("");
+                songModel.setDownloaded("");
+            }
             songModel.setComposer(composer);
             songModel.setAlbum(album);
             songModel.setYear(year);

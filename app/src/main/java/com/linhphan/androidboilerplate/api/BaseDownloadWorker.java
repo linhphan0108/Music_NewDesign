@@ -74,7 +74,7 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        if (NetworkUtil.isNetworkConnected(mContext)) {//determine whether internet connection is available
+        if (!NetworkUtil.isNetworkConnected(mContext)) {//determine whether internet connection is available
             this.mException = new NoInternetConnectionException();
             return;
         }

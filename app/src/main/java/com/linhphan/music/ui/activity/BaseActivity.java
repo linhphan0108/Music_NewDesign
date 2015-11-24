@@ -65,8 +65,10 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mMusicSrv.onUnbind();
-        unbindService(serviceConnection);
+        if (mMusicSrv != null) {
+            mMusicSrv.onUnbind();
+            unbindService(serviceConnection);
+        }
     }
 
     @Override
