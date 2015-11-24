@@ -21,7 +21,7 @@ public class UserSetting {
     }
 
     public void setRepeatMode(Context context, RepeatMode repeatMode){
-        Utils.putIntToSharedPreferences(context, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, RepeatMode.REPEAT.getValue());
+        Utils.putIntToSharedPreferences(context, Utils.SHARED_PREFERENCES_KEY_REPEAT_MODE, repeatMode.getValue());
     }
 
     private RepeatMode convertRepeatMode(int code){
