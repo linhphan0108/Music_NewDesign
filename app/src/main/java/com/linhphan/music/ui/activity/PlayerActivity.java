@@ -4,7 +4,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -64,40 +66,13 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         setTitle(title);
     }
 
-    private void getWidgets() {
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mCircleIndicator = (CircleIndicator) findViewById(R.id.tab_indicator);
-        mSbLoading = (SeekBar) findViewById(R.id.sb_loading);
-        mTxtTimer = (TextView) findViewById(R.id.txt_timer);
-        mImgButtonPlay = (ImageButton) findViewById(R.id.img_btn_play);
-        mImgButtonPaused = (ImageButton) findViewById(R.id.img_btn_pause);
-        mImgButtonNext = (ImageButton) findViewById(R.id.img_btn_next);
-        mImgButtonPre = (ImageButton) findViewById(R.id.img_btn_previous);
-        mImgButtonRepeat = (ImageButton) findViewById(R.id.img_btn_repeat);
-        mImgButtonShuffle = (ImageButton) findViewById(R.id.img_btn_shuffle);
-    }
-
-    private void registerEventHandler() {
-        mImgButtonPlay.setOnClickListener(this);
-        mImgButtonPaused.setOnClickListener(this);
-        mSbLoading.setOnSeekBarChangeListener(this);
-        mImgButtonNext.setOnClickListener(this);
-        mImgButtonPre.setOnClickListener(this);
-        mImgButtonRepeat.setOnClickListener(this);
-        mImgButtonShuffle.setOnClickListener(this);
-    }
-
-    private void setupViewPager() {
-        mAdapter = new ViewPagerPlayerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(mAdapter);
-        mViewPager.addOnPageChangeListener(this);
-        mCircleIndicator.setViewPager(mViewPager);
-        mViewPager.setCurrentItem(1);//open the central fragment
-    }
-
-    private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -147,13 +122,13 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
 
             //set new selected item in list view
             SongListFragment rightPlayerFragment = (SongListFragment) mAdapter.getRightPlayerFragment();
-            if (rightPlayerFragment != null){
+            if (rightPlayerFragment != null) {
                 rightPlayerFragment.setSelectedItem(contentManager.getCurrentPlayingSongPosition());
             }
 
             //load new song info
             LeftPlayerFragment leftPlayerFragment = (LeftPlayerFragment) mAdapter.getLeftPlayerFragment();
-            if (leftPlayerFragment != null){
+            if (leftPlayerFragment != null) {
                 leftPlayerFragment.checkAndShowSongInfo(currentSong);
             }
 
@@ -190,26 +165,6 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         return false;
     }
 
-    /**
-     * update paused or playing buttons
-     *
-     * @param paused true if media player is paused
-     */
-    public void updatePausedOrPlayingButton(boolean paused) {
-        if (paused) {
-            mImgButtonPaused.setVisibility(View.GONE);
-            mImgButtonPlay.setVisibility(View.VISIBLE);
-        } else {
-            mImgButtonPaused.setVisibility(View.VISIBLE);
-            mImgButtonPlay.setVisibility(View.GONE);
-        }
-    }
-
-    public void updateBuffer(int percentage) {
-        mSbLoading.setSecondaryProgress(percentage);
-        Logger.d(getTag(), "buffering " + percentage);
-    }
-
     @Override
     public void
     onClick(View v) {
@@ -242,5 +197,64 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         }
     }
 
+    private void getWidgets() {
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mCircleIndicator = (CircleIndicator) findViewById(R.id.tab_indicator);
+        mSbLoading = (SeekBar) findViewById(R.id.sb_loading);
+        mTxtTimer = (TextView) findViewById(R.id.txt_timer);
+        mImgButtonPlay = (ImageButton) findViewById(R.id.img_btn_play);
+        mImgButtonPaused = (ImageButton) findViewById(R.id.img_btn_pause);
+        mImgButtonNext = (ImageButton) findViewById(R.id.img_btn_next);
+        mImgButtonPre = (ImageButton) findViewById(R.id.img_btn_previous);
+        mImgButtonRepeat = (ImageButton) findViewById(R.id.img_btn_repeat);
+        mImgButtonShuffle = (ImageButton) findViewById(R.id.img_btn_shuffle);
+    }
+
+    private void registerEventHandler() {
+        mImgButtonPlay.setOnClickListener(this);
+        mImgButtonPaused.setOnClickListener(this);
+        mSbLoading.setOnSeekBarChangeListener(this);
+        mImgButtonNext.setOnClickListener(this);
+        mImgButtonPre.setOnClickListener(this);
+        mImgButtonRepeat.setOnClickListener(this);
+        mImgButtonShuffle.setOnClickListener(this);
+    }
+
+    private void setupViewPager() {
+        mAdapter = new ViewPagerPlayerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.addOnPageChangeListener(this);
+        mCircleIndicator.setViewPager(mViewPager);
+        mViewPager.setCurrentItem(1);//open the central fragment
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    /**
+     * update paused or playing buttons
+     *
+     * @param paused true if media player is paused
+     */
+    public void updatePausedOrPlayingButton(boolean paused) {
+        if (paused) {
+            mImgButtonPaused.setVisibility(View.GONE);
+            mImgButtonPlay.setVisibility(View.VISIBLE);
+        } else {
+            mImgButtonPaused.setVisibility(View.VISIBLE);
+            mImgButtonPlay.setVisibility(View.GONE);
+        }
+    }
+
+    public void updateBuffer(int percentage) {
+        mSbLoading.setSecondaryProgress(percentage);
+        Logger.d(getTag(), "buffering " + percentage);
+    }
 
 }

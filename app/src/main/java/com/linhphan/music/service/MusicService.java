@@ -470,8 +470,6 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
     private void showCustomNotification(Context context) {
         if (context == null) return;
-        RemoteViews smallView = new RemoteViews(getApplication().getPackageName(), R.layout.small_notificattion);
-        RemoteViews bigView = new RemoteViews(getApplication().getPackageName(), R.layout.big_notification);
 
         ContentManager contentManager = ContentManager.getInstance();
         SongModel currentSong = contentManager.getCurrentPlayingSong();
@@ -480,7 +478,26 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(currentSong.getTitle()).build();
 
+        //== normal content view for notification
+        RemoteViews smallView = new RemoteViews(getApplication().getPackageName(), R.layout.small_notificattion);
+        setListeners(smallView);
+        notification.priority = Notification.PRIORITY_MAX;
+        notification.contentView = smallView;
+        notification.contentView.setImageViewResource(R.id.img_notification, R.mipmap.ic_launcher);
+        notification.contentView.setTextViewText(R.id.txt_title, currentSong.getTitle());
+        notification.contentView.setTextViewText(R.id.txt_artist, currentSong.getArtist());
+
+        if (mServiceState == MusicServiceState.prepared || mServiceState == MusicServiceState.playing) {
+            notification.contentView.setViewVisibility(R.id.img_btn_play, View.GONE);
+            notification.contentView.setViewVisibility(R.id.img_btn_pause, View.VISIBLE);
+        } else {
+            notification.contentView.setViewVisibility(R.id.img_btn_play, View.VISIBLE);
+            notification.contentView.setViewVisibility(R.id.img_btn_pause, View.GONE);
+        }
+
+        //== big content view for notification
         if (AppUtil.getInstance().isSupportBigNotification()) {
+            RemoteViews bigView = new RemoteViews(getApplication().getPackageName(), R.layout.big_notification);
             setListeners(bigView);
             notification.bigContentView = bigView;
             notification.bigContentView.setImageViewResource(R.id.img_notification, R.mipmap.ic_launcher);
@@ -496,20 +513,6 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                 notification.bigContentView.setViewVisibility(R.id.img_btn_pause, View.GONE);
             }
 
-        } else {
-            setListeners(smallView);
-            notification.contentView = smallView;
-            notification.contentView.setImageViewResource(R.id.img_notification, R.mipmap.ic_launcher);
-            notification.contentView.setTextViewText(R.id.txt_title, currentSong.getTitle());
-            notification.contentView.setTextViewText(R.id.txt_artist, currentSong.getArtist());
-
-            if (mServiceState == MusicServiceState.prepared || mServiceState == MusicServiceState.playing) {
-                notification.contentView.setViewVisibility(R.id.img_btn_play, View.GONE);
-                notification.contentView.setViewVisibility(R.id.img_btn_pause, View.VISIBLE);
-            } else {
-                notification.contentView.setViewVisibility(R.id.img_btn_play, View.VISIBLE);
-                notification.contentView.setViewVisibility(R.id.img_btn_pause, View.GONE);
-            }
         }
 
         notification.flags |= Notification.FLAG_ONGOING_EVENT;

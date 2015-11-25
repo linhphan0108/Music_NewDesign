@@ -61,7 +61,49 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     /**
      * setup the progressbar which will be showed on screen
      * @param isShow     the progressbar will be showed if this parameter is true, otherwise nothing will be showed
-     * @param horizontal if this parameter is true then the progressbar will showed in horizontal style, otherwise the progressbar will be showed in spinner style
+     * @param horizontal if this parameter is true then the progressbar will showed in horizontal style, o<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical|center_horizontal">
+
+
+    <ImageButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/btn_pre"
+    android:src="@drawable/ic_previous"
+    android:background="@drawable/bg_media_button_controller" />
+
+
+    <ImageButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/img_btn_pause"
+    android:src="@drawable/ic_pause"
+    android:background="@drawable/bg_media_button_controller"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin" />
+
+
+    <ImageButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/img_btn_play"
+    android:src="@drawable/ic_button_play"
+    android:background="@drawable/bg_media_button_controller"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:visibility="gone" />
+
+
+    <ImageButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/img_btn_next"
+    android:src="@drawable/ic_next"
+    android:background="@drawable/bg_media_button_controller" />
+    </LinearLayout>
      * @return JsonDownloadWorker object
      */
     public BaseDownloadWorker   showProgressbar(boolean isShow, boolean horizontal) {
