@@ -1,6 +1,7 @@
 package com.linhphan.music.ui.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -193,6 +194,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     //===================== get song list callback =================================================
     @Override
     public void onDownloadSuccessfully(Object data) {
+        @SuppressWarnings("unchecked")
         ArrayList<SongModel> songList = (ArrayList<SongModel>) data;
         ContentManager contentManager = ContentManager.getInstance();
         contentManager.setCurrentDisplayed(songList, mCategoryCode);
@@ -211,11 +213,11 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
         Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
         query = query.trim();
         query = query.replace(" ", "+");
-        String url = UrlProvider.SEARCH_PATH + query;
+        String url = UrlProvider.SEARCH_PATH + Uri.encode(query);
         JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
         worker.showProgressbar(true, false)
                 .setParser(new JSoupSearchParser())
-                .execute(url);
+             .execute(url);
         mSearchView.clearFocus();
         ViewUtil.hideKeyBoard(getActivity());
         return true;
