@@ -165,4 +165,34 @@ public class FileUtil {
         }
         return result;
     }
+
+    /**
+     * try to create a folder in external storage if it is exists. otherwise it will create a folder in internal storage
+     * @return the path which new created folder was created, otherwise return null;
+     */
+    public static File getOrCreateAppFolder(String homeFolderName){
+        if (isExternalStorageWritable()){//== if there is an external storage available
+            File folder = new File(Environment.getExternalStorageDirectory(), homeFolderName);
+            if (!folder.isDirectory()) {
+                if (folder.mkdirs()) {
+                    return folder;
+                } else {
+                    return null;
+                }
+            }else{
+                return folder;
+            }
+        }else{
+            File folder = new File(Environment.getDataDirectory(), homeFolderName);
+            if (!folder.isDirectory()){
+                if (folder.mkdirs()){
+                    return folder;
+                }else{
+                    return null;
+                }
+            }else{
+                return folder;
+            }
+        }
+    }
 }

@@ -108,7 +108,29 @@ public class ContentManager {
     }
 
     public SongModel getCurrentPlayingSong() {
-        return mCurrentPlaying.getCurrentSong();
+        if (mCurrentPlaying != null) {
+            return mCurrentPlaying.getCurrentSong();
+        }else{
+            return null;
+        }
+    }
+
+    public String getCurrentPlayingSongTitle(){
+        SongModel currentSong = getCurrentPlayingSong();
+        if (currentSong != null){
+            return currentSong.getTitle();
+        }else{
+            return null;
+        }
+    }
+
+    public String getCurrentPlayingSongPath(){
+        SongModel currentSong = getCurrentPlayingSong();
+        if (currentSong != null){
+            return currentSong.getPath();
+        }else{
+            return null;
+        }
     }
 
     public int getNextSong() {

@@ -63,7 +63,7 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
     @Override
     protected void onResume() {
         super.onResume();
-        String title = ContentManager.getInstance().getCurrentPlayingSong().getTitle();
+        String title = ContentManager.getInstance().getCurrentPlayingSongTitle();
         setTitle(title);
     }
 

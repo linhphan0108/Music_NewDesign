@@ -64,7 +64,7 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
     }
     //====
 
-    private void getWidgets(View root){
+    private void getWidgets(View root) {
         imgCover = (ImageView) root.findViewById(R.id.img_cover);
         txtTitle = (TextView) root.findViewById(R.id.txt_title);
         txtArtists = (TextView) root.findViewById(R.id.txt_artists);
@@ -76,19 +76,68 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
         edtLyrics = (EditText) root.findViewById(R.id.edt_lyrics);
     }
 
-    private void showSongInfo(SongModel songModel){
+    private void showSongInfo(SongModel songModel) {
         if (songModel == null) return;
 
-        txtTitle.setText(songModel.getTitle());
-        txtArtists.setText(songModel.getArtist());
-        txtComposer.setText(songModel.getComposer());
-        txtAlbum.setText(songModel.getAlbum());
-        txtYear.setText(songModel.getYear());
-        txtViewed.setText(songModel.getViewed());
-        txtDownloaded.setText(songModel.getDownloaded());
-        edtLyrics.setText(songModel.getLyrics());
+        //==title
+        if (songModel.getTitle().isEmpty()) {
+            txtTitle.setText(R.string.text_view_unknown);
+        }else{
+            txtTitle.setText(songModel.getTitle());
+        }
+
+        //==artist
+        if (songModel.getArtist().isEmpty()){
+            txtArtists.setText(R.string.text_view_unknown);
+        }else {
+            txtArtists.setText(songModel.getArtist());
+        }
+
+        //==composer
+        if (songModel.getComposer().isEmpty()){
+            txtComposer.setText(R.string.text_view_unknown);
+        }else {
+            txtComposer.setText(songModel.getComposer());
+        }
+
+        //==album
+        if (songModel.getAlbum().isEmpty()){
+            txtAlbum.setText(R.string.text_view_unknown);
+        }else {
+            txtAlbum.setText(songModel.getAlbum());
+        }
+
+        //==published year
+        if (songModel.getYear().isEmpty()){
+            txtYear.setText(R.string.text_view_unknown);
+        }else {
+            txtYear.setText(songModel.getYear());
+        }
+
+        //==viewed
+        if (songModel.getViewed().isEmpty()){
+            txtViewed.setText(R.string.text_view_unknown);
+        }else {
+            txtViewed.setText(songModel.getViewed());
+        }
+
+        //==downloaded
+        if (songModel.getDownloaded().isEmpty()){
+            txtDownloaded.setText(R.string.text_view_unknown);
+        }else {
+            txtDownloaded.setText(songModel.getDownloaded());
+        }
+
+        //==lyrics
+        if (songModel.getLyrics().isEmpty()){
+            edtLyrics.setText(R.string.text_view_unknown);
+        }else {
+            edtLyrics.setText(songModel.getLyrics());
+        }
+
+        //== album cover
         int size = (int) ViewUtil.convertDp2Px(150);
-        if(songModel.getCoverPath() != null && !songModel.getCoverPath().equals("http://chiasenhac.com/images/player_csn.png")) {
+        if (songModel.getCoverPath() != null && !songModel.getCoverPath().equals("http://chiasenhac.com/images/player_csn.png")) {
             Picasso.with(getActivity())
                     .load(songModel.getCoverPath())
                     .resize(size, size)
@@ -97,7 +146,7 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
                     .placeholder(R.drawable.ic_recordring)
                     .error(R.drawable.ic_recordring)
                     .into(imgCover);
-        }else{
+        } else {
             Picasso.with(getActivity())
                     .load(R.drawable.ic_recordring)
                     .resize(size, size)
@@ -106,13 +155,13 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
         }
     }
 
-    public void checkAndShowSongInfo(SongModel songModel){
-        if (songModel.getCoverPath() == null || songModel.getCoverPath().isEmpty()){
+    public void checkAndShowSongInfo(SongModel songModel) {
+        if (songModel.getCoverPath() == null || songModel.getCoverPath().isEmpty()) {
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
             worker.setParser(new JSoupSongInfoParser())
                     .showProgressbar(true, false)
                     .execute(songModel.getOriginPath());
-        }else{
+        } else {
             showSongInfo(songModel);
         }
     }
