@@ -10,10 +10,11 @@ import org.jsoup.nodes.Document;
 public class JSoupDownloadSongParser implements IParser {
     @Override
     public Object parse(Object data) {
-        Object result = null;
+        String result = null;
         if (data instanceof Document) {
             Document document = (Document) data;
-            result = document.select("div[id=downloadlink]").select("a").last().attr("abs:href");
+            result = document.select("div[id=downloadlink]").select("a").last().attr("abs:href").trim();
+            result = result.replace(" ", "");
         }
         return result;
     }

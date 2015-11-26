@@ -380,6 +380,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         ContentManager contentManager = ContentManager.getInstance();
         SongModel songModel = contentManager.getSongAt(position);
         if (songModel != null) {
+            Logger.d(getTag(), "get direct link from "+ songModel.getPath());
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getApplicationContext(), this);
             worker.setParser(new JSoupDownloadSongParser())
                     .execute(songModel.getPath());

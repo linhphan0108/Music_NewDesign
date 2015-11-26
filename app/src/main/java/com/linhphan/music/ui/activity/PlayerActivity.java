@@ -31,7 +31,7 @@ import me.relex.circleindicator.CircleIndicator;
 public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChangeListener, Handler.Callback, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private ViewPager mViewPager;
-    ViewPagerPlayerAdapter mAdapter;
+    private ViewPagerPlayerAdapter mAdapter;
     private CircleIndicator mCircleIndicator;
     private SeekBar mSbLoading;
     private TextView mTxtTimer;
