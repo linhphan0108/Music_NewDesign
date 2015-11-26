@@ -95,16 +95,6 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        switch (state) {
-            case ViewPager.SCROLL_STATE_IDLE:
-                if (mViewPager.getCurrentItem() == 1) {
-                    CenterPlayerFragment centerPlayerFragment = (CenterPlayerFragment) mAdapter.getCentralPlayeInstance();
-                    if (centerPlayerFragment != null) {
-                        centerPlayerFragment.startRotationAnimation();
-                    }
-                }
-                break;
-        }
     }
 
     //======== seek_bar's callback =================================================================
@@ -129,6 +119,12 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
             //==set the selected item in list view in ContentFragment
             ContentManager contentManager = ContentManager.getInstance();
             SongModel currentSong = contentManager.getCurrentPlayingSong();
+
+            //start rotation animation for disc image in central fragment
+            CenterPlayerFragment centerPlayerFragment = (CenterPlayerFragment) mAdapter.getCentralPlayerInstance();
+            if (centerPlayerFragment != null) {
+                centerPlayerFragment.startRotationAnimation();
+            }
 
             //set new selected item in list view
             SongListFragment rightPlayerFragment = (SongListFragment) mAdapter.getRightPlayerFragment();
@@ -158,6 +154,10 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
                     String str = TimerUtil.convertTime2String(position) + "/" + TimerUtil.convertTime2String(duration);
                     mSbLoading.setProgress(Utils.calculatePercentage(position, duration));
                     mTxtTimer.setText(str);
+                    CenterPlayerFragment centerPlayerFragment = (CenterPlayerFragment) mAdapter.getCentralPlayerInstance();
+                    if (centerPlayerFragment != null) {
+                        centerPlayerFragment.startRotationAnimation();
+                    }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -166,7 +166,7 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
             updateBuffer((Integer) msg.obj);
         } else if (msg.what == MessageCode.PAUSED.ordinal()) {
             updatePausedOrPlayingButton(true);
-            CenterPlayerFragment centerPlayerFragment = (CenterPlayerFragment) mAdapter.getCentralPlayeInstance();
+            CenterPlayerFragment centerPlayerFragment = (CenterPlayerFragment) mAdapter.getCentralPlayerInstance();
             if (centerPlayerFragment != null) {
                 centerPlayerFragment.stopRotationAnimation();
             }

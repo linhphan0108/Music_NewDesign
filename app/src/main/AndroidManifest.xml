@@ -28,8 +28,8 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".ui.activity.PlayerActivity" >
-        </activity>
+        <activity android:name=".ui.activity.PlayerActivity"
+            android:launchMode="singleTop"/>
     </application>
 
 </manifest>

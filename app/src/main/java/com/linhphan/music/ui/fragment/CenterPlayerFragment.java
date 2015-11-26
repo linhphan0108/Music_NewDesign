@@ -15,6 +15,7 @@ public class CenterPlayerFragment extends BaseFragment {
 
     private CircleImageView mCrlImgRotation;
     private Animation mRotationAnimation;
+    private boolean isRotated = false;
 
     public CenterPlayerFragment() {
         // Required empty public constructor
@@ -40,6 +41,11 @@ public class CenterPlayerFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         stopRotationAnimation();
@@ -50,21 +56,24 @@ public class CenterPlayerFragment extends BaseFragment {
         super.onDetach();
     }
 
-    private void getWidgets(View root){
+    private void getWidgets(View root) {
         mCrlImgRotation = (CircleImageView) root.findViewById(R.id.img_rotation);
     }
 
-    private void loadAnimation(){
+    private void loadAnimation() {
         mRotationAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.animation_rotation);
-
     }
 
-    public void startRotationAnimation(){
-        mCrlImgRotation.setAnimation(mRotationAnimation);
+    public void startRotationAnimation() {
+        if (!isRotated) {
+            mCrlImgRotation.clearAnimation();
+            mCrlImgRotation.startAnimation(mRotationAnimation);
+            isRotated = true;
+        }
     }
 
-    public void stopRotationAnimation(){
+    public void stopRotationAnimation() {
         mCrlImgRotation.clearAnimation();
+        isRotated = false;
     }
-
 }

@@ -61,7 +61,7 @@ public class ViewPagerPlayerAdapter extends FragmentPagerAdapter {
         return mLeftPlayerInstance;
     }
 
-    public Fragment getCentralPlayeInstance(){
+    public Fragment getCentralPlayerInstance(){
         return mCentralPlayerInstance;
     }
 }

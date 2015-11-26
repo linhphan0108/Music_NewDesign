@@ -138,7 +138,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public boolean isMediaPlayerPlaying() {
-        return mMusicSrv.isPlaying();
+        if (mMusicSrv != null) {
+            return mMusicSrv.isPlaying();
+        }else{
+            return false;
+        }
     }
 
     protected RepeatMode onRepeatButtonClicked() {
