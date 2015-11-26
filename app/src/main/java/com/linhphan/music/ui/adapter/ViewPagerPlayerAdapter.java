@@ -19,6 +19,7 @@ public class ViewPagerPlayerAdapter extends FragmentPagerAdapter {
 
     private Fragment mRightPlayerInstance;
     private Fragment mLeftPlayerInstance;
+    private Fragment mCentralPlayerInstance;
 
     public ViewPagerPlayerAdapter(FragmentManager fm) {
         super(fm);
@@ -32,7 +33,8 @@ public class ViewPagerPlayerAdapter extends FragmentPagerAdapter {
                 return mLeftPlayerInstance;
 
             case 1:
-                return BaseFragment.newInstance(CenterPlayerFragment.class, null);
+                mCentralPlayerInstance = BaseFragment.newInstance(CenterPlayerFragment.class, null);
+                return mCentralPlayerInstance;
 
             case 2:
                 Bundle bundle = new Bundle();
@@ -57,5 +59,9 @@ public class ViewPagerPlayerAdapter extends FragmentPagerAdapter {
 
     public Fragment getLeftPlayerFragment(){
         return mLeftPlayerInstance;
+    }
+
+    public Fragment getCentralPlayeInstance(){
+        return mCentralPlayerInstance;
     }
 }

@@ -17,6 +17,7 @@ import com.linhphan.androidboilerplate.util.TimerUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.ui.adapter.ViewPagerPlayerAdapter;
+import com.linhphan.music.ui.fragment.CenterPlayerFragment;
 import com.linhphan.music.ui.fragment.LeftPlayerFragment;
 import com.linhphan.music.ui.fragment.SongListFragment;
 import com.linhphan.music.util.ContentManager;
@@ -94,7 +95,16 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
+        switch (state) {
+            case ViewPager.SCROLL_STATE_IDLE:
+                if (mViewPager.getCurrentItem() == 1) {
+                    CenterPlayerFragment centerPlayerFragment = (CenterPlayerFragment) mAdapter.getCentralPlayeInstance();
+                    if (centerPlayerFragment != null) {
+                        centerPlayerFragment.startRotationAnimation();
+                    }
+                }
+                break;
+        }
     }
 
     //======== seek_bar's callback =================================================================
@@ -112,7 +122,7 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         seekTo(seekBar.getProgress());
     }
 
-    //== mHandler's callback
+    //======= mHandler's callback ==================================================================
     @Override
     public boolean handleMessage(Message msg) {
         if (msg.what == MessageCode.SONG_CHANGED.ordinal()) {
@@ -155,6 +165,10 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
             updateBuffer((Integer) msg.obj);
         } else if (msg.what == MessageCode.PAUSED.ordinal()) {
             updatePausedOrPlayingButton(true);
+            CenterPlayerFragment centerPlayerFragment = (CenterPlayerFragment) mAdapter.getCentralPlayeInstance();
+            if (centerPlayerFragment != null) {
+                centerPlayerFragment.stopRotationAnimation();
+            }
         } else if (msg.what == MessageCode.PLAYING.ordinal()) {
             updatePausedOrPlayingButton(false);
         } else if (msg.what == MessageCode.DESTROYED.ordinal()) {
@@ -255,5 +269,4 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         mSbLoading.setSecondaryProgress(percentage);
         Logger.d(getTag(), "buffering " + percentage);
     }
-
 }

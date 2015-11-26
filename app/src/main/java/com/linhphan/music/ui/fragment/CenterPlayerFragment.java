@@ -13,7 +13,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CenterPlayerFragment extends BaseFragment {
 
-    CircleImageView mCrlImgRotation;
+    private CircleImageView mCrlImgRotation;
+    private Animation mRotationAnimation;
 
     public CenterPlayerFragment() {
         // Required empty public constructor
@@ -28,18 +29,42 @@ public class CenterPlayerFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.fragment_player_center, container, false);
+        return inflater.inflate(R.layout.fragment_player_center, container, false);
+    }
 
-        mCrlImgRotation = (CircleImageView) rootView.findViewById(R.id.img_rotation);
-        Animation rotationAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.animation_rotation);
-        mCrlImgRotation.setAnimation(rotationAnimation);
+    @Override
+    public void onStart() {
+        super.onStart();
+        getWidgets(getView());
+        loadAnimation();
+    }
 
-        return rootView;
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopRotationAnimation();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    private void getWidgets(View root){
+        mCrlImgRotation = (CircleImageView) root.findViewById(R.id.img_rotation);
+    }
+
+    private void loadAnimation(){
+        mRotationAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.animation_rotation);
+
+    }
+
+    public void startRotationAnimation(){
+        mCrlImgRotation.setAnimation(mRotationAnimation);
+    }
+
+    public void stopRotationAnimation(){
+        mCrlImgRotation.clearAnimation();
     }
 
 }
