@@ -155,8 +155,9 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
                 try {
                     int position = Integer.parseInt(arr[0]);
                     int duration = Integer.parseInt(arr[1]);
+                    String str = TimerUtil.convertTime2String(position) + "/" + TimerUtil.convertTime2String(duration);
                     mSbLoading.setProgress(Utils.calculatePercentage(position, duration));
-                    mTxtTimer.setText(TimerUtil.convertTime2String(position) + "/" + TimerUtil.convertTime2String(duration));
+                    mTxtTimer.setText(str);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
