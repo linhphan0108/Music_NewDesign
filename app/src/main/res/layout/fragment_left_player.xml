@@ -29,16 +29,16 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginBottom="6dp"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:id="@+id/txt_title"
                         android:textColor="@color/PrimaryDarkColor"
                         android:singleLine="false"
-                        android:capitalize="words"
                         android:textStyle="bold"
                         android:layout_gravity="start|center_vertical"
-                        android:layout_marginLeft="6dp"
-                        android:layout_marginStart="6dp"
-                        android:layout_marginBottom="6dp" />
+                        android:inputType="text|textCapWords|textNoSuggestions"/>
 
                     <LinearLayout
                         android:orientation="horizontal"
