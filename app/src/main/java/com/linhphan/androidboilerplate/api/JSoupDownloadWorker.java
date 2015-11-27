@@ -1,7 +1,6 @@
 package com.linhphan.androidboilerplate.api;
 
 import android.content.Context;
-import android.net.Uri;
 
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;

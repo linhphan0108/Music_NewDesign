@@ -1,22 +1,29 @@
 package com.linhphan.music.ui.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.linhphan.androidboilerplate.api.FileDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;
+import com.linhphan.androidboilerplate.util.TextUtil;
 import com.linhphan.music.R;
+import com.linhphan.music.data.model.SongModel;
+import com.linhphan.music.ui.dialog.SingleChoiceFragment;
 import com.linhphan.music.util.ContentManager;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CenterPlayerFragment extends BaseFragment implements View.OnClickListener, DownloadCallback{
+public class CenterPlayerFragment extends BaseFragment implements View.OnClickListener, DownloadCallback, AdapterView.OnItemClickListener{
 
     private CircleImageView mCrlImgRotation;
     private Animation mRotationAnimation;
@@ -69,7 +76,7 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_download:
-                DownloadFile();
+                showSingleChoiceDialog();
                 break;
         }
     }
@@ -79,6 +86,7 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
     public void onDownloadSuccessfully(Object data) {
         if (data != null && data instanceof String){
             Logger.d(getClass().getName(), "file is stored at "+ String.valueOf(data));
+            Toast.makeText(getContext(), "downloaded file was stored at "+ String.valueOf(data), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -114,10 +122,39 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
         isRotated = false;
     }
 
-    private void DownloadFile(){
-        String url = ContentManager.getInstance().getCurrentPlayingSongPath();
+    /**
+     * download a song at specified url
+     * if downloading is successfully then it will be stored in the public directory in storage.
+     */
+    private void DownloadFile(String url){
+        ContentManager contentManager = ContentManager.getInstance();
+        String fileName = contentManager.getCurrentPlayingSongTitle().trim();
+        fileName = TextUtil.removeAccent(fileName);
+        fileName += url.substring(url.length()-4, url.length());
         FileDownloadWorker fileDownloadWorker = new FileDownloadWorker(getContext(), this);
-        fileDownloadWorker.showProgressbar(true, false);
-        fileDownloadWorker.execute(url);
+        fileDownloadWorker.showProgressbar(true, true);
+        fileDownloadWorker.execute(url, fileName);
+    }
+
+    private void showSingleChoiceDialog(){
+        ContentManager contentManager = ContentManager.getInstance();
+        SongModel songModel = contentManager.getCurrentPlayingSong();
+        SingleChoiceFragment dialog = (SingleChoiceFragment) SingleChoiceFragment.newInstance(songModel.getDirectlyDownloadPath());
+        dialog.setOnItemClickListener(this);
+        dialog.show(getFragmentManager(), SingleChoiceFragment.class.getName());
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ContentManager contentManager = ContentManager.getInstance();
+        SongModel songModel = contentManager.getCurrentPlayingSong();
+        String directLink = songModel.getDirectlyDownloadPath()[position];
+        DownloadFile(directLink);
+
+        Fragment fragment = getFragmentManager().findFragmentByTag(SingleChoiceFragment.class.getName());
+        if (fragment instanceof SingleChoiceFragment){
+            SingleChoiceFragment singleChoiceFragment = (SingleChoiceFragment) fragment;
+            singleChoiceFragment.dismiss();
+        }
     }
 }

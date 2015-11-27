@@ -7,8 +7,9 @@ import java.io.Serializable;
  */
 public class SongModel implements Serializable {
     private static final long serialVersionUID = 11111L;
-    private String originPath;
-    private String path;
+    private String originPath;//the information web page
+    private String path;//the web category download web page
+    private String[] mDirectlyDownloadPath;
     private String title;
     private String artist;
     private String composer;
@@ -143,5 +144,21 @@ public class SongModel implements Serializable {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public void setDirectlyDownloadPath(String[] arr){
+        mDirectlyDownloadPath = arr;
+    }
+
+    public String[] getDirectlyDownloadPath(){
+        return mDirectlyDownloadPath;
+    }
+
+    public String getLastDirectlyDownloadPath(){
+        if (mDirectlyDownloadPath != null && mDirectlyDownloadPath.length > 0){
+            return mDirectlyDownloadPath[mDirectlyDownloadPath.length -1];
+        }else{
+            return null;
+        }
     }
 }

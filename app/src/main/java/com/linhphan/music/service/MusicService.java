@@ -26,7 +26,7 @@ import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.music.R;
-import com.linhphan.music.api.parser.JSoupDownloadSongParser;
+import com.linhphan.music.api.parser.JSoupDirectlyDownloadSongParser;
 import com.linhphan.music.ui.activity.PlayerActivity;
 import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.ContentManager;
@@ -181,9 +181,11 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
     @Override
     public void onDownloadSuccessfully(Object data) {
-        if (data instanceof String) {
-            String url = (String) data;
-            play(url);
+        if (data instanceof String[]) {
+            String[] urls = (String[]) data;
+            ContentManager contentManager = ContentManager.getInstance();
+            contentManager.setDirectlyDownloadPathToCurrentPlayingSong(urls);
+            play(urls[urls.length -1]);
         }
 
     }
@@ -380,10 +382,16 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         ContentManager contentManager = ContentManager.getInstance();
         SongModel songModel = contentManager.getSongAt(position);
         if (songModel != null) {
-            Logger.d(getTag(), "get direct link from "+ songModel.getPath());
-            JSoupDownloadWorker worker = new JSoupDownloadWorker(getApplicationContext(), this);
-            worker.setParser(new JSoupDownloadSongParser())
-                    .execute(songModel.getPath());
+            String lastDirectDownloadPath = songModel.getLastDirectlyDownloadPath();
+            if (lastDirectDownloadPath == null || lastDirectDownloadPath.isEmpty()){
+                Logger.d(getTag(), "get direct link from " + songModel.getPath());
+                JSoupDownloadWorker worker = new JSoupDownloadWorker(getApplicationContext(), this);
+                worker.setParser(new JSoupDirectlyDownloadSongParser())
+                        .execute(songModel.getPath());
+
+            }else{
+                play(lastDirectDownloadPath);
+            }
             contentManager.setCurrentSongPosition(position);
             notifyCurrentSongHasChanged();
         }

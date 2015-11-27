@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
@@ -121,5 +122,14 @@ public class AppUtil {
         AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int currentVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
         am.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, AudioManager.FLAG_SHOW_UI);
+    }
+
+    /**
+     *send an broadcast to system to rescan media
+     * @param path assign the file will be rescanned
+     */
+    public void reScanSystemFileAt(Context context, String path){
+        Intent intent = new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + path));
+        context.sendBroadcast(intent);
     }
 }

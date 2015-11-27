@@ -3,9 +3,9 @@ package com.linhphan.androidboilerplate.api;
 import android.content.Context;
 
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
+import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.androidboilerplate.util.FileUtil;
 import com.linhphan.androidboilerplate.util.Logger;
-import com.linhphan.music.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,8 +31,8 @@ public class FileDownloadWorker extends BaseDownloadWorker {
         if (mException != null)
             return null;
 
-        String path = "http://data.chiasenhac.com/downloads/1586/4/1585284-d7265ce3/128/Apology%20-%20iKON%20[MP3%20128kbps].mp3";
-        File result;
+        String path = params[0];
+        String fileName = params[1];
         try {
             URL url = new URL(path);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -49,8 +49,8 @@ public class FileDownloadWorker extends BaseDownloadWorker {
             int contentLength = httpURLConnection.getContentLength();
 
             InputStream inputStream = httpURLConnection.getInputStream();
-            File homeFolder = FileUtil.getOrCreateAppFolder(mContext.getString(R.string.app_name));
-            File newFile = new File(homeFolder, "dump.mp3");
+            File publicMusicDir = FileUtil.getPublicMusicStorageDirectory();
+            File newFile = new File(publicMusicDir, fileName);
             OutputStream outputStream = new FileOutputStream(newFile);
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
 
@@ -68,7 +68,8 @@ public class FileDownloadWorker extends BaseDownloadWorker {
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
             outputStream.close();
-
+            //rescan media files
+            AppUtil.getInstance().reScanSystemFileAt(mContext, publicMusicDir.getAbsolutePath());
             return newFile.getAbsolutePath();//locate the new downloaded file
 
         } catch (MalformedURLException e) {
