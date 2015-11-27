@@ -26,10 +26,11 @@ public class JSoupSearchParser implements IParser {
                 String songName = songElement.select("a[class=musictitle]").text();
                 String artist = songElement.select("div[class=tenbh] > p").get(1).text();
                 String originPath = songElement.select("a").attr("abs:href");
-                //http://playlist.chiasenhac.com/nhac-hot-2/hoa-tuyet-trang~phuong-nhung-zj~1435091.html
-                String downloadPath = originPath.substring(0, originPath.length() - 5) + UrlProvider.SURfFIX_DOWNLOAD_PATH;
-                SongModel songModel = new SongModel(songName, artist, downloadPath, originPath);
-                links.add(songModel);
+                if (!originPath.contains("video")){
+                    String downloadPath = originPath.substring(0, originPath.length() - 5) + UrlProvider.SURfFIX_DOWNLOAD_PATH;
+                    SongModel songModel = new SongModel(songName, artist, downloadPath, originPath);
+                    links.add(songModel);
+                }
             }
         }
 
