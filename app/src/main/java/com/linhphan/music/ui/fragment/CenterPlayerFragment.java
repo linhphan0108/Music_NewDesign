@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.linhphan.androidboilerplate.api.FileDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
+import com.linhphan.androidboilerplate.util.AppUtil;
+import com.linhphan.androidboilerplate.util.FileUtil;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.androidboilerplate.util.TextUtil;
 import com.linhphan.music.R;

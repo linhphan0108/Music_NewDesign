@@ -69,7 +69,7 @@ public class FileDownloadWorker extends BaseDownloadWorker {
             bufferedOutputStream.close();
             outputStream.close();
             //rescan media files
-            AppUtil.getInstance().reScanSystemFileAt(mContext, publicMusicDir.getAbsolutePath());
+            AppUtil.getInstance().reScanSystemFileAt(mContext, newFile);
             return newFile.getAbsolutePath();//locate the new downloaded file
 
         } catch (MalformedURLException e) {

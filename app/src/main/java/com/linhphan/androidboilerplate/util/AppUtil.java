@@ -13,6 +13,7 @@ import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -126,10 +127,17 @@ public class AppUtil {
 
     /**
      *send an broadcast to system to rescan media
-     * @param path assign the file will be rescanned
+     * @param file assign the file will be rescanned
      */
-    public void reScanSystemFileAt(Context context, String path){
-        Intent intent = new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + path));
-        context.sendBroadcast(intent);
+    public void reScanSystemFileAt(Context context, File file){
+        if (hasKitKat()){
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            intent.setData(Uri.fromFile(file));
+                    context.sendBroadcast(intent);
+
+        }else {
+            Intent intent = new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.fromFile(file.getParentFile()));
+            context.sendBroadcast(intent);
+        }
     }
 }
