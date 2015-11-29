@@ -46,7 +46,7 @@ import java.io.IOException;
  */
 public class MusicService extends Service implements DownloadCallback, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, AudioManager.OnAudioFocusChangeListener {
-    final private static int NOTIFY_ID = 11111;
+
     public static final String NOTIFY_PREVIOUS = "uit.linh.online.music.previous";
     public static final String NOTIFY_REMOVE = "uit.linh.online.music.delete";
     public static final String NOTIFY_PAUSE = "uit.linh.online.music.onPause";
@@ -54,13 +54,16 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     public static final String NOTIFY_NEXT = "uit.linh.online.music.next";
     public static final String NOTIFY_OPEN_MAIN_ACTIVITY = "uit.linh.online.music.open.main";
     private final NotificationBroadcast notificationBroadcast = new NotificationBroadcast();
+    private static final int NOTIFY_ID = 11111;
+    private static final int MAX_ATEMPT = 3;//the maximum times try to attempt try request a song.
 
     private MediaPlayer mp;
-    private MusicBinder musicBinder;
+    private MusicBinder mMusicBinder;
     private MusicServiceState mServiceState;
-    private boolean isBound = false;
+    private boolean mIsBound = false;
     private Handler mHandler;
-    private CustomRunnable runnable;
+    private CustomRunnable mRunnable;
+    private int mAttempted = 0;
 
     public class MusicBinder extends Binder {
         public MusicService getMusicService() {
@@ -102,23 +105,23 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        if (musicBinder == null)
-            musicBinder = new MusicBinder();
-        isBound = true;
+        if (mMusicBinder == null)
+            mMusicBinder = new MusicBinder();
+        mIsBound = true;
         Logger.d(getTag(), "the service is bound");
-        return musicBinder;
+        return mMusicBinder;
     }
 
     @Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
-        isBound = true;
+        mIsBound = true;
         Logger.d(getTag(), "the service is rebound");
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        isBound = false;
+        mIsBound = false;
         terminateThread();
         Logger.d(getTag(), "the service is unbound");
         return super.onUnbind(intent);
@@ -138,7 +141,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     //=================== media player callback ====================================================
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        if (isBound)
+        if (mIsBound)
             notifyMediaPlayerBuffer(percent);
     }
 
@@ -185,15 +188,31 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             String[] urls = (String[]) data;
             ContentManager contentManager = ContentManager.getInstance();
             contentManager.setDirectlyDownloadPathToCurrentPlayingSong(urls);
-            play(urls[urls.length -1]);
+            play(urls[urls.length - 1]);
+            mAttempted = 0;
         }
 
     }
 
     @Override
     public void onDownloadFailed(Exception e) {
-        if (e instanceof NoInternetConnectionException)
+        if (e instanceof NoInternetConnectionException) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }else{
+            e.printStackTrace();
+        }
+        if (mAttempted <= MAX_ATEMPT){
+            int current = ContentManager.getInstance().getCurrentPlayingSongPosition();
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }finally {
+                play(current);
+                Logger.d(getTag(), "time " + mAttempted + ". try to attempt to request the song at " + ContentManager.getInstance().getCurrentPlayingSongPath());
+            }
+        }
     }
 
     //================== audio manager callback ====================================================
@@ -240,11 +259,11 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     public void onBind() {
-        isBound = true;
+        mIsBound = true;
     }
 
     public void onUnbind() {
-        isBound = false;
+        mIsBound = false;
         terminateThread();
     }
 
@@ -392,6 +411,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             }else{
                 play(lastDirectDownloadPath);
             }
+            mAttempted++;
             contentManager.setCurrentSongPosition(position);
             notifyCurrentSongHasChanged();
         }
@@ -434,10 +454,10 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
      * create a new thread to retrieve the timing of the playing media player
      */
     private void retrieveElapseTimePeriodically() {
-        if (runnable == null)
-            runnable = new CustomRunnable();
-        runnable.terminate(false);
-        Thread thread = new Thread(runnable);//the thread which run to get periodically time position of the song
+        if (mRunnable == null)
+            mRunnable = new CustomRunnable();
+        mRunnable.terminate(false);
+        Thread thread = new Thread(mRunnable);//the thread which run to get periodically time position of the song
         thread.start();
     }
 
@@ -445,8 +465,8 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
      * terminate the thread which run to retrieve the timing of the playing media player
      */
     private void terminateThread() {
-        if (runnable != null)
-            runnable.terminate(true);
+        if (mRunnable != null)
+            mRunnable.terminate(true);
     }
 
     class CustomRunnable implements Runnable {
@@ -454,7 +474,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
         @Override
         public void run() {
-            while (!isTerminate && isBound) {
+            while (!isTerminate && mIsBound) {
                 try {
                     Logger.d(getTag(), "music state: " + mServiceState);
                     if (mServiceState == MusicServiceState.playing && mHandler != null) {
