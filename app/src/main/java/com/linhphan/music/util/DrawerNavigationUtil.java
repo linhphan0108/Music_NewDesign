@@ -8,7 +8,7 @@ import com.linhphan.music.R;
  * Created by linhphan on 11/18/15.
  */
 public class DrawerNavigationUtil {
-    public static final int DEFAULT_CATEGORY_CDE = 0;
+    public static final int DEFAULT_CATEGORY_CODE = 0;
     public static final int SEARCH_CATEGORY_CODE = 99999;
 
     public static int getMenuItemId(int position) {

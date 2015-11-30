@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,15 +43,14 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     public static final String ARGUMENT_KEY_MENU_ITEM_ID = "ARGUMENT_KEY_MENU_ITEM_ID";
     public static final String ARGUMENT_KEY_LAYOUT_RESOURCE_ID = "ARGUMENT_KEY_LAYOUT_RESOURCE_ID";
 
-    private String mUrl;
-    private int mCategoryCode = DrawerNavigationUtil.DEFAULT_CATEGORY_CDE;
+    private int mCategoryCode = DrawerNavigationUtil.DEFAULT_CATEGORY_CODE;
     SearchView mSearchView;
 
 
     /**
      * The fragment's ListView/GridView.
      */
-    private AbsListView mListView;
+    private ListView mListView;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
@@ -71,16 +71,16 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
 
         int layoutResource = R.layout.song_item_black_transparent;
         if (getArguments() != null) {
-            mCategoryCode = getArguments().getInt(ARGUMENT_KEY_MENU_ITEM_ID, DrawerNavigationUtil.DEFAULT_CATEGORY_CDE);
+            mCategoryCode = getArguments().getInt(ARGUMENT_KEY_MENU_ITEM_ID, DrawerNavigationUtil.DEFAULT_CATEGORY_CODE);
             layoutResource = getArguments().getInt(ARGUMENT_KEY_LAYOUT_RESOURCE_ID, R.layout.song_item_black_transparent);
         }
         ArrayList<SongModel> songList = ContentManager.getInstance().getSongListByCategory(mCategoryCode);
         if (songList == null || songList.size() <= 0) {
-            mUrl = UrlProvider.getUrlFromCategoryCode(mCategoryCode);
+            String url = UrlProvider.getUrlFromCategoryCode(mCategoryCode);
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
             worker.setParser(new JSoupSongListParser())
                     .showProgressbar(true, false)
-                    .execute(mUrl);
+                    .execute(url);
         }
         mAdapter = new SongListAdapter(getActivity(), layoutResource, songList);
     }
@@ -89,7 +89,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);//to access action bar's menu
-        return inflater.inflate(R.layout.fragment_item, container, false);
+        return inflater.inflate(R.layout.fragment_song_list, container, false);
     }
 
     @Override
@@ -148,7 +148,8 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
 
     private void getWidgets(View root) {
         // Set the adapter
-        mListView = (AbsListView) root.findViewById(android.R.id.list);
+        mListView = (ListView) root.findViewById(R.id.listView);
+        mListView.setEmptyView(root.findViewById(R.id.txt_empty));
         mListView.setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
@@ -218,6 +219,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
         worker.showProgressbar(true, false)
                 .setParser(new JSoupSearchParser())
              .execute(url);
+        mCategoryCode = DrawerNavigationUtil.SEARCH_CATEGORY_CODE;
         mSearchView.clearFocus();
         ViewUtil.hideKeyBoard(getActivity());
         return true;

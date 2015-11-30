@@ -186,12 +186,13 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     public void onDownloadSuccessfully(Object data) {
         if (data instanceof String[]) {
             String[] urls = (String[]) data;
-            ContentManager contentManager = ContentManager.getInstance();
-            contentManager.setDirectlyDownloadPathToCurrentPlayingSong(urls);
-            play(urls[urls.length - 1]);
-            mAttempted = 0;
+            if (urls.length > 0) {
+                ContentManager contentManager = ContentManager.getInstance();
+                contentManager.setDirectlyDownloadPathToCurrentPlayingSong(urls);
+                play(urls[urls.length - 1]);
+                mAttempted = 0;
+            }
         }
-
     }
 
     @Override
@@ -199,16 +200,16 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         if (e instanceof NoInternetConnectionException) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
-        }else{
+        } else {
             e.printStackTrace();
         }
-        if (mAttempted <= MAX_ATEMPT){
+        if (mAttempted <= MAX_ATEMPT) {
             int current = ContentManager.getInstance().getCurrentPlayingSongPosition();
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
-            }finally {
+            } finally {
                 play(current);
                 Logger.d(getTag(), "time " + mAttempted + ". try to attempt to request the song at " + ContentManager.getInstance().getCurrentPlayingSongPath());
             }
@@ -402,13 +403,13 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         SongModel songModel = contentManager.getSongAt(position);
         if (songModel != null) {
             String lastDirectDownloadPath = songModel.getLastDirectlyDownloadPath();
-            if (lastDirectDownloadPath == null || lastDirectDownloadPath.isEmpty()){
+            if (lastDirectDownloadPath == null || lastDirectDownloadPath.isEmpty()) {
                 Logger.d(getTag(), "get direct link from " + songModel.getPath());
                 JSoupDownloadWorker worker = new JSoupDownloadWorker(getApplicationContext(), this);
                 worker.setParser(new JSoupDirectlyDownloadSongParser())
                         .execute(songModel.getPath());
 
-            }else{
+            } else {
                 play(lastDirectDownloadPath);
             }
             mAttempted++;
