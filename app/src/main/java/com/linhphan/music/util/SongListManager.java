@@ -23,6 +23,8 @@ public class SongListManager {
     }
 
     public ArrayList<SongModel> getSongList() {
+        if (mSongList == null)
+            mSongList = new ArrayList<>();
         return mSongList;
     }
 

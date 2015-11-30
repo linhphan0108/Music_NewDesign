@@ -44,7 +44,10 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     public static final String ARGUMENT_KEY_LAYOUT_RESOURCE_ID = "ARGUMENT_KEY_LAYOUT_RESOURCE_ID";
 
     private int mCategoryCode = DrawerNavigationUtil.DEFAULT_CATEGORY_CODE;
-    SearchView mSearchView;
+    private SearchView mSearchView;
+    private String mSearchKey;
+    private int mPageSearchIndex = -1;
+    private boolean mIsSearchMode = false;
 
 
     /**
@@ -154,6 +157,26 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (mIsSearchMode && totalItemCount > 0  && firstVisibleItem + visibleItemCount == totalItemCount){
+                    mPageSearchIndex++;
+                    Toast.makeText(getContext(), "load more at page "+ mPageSearchIndex, Toast.LENGTH_SHORT).show();
+                    String query = mSearchKey.replace(" ", "+");
+                    String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
+                    JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), SongListFragment.this);
+                    worker.showProgressbar(false, false)
+                            .setParser(new JSoupSearchParser())
+                            .execute(url);
+                }
+            }
+        });
 
         setSelectedItem(ContentManager.getInstance().getCurrentPlayingSongPosition());
     }
@@ -197,9 +220,25 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     public void onDownloadSuccessfully(Object data) {
         @SuppressWarnings("unchecked")
         ArrayList<SongModel> songList = (ArrayList<SongModel>) data;
+        if (songList == null || songList.size() <= 0) return;
         ContentManager contentManager = ContentManager.getInstance();
-        contentManager.setCurrentDisplayed(songList, mCategoryCode);
-        mAdapter.resetList(songList);
+        if (mIsSearchMode){
+            ArrayList<SongModel> currentDisplayedList = contentManager.getCurrentDisplayedList();
+            if (currentDisplayedList.size() > 0){
+                int firstVisiblePosition = mListView.getFirstVisiblePosition();
+                contentManager.getCurrentDisplayedList().addAll(songList);
+                mAdapter.resetList(contentManager.getCurrentDisplayedList());
+                mListView.setSelection(firstVisiblePosition);
+
+            }else{
+                contentManager.setCurrentDisplayed(songList, mCategoryCode);
+                mAdapter.resetList(songList);
+            }
+
+        }else {
+            contentManager.setCurrentDisplayed(songList, mCategoryCode);
+            mAdapter.resetList(songList);
+        }
     }
 
     @Override
@@ -212,14 +251,16 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     @Override
     public boolean onQueryTextSubmit(String query) {
         Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
-        query = query.trim();
-        query = query.replace(" ", "+");
-        String url = UrlProvider.SEARCH_PATH + Uri.encode(query);
+        mSearchKey = query.trim();
+        mPageSearchIndex = 1;
+        query = mSearchKey.replace(" ", "+");
+        String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
         JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
         worker.showProgressbar(true, false)
                 .setParser(new JSoupSearchParser())
              .execute(url);
         mCategoryCode = DrawerNavigationUtil.SEARCH_CATEGORY_CODE;
+        mIsSearchMode = true;
         mSearchView.clearFocus();
         ViewUtil.hideKeyBoard(getActivity());
         return true;
