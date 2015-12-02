@@ -304,7 +304,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     public void next() {
-        pause();
+        stop();
 
         ContentManager contentManager = ContentManager.getInstance();
         UserSetting userSetting = UserSetting.getInstance();
@@ -346,7 +346,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     public void pre() {
-        pause();
+        stop();
 
         boolean isShuffle = Utils.getBooleanFromSharedPreferences(getApplicationContext(), Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
         if (isShuffle) {

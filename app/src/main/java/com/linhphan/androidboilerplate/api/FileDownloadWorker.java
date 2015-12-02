@@ -49,7 +49,7 @@ public class FileDownloadWorker extends BaseDownloadWorker {
             int contentLength = httpURLConnection.getContentLength();
 
             InputStream inputStream = httpURLConnection.getInputStream();
-            File publicMusicDir = FileUtil.getPublicMusicStorageDirectory();
+            File publicMusicDir = FileUtil.getPublicDownloadDirectory();
             File newFile = new File(publicMusicDir, fileName);
             OutputStream outputStream = new FileOutputStream(newFile);
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);

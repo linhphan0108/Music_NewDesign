@@ -199,4 +199,8 @@ public class FileUtil {
     public static File getPublicMusicStorageDirectory(){
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
     }
+
+    public static File getPublicDownloadDirectory(){
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+    }
 }

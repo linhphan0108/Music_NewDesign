@@ -130,6 +130,7 @@ public class AppUtil {
      * @param file assign the file will be rescanned
      */
     public void reScanSystemFileAt(Context context, File file){
+        Logger.d(getClass().getName(), "rescan file at "+ file.getAbsolutePath());
         if (hasKitKat()){
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             intent.setData(Uri.fromFile(file));
