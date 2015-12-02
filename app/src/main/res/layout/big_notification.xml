@@ -20,11 +20,11 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:id="@+id/img_notification"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/ic_recording"
                 android:background="@drawable/bg_media_button_controller"
                 android:layout_margin="@dimen/abc_action_bar_overflow_padding_start_material"
                 android:layout_gravity="center_vertical"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerInside" />
         </LinearLayout>
 
 
@@ -43,14 +43,15 @@
 
 
                 <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:id="@+id/btn_remove"
                     android:src="@drawable/ic_remove"
                     android:layout_gravity="top|end"
                     android:background="@drawable/bg_media_button_controller"
                     android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"/>
+                    android:layout_marginEnd="10dp"
+                    android:scaleType="centerInside"/>
             </LinearLayout>
 
 
@@ -93,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btn_pre"
-            android:src="@drawable/ic_previous"
+            android:src="@drawable/ic_single_pre"
             android:background="@drawable/bg_media_button_controller" />
 
 
@@ -122,7 +123,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/img_btn_next"
-            android:src="@drawable/ic_next"
+            android:src="@drawable/ic_single_next"
             android:background="@drawable/bg_media_button_controller" />
     </LinearLayout>
 </LinearLayout>

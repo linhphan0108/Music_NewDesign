@@ -75,15 +75,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     public int onStartCommand(Intent intent, int flags, int startId) {
         Logger.d(getTag(), "the service is started by flag " + String.valueOf(flags));
         if (mp == null) {
-            mp = new MediaPlayer();
-            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mp.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-            mp.setOnPreparedListener(this);
-            mp.setOnErrorListener(this);
-            mp.setOnCompletionListener(this);
-            mp.setOnBufferingUpdateListener(this);
-            mp.setOnSeekCompleteListener(this);
-            mServiceState = MusicServiceState.idle;
+            initMediaPlayer();
         }
 
         return START_STICKY;
@@ -299,7 +291,21 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     //==============================================================================================
+    private void initMediaPlayer(){
+        mp = new MediaPlayer();
+        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mp.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        mp.setOnPreparedListener(this);
+        mp.setOnErrorListener(this);
+        mp.setOnCompletionListener(this);
+        mp.setOnBufferingUpdateListener(this);
+        mp.setOnSeekCompleteListener(this);
+        mServiceState = MusicServiceState.idle;
+    }
+
     public void next() {
+        pause();
+
         ContentManager contentManager = ContentManager.getInstance();
         UserSetting userSetting = UserSetting.getInstance();
         RepeatMode repeatMode = userSetting.getRepeatMode(getApplicationContext());
@@ -340,6 +346,8 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     public void pre() {
+        pause();
+
         boolean isShuffle = Utils.getBooleanFromSharedPreferences(getApplicationContext(), Utils.SHARED_PREFERENCES_KEY_SHUFFLE_MODE, false);
         if (isShuffle) {
             ContentManager contentManager = ContentManager.getInstance();
@@ -399,6 +407,8 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
      * @param position the position of the song in list.
      */
     public void play(int position) {
+        pause();
+
         ContentManager contentManager = ContentManager.getInstance();
         SongModel songModel = contentManager.getSongAt(position);
         if (songModel != null) {
@@ -431,12 +441,15 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         } else if (mServiceState == MusicServiceState.stopped) {
             mp.reset();
 
+        }else if (mServiceState == MusicServiceState.destroy){
+
+            initMediaPlayer();
         } else if (mServiceState == MusicServiceState.preparing) {
             return;
         }
 
         try {
-            mp.setDataSource(getBaseContext(), Uri.parse(url));
+            mp.setDataSource(getBaseContext(), Uri.parse(url));// TODO: 12/2/15  
             mp.prepareAsync();
             mServiceState = MusicServiceState.preparing;
         } catch (IOException e) {
@@ -505,7 +518,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         SongModel currentSong = contentManager.getCurrentPlayingSong();
         if (currentSong == null) return;
         Notification notification = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_music_launcher)//the icon will be displayed on status bar
                 .setContentTitle(currentSong.getTitle()).build();
 
         //== normal content view for notification
@@ -513,7 +526,6 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         setListeners(smallView);
         notification.priority = Notification.PRIORITY_MAX;
         notification.contentView = smallView;
-        notification.contentView.setImageViewResource(R.id.img_notification, R.mipmap.ic_launcher);
         notification.contentView.setTextViewText(R.id.txt_title, currentSong.getTitle());
         notification.contentView.setTextViewText(R.id.txt_artist, currentSong.getArtist());
 
@@ -530,7 +542,6 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             RemoteViews bigView = new RemoteViews(getApplication().getPackageName(), R.layout.big_notification);
             setListeners(bigView);
             notification.bigContentView = bigView;
-            notification.bigContentView.setImageViewResource(R.id.img_notification, R.mipmap.ic_launcher);
             notification.bigContentView.setTextViewText(R.id.txt_title, currentSong.getTitle());
             notification.bigContentView.setTextViewText(R.id.txt_artist, currentSong.getArtist());
 

@@ -16,6 +16,7 @@ import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.R;
 import com.linhphan.music.service.MusicService;
+import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.RepeatMode;
 import com.linhphan.music.util.UserSetting;
 import com.linhphan.music.util.Utils;
@@ -69,6 +70,13 @@ public class BaseActivity extends AppCompatActivity {
             mMusicSrv.onUnbind();
             unbindService(serviceConnection);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Constants.RESPONSE_CODE_FINISH)
+            finish();
     }
 
     @Override

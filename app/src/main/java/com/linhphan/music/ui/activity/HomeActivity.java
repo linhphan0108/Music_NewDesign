@@ -96,8 +96,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && isMediaPlayerPlaying()) {
-            final FrameLayout frControllers = (FrameLayout) findViewById(R.id.controllers);
-            frControllers.setVisibility(View.VISIBLE);
+            showControlFragment();
         }
     }
 
@@ -166,6 +165,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
             mControllerFragment.updateArtistAndTitle(currentSong.getTitle(), currentSong.getArtist());
 
             //==update the paused or playing button in ControllerFragment
+            showControlFragment();
             mControllerFragment.updatePausedOrPlayingButton(false);
 
             Logger.d(getTag(), "the current song has been changed");
@@ -237,5 +237,19 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         manager.beginTransaction()
                 .replace(R.id.main_content, fragment, fragment.getClass().getSimpleName())
                 .commit();
+    }
+
+    public void showControlFragment() {
+        final FrameLayout frControllers = (FrameLayout) findViewById(R.id.controllers);
+        if (frControllers.getVisibility() != View.VISIBLE) {
+            frControllers.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideControlFragment() {
+        final FrameLayout frControllers = (FrameLayout) findViewById(R.id.controllers);
+        if (frControllers.getVisibility() != View.INVISIBLE) {
+            frControllers.setVisibility(View.INVISIBLE);
+        }
     }
 }

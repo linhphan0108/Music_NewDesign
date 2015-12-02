@@ -26,6 +26,7 @@ import com.linhphan.music.ui.activity.BaseActivity;
 import com.linhphan.music.ui.activity.PlayerActivity;
 import com.linhphan.music.ui.adapter.SongListAdapter;
 import com.linhphan.music.api.parser.JSoupSongListParser;
+import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.util.DrawerNavigationUtil;
@@ -128,7 +129,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
             BaseActivity activity = (BaseActivity) getActivity();
             if (!activity.isMediaPlayerPlaying()) {//if the music is playing then do nothing
                 Intent intent = new Intent(getActivity(), PlayerActivity.class);
-                getContext().startActivity(intent);
+                activity.startActivityForResult(intent, Constants.REQUEST_CODE_OPEN_PLAYER_ACTIVITY);
             }
         }
     }

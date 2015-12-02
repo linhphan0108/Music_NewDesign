@@ -8,7 +8,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:src="@drawable/ic_recordring"
+            android:src="@drawable/ic_recording"
             android:id="@+id/img_rotation"
             android:touchscreenBlocksFocus="false"
             android:layout_gravity="center_horizontal"/>

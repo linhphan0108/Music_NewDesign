@@ -20,6 +20,7 @@ import com.linhphan.music.ui.adapter.ViewPagerPlayerAdapter;
 import com.linhphan.music.ui.fragment.CenterPlayerFragment;
 import com.linhphan.music.ui.fragment.LeftPlayerFragment;
 import com.linhphan.music.ui.fragment.SongListFragment;
+import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.music.util.MessageCode;
 import com.linhphan.music.util.RepeatMode;
@@ -173,6 +174,7 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         } else if (msg.what == MessageCode.PLAYING.ordinal()) {
             updatePausedOrPlayingButton(false);
         } else if (msg.what == MessageCode.DESTROYED.ordinal()) {
+            setResult(Constants.RESPONSE_CODE_FINISH);
             finish();
         }
 

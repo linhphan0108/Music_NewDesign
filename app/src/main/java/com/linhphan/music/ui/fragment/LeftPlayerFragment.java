@@ -143,12 +143,12 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
                     .resize(size, size)
                     .onlyScaleDown()
                     .centerCrop()
-                    .placeholder(R.drawable.ic_recordring)
-                    .error(R.drawable.ic_recordring)
+                    .placeholder(R.drawable.ic_recording)
+                    .error(R.drawable.ic_recording)
                     .into(imgCover);
         } else {
             Picasso.with(getActivity())
-                    .load(R.drawable.ic_recordring)
+                    .load(R.drawable.ic_recording)
                     .resize(size, size)
                     .centerCrop()
                     .into(imgCover);
