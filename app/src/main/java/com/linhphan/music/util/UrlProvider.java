@@ -31,8 +31,6 @@ public class UrlProvider {
             //================== english music
             case R.id.menu_item_pop_en:
                 return "http://chiasenhac.com/mp3/us-uk/u-pop/";
-            case R.id.menu_item_remix_en:
-//            break;// TODO: 24/10/2015 this must return an url
             case R.id.menu_item_rap_en:
                 return "http://chiasenhac.com/mp3/us-uk/u-rap-hiphop/";
             case R.id.menu_item_dance_en:
@@ -41,18 +39,14 @@ public class UrlProvider {
             //================== korean music
             case R.id.menu_item_pop_korea:
                 return "http://chiasenhac.com/mp3/korea/k-pop/";
-            case R.id.menu_item_remix_korea:
             case R.id.menu_item_rap_korea:
                 return "http://chiasenhac.com/mp3/korea/k-rap-hiphop/";
-//            break;// TODO: 24/10/2015 this must return an url
             case R.id.menu_item_dance_korea:
                 return "http://chiasenhac.com/mp3/korea/k-dance-remix/";
 
             //=================== chinese music
             case R.id.menu_item_pop_china:
                 return "http://chiasenhac.com/mp3/chinese/c-pop/";
-            case R.id.menu_item_remix_china:
-//                break;// TODO: 24/10/2015 this must return an url
             case R.id.menu_item_rap_china:
                 return "http://chiasenhac.com/mp3/chinese/c-rap-hiphop/";
             case R.id.menu_item_dance_china:

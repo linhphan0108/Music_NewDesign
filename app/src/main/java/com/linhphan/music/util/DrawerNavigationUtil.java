@@ -10,10 +10,16 @@ import com.linhphan.music.R;
 public class DrawerNavigationUtil {
     public static final int DEFAULT_CATEGORY_CODE = 0;
     public static final int SEARCH_CATEGORY_CODE = 99999;
+    public static final int CURRENT_CATEGORY_CODE = 88888;
+
+
 
     public static int getMenuItemId(int position) {
         switch (position) {
             //vietnamese music
+            case CURRENT_CATEGORY_CODE:
+                return R.id.menu_item_current_playing;
+
             case 0:
                 return R.id.menu_item_hot_vi;
             case 1:
@@ -27,30 +33,24 @@ public class DrawerNavigationUtil {
             case 4:
                 return R.id.menu_item_pop_en;
             case 5:
-                return R.id.menu_item_remix_en;
-            case 6:
                 return R.id.menu_item_rap_en;
-            case 7:
+            case 6:
                 return R.id.menu_item_dance_en;
 
             //korean music
-            case 8:
+            case 7:
                 return R.id.menu_item_pop_korea;
-            case 9:
-                return R.id.menu_item_remix_korea;
-            case 10:
+            case 8:
                 return R.id.menu_item_rap_korea;
-            case 11:
+            case 9:
                 return R.id.menu_item_dance_korea;
 
             //chinese music
-            case 12:
+            case 10:
                 return R.id.menu_item_pop_china;
-            case 13:
-                return R.id.menu_item_remix_china;
-            case 14:
+            case 11:
                 return R.id.menu_item_rap_china;
-            case 15:
+            case 12:
                 return R.id.menu_item_dance_china;
 
             default:
@@ -60,6 +60,9 @@ public class DrawerNavigationUtil {
 
     public static int getCategoryCode(int menuItemId) {
         switch (menuItemId) {
+            case R.id.menu_item_current_playing:
+                return CURRENT_CATEGORY_CODE;
+
             //vietnamese music
             case R.id.menu_item_hot_vi:
                 return 0;
@@ -73,32 +76,26 @@ public class DrawerNavigationUtil {
             //english music
             case R.id.menu_item_pop_en:
                 return 4;
-            case R.id.menu_item_remix_en:
-                return 5;
             case R.id.menu_item_rap_en:
-                return 6;
+                return 5;
             case R.id.menu_item_dance_en:
-                return 7;
+                return 6;
 
             //korean music
             case R.id.menu_item_pop_korea:
-                return 8;
-            case R.id.menu_item_remix_korea:
-                return 9;
+                return 7;
             case R.id.menu_item_rap_korea:
-                return 10;
+                return 8;
             case R.id.menu_item_dance_korea:
-                return 11;
+                return 9;
 
             //chinese music
             case R.id.menu_item_pop_china:
-                return 12;
-            case R.id.menu_item_remix_china:
-                return 13;
+                return 10;
             case R.id.menu_item_rap_china:
-                return 14;
+                return 11;
             case R.id.menu_item_dance_china:
-                return 15;
+                return 12;
 
             default:
                 return -1;
@@ -121,30 +118,24 @@ public class DrawerNavigationUtil {
             case 4:
                 return context.getString(R.string.music_type_pop);
             case 5:
-                return context.getString(R.string.music_type_remix);
-            case 6:
                 return context.getString(R.string.music_type_rap);
-            case 7:
+            case 6:
                 return context.getString(R.string.music_type_dance);
 
             //korean music
-            case 8:
+            case 7:
                 return context.getString(R.string.music_type_pop);
-            case 9:
-                return context.getString(R.string.music_type_remix);
-            case 10:
+            case 8:
                 return context.getString(R.string.music_type_rap);
-            case 11:
+            case 9:
                 return context.getString(R.string.music_type_dance);
 
             //chinese music
-            case 12:
+            case 10:
                 return context.getString(R.string.music_type_pop);
-            case 13:
-                return context.getString(R.string.music_type_remix);
-            case 14:
+            case 11:
                 return context.getString(R.string.music_type_rap);
-            case 15:
+            case 12:
                 return context.getString(R.string.music_type_dance);
 
             case SEARCH_CATEGORY_CODE:

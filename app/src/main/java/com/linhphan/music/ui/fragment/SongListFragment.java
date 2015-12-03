@@ -78,7 +78,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
             mCategoryCode = getArguments().getInt(ARGUMENT_KEY_MENU_ITEM_ID, DrawerNavigationUtil.DEFAULT_CATEGORY_CODE);
             layoutResource = getArguments().getInt(ARGUMENT_KEY_LAYOUT_RESOURCE_ID, R.layout.song_item_black_transparent);
         }
-        ArrayList<SongModel> songList = ContentManager.getInstance().getSongListByCategory(mCategoryCode);
+        ArrayList<SongModel> songList = ContentManager.getInstance().getSongListByCategoryCode(mCategoryCode);
         if (songList == null || songList.size() <= 0) {
             String url = UrlProvider.getUrlFromCategoryCode(mCategoryCode);
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
@@ -218,7 +218,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (mIsSearchMode && totalItemCount > 0  && firstVisibleItem + visibleItemCount == totalItemCount){
             mPageSearchIndex++;
-            Toast.makeText(getContext(), "load more at page "+ mPageSearchIndex, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "load more songs", Toast.LENGTH_SHORT).show();
             String query = mSearchKey.replace(" ", "+");
             String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);

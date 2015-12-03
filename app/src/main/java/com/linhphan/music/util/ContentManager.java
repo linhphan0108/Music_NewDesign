@@ -159,12 +159,20 @@ public class ContentManager {
         this.mCurrentPlaying.setIndex(index);
     }
 
-    public ArrayList<SongModel> getSongListByCategory(int category){
-        if (category == mCurrentDisplayed.getCategory()){
+    public ArrayList<SongModel> getSongListByCategoryCode(int categoryCode){
+        if (categoryCode == DrawerNavigationUtil.CURRENT_CATEGORY_CODE){
+            if (mCurrentPlaying.getSongList().size() > 0){
+                return mCurrentPlaying.getSongList();
+            }else{
+                return mCurrentDisplayed.getSongList();
+            }
+        }
+
+        if (categoryCode == mCurrentDisplayed.getCategory()){
             return mCurrentDisplayed.getSongList();
         }
 
-        if (category == mCurrentPlaying.getCategory()){
+        if (categoryCode == mCurrentPlaying.getCategory()){
             return mCurrentPlaying.getSongList();
         }
         return new ArrayList<>();

@@ -42,7 +42,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home);
 
         setupToolbar();//setup toolbar
         setupNavigationView();
@@ -72,7 +72,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
     protected void onResume() {
         super.onResume();
         //== set selected item in drawer navigation
-        int selectedMenuItem;
+        int selectedMenuItem = -1;
         int categoryCode;
         if (isNewCreated) {
             categoryCode = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
@@ -80,15 +80,14 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
             isNewCreated = false;
         } else {
             categoryCode = ContentManager.getInstance().getCurrentDisplayedCategory();
-            selectedMenuItem = DrawerNavigationUtil.getMenuItemId(categoryCode);
-//            if (selectedMenuItem == -1) {
-//                index = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
-//                selectedMenuItem = DrawerNavigationUtil.getMenuItemId(index);
-//            }
+            if (categoryCode == DrawerNavigationUtil.SEARCH_CATEGORY_CODE) {
+                selectedMenuItem = DrawerNavigationUtil.getMenuItemId(DrawerNavigationUtil.CURRENT_CATEGORY_CODE);
+            } else {
+                selectedMenuItem = DrawerNavigationUtil.getMenuItemId(categoryCode);
+            }
         }
 
-        if (selectedMenuItem != -1)
-            navigationView.setCheckedItem(selectedMenuItem);
+        navigationView.setCheckedItem(selectedMenuItem);
         setTitle(DrawerNavigationUtil.getTitle(this, categoryCode));
     }
 

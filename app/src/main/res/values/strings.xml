@@ -19,7 +19,9 @@
     <string name="music_type_remix">Nhạc Remix</string>
     <string name="music_type_country">Nhạc Quê Hương</string>
     <string name="music_type_hot">Nhạc Hot</string>
+    <string name="music_type_current">Đang Chơi</string>
     <string name="music_type_search_result">Search Result</string>
+
 
     <string name="text_view_unknown">Unknown</string>
     <string name="text_view_empty">no data here</string>

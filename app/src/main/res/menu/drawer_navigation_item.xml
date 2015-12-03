@@ -2,6 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
         <item
+            android:id="@+id/group_item_current"
+            android:title="">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/menu_item_current_playing"
+                        android:title="@string/music_type_current"
+                        android:icon="@drawable/ic_menu_star"
+                        />
+                </group>
+            </menu>
+        </item>
+        <item
             android:id="@+id/group_item_vi"
             android:title="@string/group_item_vietnam">
             <menu>
@@ -34,10 +47,6 @@
                     <item
                         android:id="@+id/menu_item_pop_en"
                         android:title="@string/music_type_pop"
-                        android:icon="@drawable/ic_menu_star"/>
-                    <item
-                        android:id="@+id/menu_item_remix_en"
-                        android:title="@string/music_type_remix"
                         android:icon="@drawable/ic_menu_star"/>
                     <item
                         android:id="@+id/menu_item_rap_en"
