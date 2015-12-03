@@ -156,6 +156,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
     public boolean handleMessage(Message msg) {
         if (msg.what == MessageCode.SONG_CHANGED.ordinal()) {
             //==set the selected item in list view in ContentFragment
+            if (mContentFragment == null) return false;
             ContentManager contentManager = ContentManager.getInstance();
             mContentFragment.setSelectedItem(contentManager.getCurrentPlayingSongPosition());
 
