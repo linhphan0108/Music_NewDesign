@@ -300,7 +300,9 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
     //==============================================================================================
     private void initMediaPlayer(){
-        mp = new MediaPlayer();
+        if (mp == null) {
+            mp = new MediaPlayer();
+        }
         mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mp.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         mp.setOnPreparedListener(this);
@@ -369,9 +371,10 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     public void pause() {
-        if (mServiceState == MusicServiceState.prepared || mServiceState == MusicServiceState.playing)
+        if (mServiceState == MusicServiceState.prepared || mServiceState == MusicServiceState.playing) {
             mp.pause();
-        mServiceState = MusicServiceState.paused;
+            mServiceState = MusicServiceState.paused;
+        }
         terminateThread();
         notifyMediaPlayerPaused(true);
         showCustomNotification(getApplicationContext());
@@ -415,7 +418,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
      * @param position the position of the song in list.
      */
     public void play(int position) {
-        pause();
+        stop();
 
         ContentManager contentManager = ContentManager.getInstance();
         SongModel songModel = contentManager.getSongAt(position);
@@ -602,6 +605,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     private class MusicManagerReceiver extends BroadcastReceiver {
+        private boolean isHandsetUnpluggedRecently = false;
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)){
@@ -609,10 +613,15 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                 switch (state){
                     case 0:
                         pause();
+                        isHandsetUnpluggedRecently = true;
                         Logger.d(getClass().getName(), "the handset is unplugged");
                         break;
 
                     case 1:
+                        if (isHandsetUnpluggedRecently){
+                            play();
+                            isHandsetUnpluggedRecently = false;
+                        }
                         Logger.d(getClass().getName(), "the handset is plugged");
                         break;
 

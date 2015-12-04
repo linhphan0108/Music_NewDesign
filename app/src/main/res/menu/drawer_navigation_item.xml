@@ -69,10 +69,6 @@
                         android:title="@string/music_type_pop"
                         android:icon="@drawable/ic_menu_star"/>
                     <item
-                        android:id="@+id/menu_item_remix_korea"
-                        android:title="@string/music_type_remix"
-                        android:icon="@drawable/ic_menu_star"/>
-                    <item
                         android:id="@+id/menu_item_rap_korea"
                         android:title="@string/music_type_rap"
                         android:icon="@drawable/ic_menu_star"/>
@@ -91,11 +87,7 @@
                     <item
                         android:id="@+id/menu_item_pop_china"
                         android:title="@string/music_type_pop"
-                        android:icon="@drawable/ic_menu_star"/>
-                    <item
-                        android:id="@+id/menu_item_remix_china"
-                        android:title="@string/music_type_remix"
-                        android:icon="@drawable/ic_menu_star"/>
+                        android:icon="@drawable/ic_menu_star"/>z
                     <item
                         android:id="@+id/menu_item_rap_china"
                         android:title="@string/music_type_rap"
