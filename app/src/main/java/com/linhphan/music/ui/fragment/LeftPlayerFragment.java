@@ -1,5 +1,6 @@
 package com.linhphan.music.ui.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -157,9 +158,8 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
 
     public void checkAndShowSongInfo(SongModel songModel) {
         if (songModel.getCoverPath() == null || songModel.getCoverPath().isEmpty()) {
-            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
+            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), true, this);
             worker.setParser(new JSoupSongInfoParser())
-                    .showProgressbar(true, false)
                     .execute(songModel.getOriginPath());
         } else {
             showSongInfo(songModel);

@@ -15,8 +15,8 @@ import java.io.IOException;
  */
 public class JSoupDownloadWorker extends BaseDownloadWorker {
 
-    public JSoupDownloadWorker(Context mContext, DownloadCallback mCallback) {
-        super(mContext, mCallback);
+    public JSoupDownloadWorker(Context mContext, boolean isShowDialog, DownloadCallback mCallback) {
+        super(mContext, isShowDialog, mCallback);
     }
 
     @Override

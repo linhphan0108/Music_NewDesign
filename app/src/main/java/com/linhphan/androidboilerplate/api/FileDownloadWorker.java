@@ -22,8 +22,17 @@ import java.net.URL;
  */
 public class FileDownloadWorker extends BaseDownloadWorker {
 
-    public FileDownloadWorker(Context mContext, DownloadCallback mCallback) {
-        super(mContext, mCallback);
+    private boolean mIsShowNotificationProgress;
+
+    /**
+     * the notification progress will be showed if this method is called.
+     */
+    public void showNotificationProgres(){
+        mIsShowNotificationProgress = true;
+    }
+
+    public FileDownloadWorker(Context mContext, boolean isShowDialog, DownloadCallback mCallback) {
+        super(mContext,isShowDialog, mCallback);
     }
 
     @Override
@@ -81,5 +90,17 @@ public class FileDownloadWorker extends BaseDownloadWorker {
         return null;
     }
 
-
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        if (mIsShowNotificationProgress){
+            int percent = values[0];
+            if (percent < 100) {
+                showNotificationProgress(mContext, "Downloading...", values[0]);
+            }else{
+                showNotificationProgress(mContext, "Completed!", values[0]);
+            }
+        }else {
+            super.onProgressUpdate(values);
+        }
+    }
 }

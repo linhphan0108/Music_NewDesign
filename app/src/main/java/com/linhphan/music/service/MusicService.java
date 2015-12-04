@@ -53,9 +53,9 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     public static final String NOTIFY_PLAY = "uit.linh.online.music.onPlay";
     public static final String NOTIFY_NEXT = "uit.linh.online.music.next";
     public static final String NOTIFY_OPEN_MAIN_ACTIVITY = "uit.linh.online.music.open.main";
-    private final NotificationBroadcast notificationBroadcast = new NotificationBroadcast();
+    private final MusicManagerReceiver notificationBroadcast = new MusicManagerReceiver();
     private static final int NOTIFY_ID = 11111;
-    private static final int MAX_ATEMPT = 3;//the maximum times try to attempt try request a song.
+    private static final int MAX_ATTEMPT = 3;//the maximum times try to attempt try request a song.
 
     private MediaPlayer mp;
     private MusicBinder mMusicBinder;
@@ -91,6 +91,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         intentFilter.addAction(NOTIFY_REMOVE);
         intentFilter.addAction(NOTIFY_NEXT);
         intentFilter.addAction(NOTIFY_OPEN_MAIN_ACTIVITY);
+        intentFilter.addAction(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(notificationBroadcast, intentFilter);
     }
 
@@ -195,7 +196,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         } else {
             e.printStackTrace();
         }
-        if (mAttempted <= MAX_ATEMPT) {
+        if (mAttempted <= MAX_ATTEMPT) {
             int current = ContentManager.getInstance().getCurrentPlayingSongPosition();
             try {
                 Thread.sleep(3000);
@@ -262,32 +263,39 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
     //==============================================================================================
     private void notifyCurrentSongHasChanged() {
-        Message message = mHandler.obtainMessage();
-        message.what = MessageCode.SONG_CHANGED.ordinal();
-        mHandler.sendMessage(message);
+        if (mHandler != null) {
+            Message message = mHandler.obtainMessage();
+            message.what = MessageCode.SONG_CHANGED.ordinal();
+            mHandler.sendMessage(message);
+        }
     }
 
     private void notifyMediaPlayerTiming(String msg) {
-        Message message = mHandler.obtainMessage();
-        message.what = MessageCode.TIMING.ordinal();
-        message.obj = msg;
-        mHandler.sendMessage(message);
+        if (mHandler != null) {
+            Message message = mHandler.obtainMessage();
+            message.what = MessageCode.TIMING.ordinal();
+            message.obj = msg;
+            mHandler.sendMessage(message);
+        }
     }
 
     private void notifyMediaPlayerBuffer(int percentage) {
-        Message message = mHandler.obtainMessage();
-        message.what = MessageCode.BUFFERING.ordinal();
-        message.obj = percentage;
-        mHandler.sendMessage(message);
+        if (mHandler != null) {
+            Message message = mHandler.obtainMessage();
+            message.what = MessageCode.BUFFERING.ordinal();
+            message.obj = percentage;
+            mHandler.sendMessage(message);
+        }
     }
 
     private void notifyMediaPlayerPaused(boolean paused) {
-        if (mHandler == null) return;
-        Message message = mHandler.obtainMessage();
-        if (paused)
-            message.what = MessageCode.PAUSED.ordinal();
-        else message.what = MessageCode.PLAYING.ordinal();
-        mHandler.sendMessage(message);
+        if (mHandler != null) {
+            Message message = mHandler.obtainMessage();
+            if (paused)
+                message.what = MessageCode.PAUSED.ordinal();
+            else message.what = MessageCode.PLAYING.ordinal();
+            mHandler.sendMessage(message);
+        }
     }
 
     //==============================================================================================
@@ -415,7 +423,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             String lastDirectDownloadPath = songModel.getLastDirectlyDownloadPath();
             if (lastDirectDownloadPath == null || lastDirectDownloadPath.isEmpty()) {
                 Logger.d(getTag(), "get direct link from " + songModel.getPath());
-                JSoupDownloadWorker worker = new JSoupDownloadWorker(getApplicationContext(), this);
+                JSoupDownloadWorker worker = new JSoupDownloadWorker(getBaseContext(), false, this);
                 worker.setParser(new JSoupDirectlyDownloadSongParser())
                         .execute(songModel.getPath());
 
@@ -589,11 +597,30 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         view.setOnClickPendingIntent(R.id.img_notification, pOpen);
     }
 
-    public class NotificationBroadcast extends BroadcastReceiver {
+    public void stopForeground() {
+        stopForeground(true);
+    }
+
+    private class MusicManagerReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.d(getTag(), "get notification from BroadcastReceiver");
-            if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)){
+                int state = intent.getIntExtra("state", -1);
+                switch (state){
+                    case 0:
+                        pause();
+                        Logger.d(getClass().getName(), "the handset is unplugged");
+                        break;
+
+                    case 1:
+                        Logger.d(getClass().getName(), "the handset is plugged");
+                        break;
+
+                    default:
+                        Logger.d(getClass().getName(), "I have no idea what the headset state is");
+                        break;
+                }
+            }else if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
                 KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(Intent.EXTRA_KEY_EVENT);
                 if (keyEvent == null) return;
                 if (keyEvent.getAction() != KeyEvent.ACTION_DOWN)
@@ -643,7 +670,10 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         }
     }
 
-    public void stopForeground() {
-        stopForeground(true);
+    private class HandsetReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+        }
     }
+
 }

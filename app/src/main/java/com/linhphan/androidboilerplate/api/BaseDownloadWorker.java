@@ -1,13 +1,18 @@
 package com.linhphan.androidboilerplate.api;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 
 import com.linhphan.androidboilerplate.api.Parser.IParser;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.androidboilerplate.util.NetworkUtil;
+import com.linhphan.music.R;
 import com.linhphan.music.util.NoInternetConnectionException;
 
 import java.io.BufferedInputStream;
@@ -32,14 +37,28 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     protected Map<String, String> mParams;
     protected DownloadCallback mCallback;
     protected IParser mParser;
+
+    //progress dialog
     protected ProgressDialog mProgressbar;
-    protected boolean mIsProgressbarHorizontal;
-    protected boolean mIsShowProgressbar;
+
+    //exception
     protected Exception mException;
 
-    public BaseDownloadWorker(Context mContext, DownloadCallback mCallback) {
+    /**
+     * constructs an AsyncTask download worker. this will initialize a progress bar dialog with a STYLE_SPINNER if isShowDialog is set true
+     * @param isShowDialog if this argument is set true, then a dialog will be showed when this download worker is working.
+     * @param mCallback a callback which do something after the download worker is finish or error.
+     */
+    public BaseDownloadWorker(Context mContext, boolean isShowDialog, DownloadCallback mCallback) {
         this.mContext = mContext;
         this.mCallback = mCallback;
+
+        if (isShowDialog) {
+            this.mProgressbar = new ProgressDialog(this.mContext);
+            this.mProgressbar.setMessage("Please! wait a minute");
+            mProgressbar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressbar.setCancelable(false);
+        }
     }
 
     public BaseDownloadWorker setType(Method type) {
@@ -52,20 +71,50 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
         return this;
     }
 
-    public BaseDownloadWorker setParser(IParser jsonParser){
+    public BaseDownloadWorker setParser(IParser jsonParser) {
         mParser = jsonParser;
         return this;
     }
 
+    public BaseDownloadWorker setDialogCancelCallback(String buttonName, DialogInterface.OnClickListener callback) {
+        if (mProgressbar != null) {
+            mProgressbar.setButton(DialogInterface.BUTTON_NEGATIVE, buttonName, callback);
+        }
+        return this;
+    }
+
+    public BaseDownloadWorker setDialogTitle(String title) {
+        if (mProgressbar != null) {
+            if (title != null && !title.isEmpty()) {
+                mProgressbar.setTitle(title);
+            }
+        }
+        return this;
+    }
+
     /**
-     * setup the progressbar which will be showed on screen
-     * @param isShow     the progressbar will be showed if this parameter is true, otherwise nothing will be showed
-     * @param horizontal if this parameter is true then the progressbar will showed in horizontal style,
+     * set a message to the dialog, if
+     * @param message
+     * @return
+     */
+    public BaseDownloadWorker setDialogMessage(String message) {
+        if (mProgressbar != null) {
+            if (message != null && !message.isEmpty()) {
+                mProgressbar.setMessage(message);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * setup the horizontal progressbar which will be showed on screen
      * @return JsonDownloadWorker object
      */
-    public BaseDownloadWorker   showProgressbar(boolean isShow, boolean horizontal) {
-        mIsShowProgressbar = isShow;
-        this.mIsProgressbarHorizontal = horizontal;
+    public BaseDownloadWorker setHorizontalProgressbar() {
+        mProgressbar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressbar.setMax(100);
+        mProgressbar.setProgress(0);
+
         return this;
     }
 
@@ -78,24 +127,11 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
             return;
         }
 
-        if (mIsShowProgressbar) {
-            mProgressbar = new ProgressDialog(mContext);
-
-            //====
-            if (mIsProgressbarHorizontal) {
-                mProgressbar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                mProgressbar.setMax(100);
-                mProgressbar.setProgress(0);
-
-            } else {
-                mProgressbar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            }
-
-            mProgressbar.setMessage("Please! wait a minute");
-            mProgressbar.setCancelable(false);
+        if (mContext != null && mProgressbar != null) {
             mProgressbar.show();
         }
     }
+
     @Override
     protected Object doInBackground(String... params) {
         return null;
@@ -243,6 +279,22 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
         }
 
         return builder.toString();
+    }
+
+    /**
+     * show notification progress on notification bar. this will show the progress of downloading.
+     * @param contentText the message will be showed in the notification
+     * @param percent the percent of downloading progress
+     */
+    protected void showNotificationProgress(Context context, String contentText, int percent){
+        int notId = 898989;
+        Notification notification = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_download)
+                .setContentText(contentText)
+                .setProgress(100, percent, false)
+                .build();
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notId, notification);
     }
 
     protected String getTag() {

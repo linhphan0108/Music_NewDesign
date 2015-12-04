@@ -81,9 +81,8 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
         ArrayList<SongModel> songList = ContentManager.getInstance().getSongListByCategoryCode(mCategoryCode);
         if (songList == null || songList.size() <= 0) {
             String url = UrlProvider.getUrlFromCategoryCode(mCategoryCode);
-            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
+            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), true, this);
             worker.setParser(new JSoupSongListParser())
-                    .showProgressbar(true, false)
                     .execute(url);
         }
         mAdapter = new SongListAdapter(getActivity(), layoutResource, songList);
@@ -192,8 +191,8 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
         mPageSearchIndex = 1;
         query = mSearchKey.replace(" ", "+");
         String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
-        JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
-        worker.showProgressbar(true, false)
+        JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), true, this);
+        worker.setHorizontalProgressbar()
                 .setParser(new JSoupSearchParser())
                 .execute(url);
         mCategoryCode = DrawerNavigationUtil.SEARCH_CATEGORY_CODE;
@@ -221,8 +220,8 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
             Toast.makeText(getContext(), "load more songs", Toast.LENGTH_SHORT).show();
             String query = mSearchKey.replace(" ", "+");
             String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
-            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), this);
-            worker.showProgressbar(false, false)
+            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), true, this);
+            worker.setHorizontalProgressbar()
                     .setParser(new JSoupSearchParser())
                     .execute(url);
         }

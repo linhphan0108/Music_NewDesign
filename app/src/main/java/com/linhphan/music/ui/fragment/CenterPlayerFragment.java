@@ -1,5 +1,6 @@
 package com.linhphan.music.ui.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,8 +14,6 @@ import android.widget.Toast;
 
 import com.linhphan.androidboilerplate.api.FileDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
-import com.linhphan.androidboilerplate.util.AppUtil;
-import com.linhphan.androidboilerplate.util.FileUtil;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.androidboilerplate.util.TextUtil;
 import com.linhphan.music.R;
@@ -133,8 +132,16 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
         String fileName = contentManager.getCurrentPlayingSongTitle().trim();
         fileName = TextUtil.removeAccent(fileName);
         fileName += url.substring(url.length()-4, url.length());
-        FileDownloadWorker fileDownloadWorker = new FileDownloadWorker(getContext(), this);
-        fileDownloadWorker.showProgressbar(true, true);
+        final FileDownloadWorker fileDownloadWorker = new FileDownloadWorker(getContext(), true, this);
+        fileDownloadWorker
+                .setDialogMessage("Downloading, Please wait a bit")
+                .setHorizontalProgressbar()
+                .setDialogCancelCallback("Hide", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        fileDownloadWorker.showNotificationProgres();
+                    }
+                });
         fileDownloadWorker.execute(url, fileName);
     }
 

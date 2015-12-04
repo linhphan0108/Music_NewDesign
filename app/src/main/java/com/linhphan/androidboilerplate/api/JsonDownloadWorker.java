@@ -12,8 +12,8 @@ import java.io.IOException;
  */
 public class JsonDownloadWorker extends BaseDownloadWorker {
 
-    public JsonDownloadWorker(Context mContext, DownloadCallback mCallback) {
-        super(mContext, mCallback);
+    public JsonDownloadWorker(Context mContext, boolean isShowDialog, DownloadCallback mCallback) {
+        super(mContext, isShowDialog, mCallback);
     }
 
     @Override
