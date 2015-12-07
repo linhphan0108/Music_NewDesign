@@ -139,7 +139,7 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
                 .setDialogCancelCallback("Hide", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        fileDownloadWorker.showNotificationProgres();
+                        fileDownloadWorker.showNotificationProgress();
                     }
                 });
         fileDownloadWorker.execute(url, fileName);
@@ -157,7 +157,7 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ContentManager contentManager = ContentManager.getInstance();
         SongModel songModel = contentManager.getCurrentPlayingSong();
-        String directLink = songModel.getDirectlyDownloadPath()[position];
+        String directLink = songModel.getDirectlyDownloadPath().get(position);
         DownloadFile(directLink);
 
         Fragment fragment = getFragmentManager().findFragmentByTag(SingleChoiceFragment.class.getName());

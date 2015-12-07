@@ -115,12 +115,12 @@ public class ContentManager {
         }
     }
 
-    public void setDirectlyDownloadPathToCurrentPlayingSong(String[] arr){
+    public void setDirectlyDownloadPathToCurrentPlayingSong(ArrayList<String> arr){
         SongModel current = getCurrentPlayingSong();
         current.setDirectlyDownloadPath(arr);
     }
 
-    public String[] getDirectlyDownloadPathToCurrentPlayingSong(){
+    public ArrayList<String> getDirectlyDownloadPathOfCurrentPlayingSong(){
         SongModel current = getCurrentPlayingSong();
         return current.getDirectlyDownloadPath();
     }

@@ -1,6 +1,11 @@
 package com.linhphan.music.api.parser;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.linhphan.androidboilerplate.api.Parser.IParser;
+import com.linhphan.androidboilerplate.util.ListLruCache;
+import com.linhphan.androidboilerplate.util.Logger;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,6 +17,14 @@ import java.util.ArrayList;
  * Created by linhphan on 11/17/15.
  */
 public class JSoupDirectlyDownloadSongParser implements IParser {
+    private Context mContext;
+    private String mKey;
+
+    public JSoupDirectlyDownloadSongParser(Context context, String url) {
+        this.mContext = context;
+        this.mKey = url;
+    }
+
     @Override
     public Object parse(Object data) {
         ArrayList<String> arr = new ArrayList<>();
@@ -25,7 +38,10 @@ public class JSoupDirectlyDownloadSongParser implements IParser {
                 }
             }
         }
-        return convertArrayListToStringArray(arr);
+//        ListLruCache cache = ListLruCache.getInstance(mContext);
+//        cache.put(mKey, arr);
+//        Logger.d(getClass().getName(), "urls has been cached, urls' size " + arr.size());
+        return arr;
     }
 
     private String[] convertArrayListToStringArray(ArrayList<String> arr){

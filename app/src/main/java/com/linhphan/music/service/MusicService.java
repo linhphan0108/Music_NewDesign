@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.AppUtil;
+import com.linhphan.androidboilerplate.util.ListLruCache;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupDirectlyDownloadSongParser;
 import com.linhphan.music.ui.activity.PlayerActivity;
@@ -40,6 +41,7 @@ import com.linhphan.music.util.Utils;
 import com.linhphan.music.data.model.SongModel;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by linhphan on 10/22/15.
@@ -177,12 +179,13 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
     @Override
     public void onDownloadSuccessfully(Object data) {
-        if (data instanceof String[]) {
-            String[] urls = (String[]) data;
-            if (urls.length > 0) {
+        if (data instanceof ArrayList) {
+            @SuppressWarnings("unchecked")
+            ArrayList<String> urls = (ArrayList<String>) data;
+            if (urls.size() > 0) {
                 ContentManager contentManager = ContentManager.getInstance();
                 contentManager.setDirectlyDownloadPathToCurrentPlayingSong(urls);
-                play(urls[urls.length - 1]);
+                play(urls.get(urls.size() - 1));
                 mAttempted = 0;
             }
         }
@@ -299,7 +302,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     //==============================================================================================
-    private void initMediaPlayer(){
+    private void initMediaPlayer() {
         if (mp == null) {
             mp = new MediaPlayer();
         }
@@ -424,14 +427,26 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         SongModel songModel = contentManager.getSongAt(position);
         if (songModel != null) {
             String lastDirectDownloadPath = songModel.getLastDirectlyDownloadPath();
-            if (lastDirectDownloadPath == null || lastDirectDownloadPath.isEmpty()) {
-                Logger.d(getTag(), "get direct link from " + songModel.getPath());
-                JSoupDownloadWorker worker = new JSoupDownloadWorker(getBaseContext(), false, this);
-                worker.setParser(new JSoupDirectlyDownloadSongParser())
-                        .execute(songModel.getPath());
+            if (lastDirectDownloadPath != null && !lastDirectDownloadPath.isEmpty()) {
+                play(lastDirectDownloadPath);
+                Logger.d(getTag(), "got urls from content manager. urls");
 
             } else {
-                play(lastDirectDownloadPath);
+                //== get urls from cached memory
+//                ListLruCache cache = ListLruCache.getInstance(getBaseContext());
+//                ArrayList<String> urls = (ArrayList<String>) cache.get(songModel.getPath());
+//                if (urls != null && urls.size() > 0) {
+//                    Logger.d(getTag(), "got urls from cached memory. urls' size " + urls.size());
+//                    contentManager.setDirectlyDownloadPathToCurrentPlayingSong(urls);
+//                    lastDirectDownloadPath = songModel.getLastDirectlyDownloadPath();
+//                    play(lastDirectDownloadPath);
+//
+//                } else {//== download the directly links list from remote server.
+                    Logger.d(getTag(), "get direct link from " + songModel.getPath());
+                    JSoupDownloadWorker worker = new JSoupDownloadWorker(getBaseContext(), false, this);
+                    worker.setParser(new JSoupDirectlyDownloadSongParser(getBaseContext(), songModel.getPath()))
+                            .execute(songModel.getPath());
+//                }
             }
             mAttempted++;
             contentManager.setCurrentSongPosition(position);
@@ -452,7 +467,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         } else if (mServiceState == MusicServiceState.stopped) {
             mp.reset();
 
-        }else if (mServiceState == MusicServiceState.destroy){
+        } else if (mServiceState == MusicServiceState.destroy) {
 
             initMediaPlayer();
         } else if (mServiceState == MusicServiceState.preparing) {
@@ -606,11 +621,12 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
 
     private class MusicManagerReceiver extends BroadcastReceiver {
         private boolean isHandsetUnpluggedRecently = false;
+
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)){
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
                 int state = intent.getIntExtra("state", -1);
-                switch (state){
+                switch (state) {
                     case 0:
                         pause();
                         isHandsetUnpluggedRecently = true;
@@ -618,7 +634,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                         break;
 
                     case 1:
-                        if (isHandsetUnpluggedRecently){
+                        if (isHandsetUnpluggedRecently) {
                             play();
                             isHandsetUnpluggedRecently = false;
                         }
@@ -629,7 +645,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                         Logger.d(getClass().getName(), "I have no idea what the headset state is");
                         break;
                 }
-            }else if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
+            } else if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
                 KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(Intent.EXTRA_KEY_EVENT);
                 if (keyEvent == null) return;
                 if (keyEvent.getAction() != KeyEvent.ACTION_DOWN)
@@ -679,7 +695,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         }
     }
 
-    private class HandsetReceiver extends BroadcastReceiver{
+    private class HandsetReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
         }

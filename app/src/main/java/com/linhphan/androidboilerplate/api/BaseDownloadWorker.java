@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -32,7 +33,7 @@ import java.util.Map;
  * Created by linhphan on 11/17/15.
  */
 public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
-    protected Context mContext;
+    protected final WeakReference<Context> mContext;
     protected Method mType = Method.GET;//the method of request whether POST or GET, default value is GET
     protected Map<String, String> mParams;
     protected DownloadCallback mCallback;
@@ -50,11 +51,11 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
      * @param mCallback a callback which do something after the download worker is finish or error.
      */
     public BaseDownloadWorker(Context context, boolean isShowDialog, DownloadCallback mCallback) {
-        this.mContext = context;
+        this.mContext = new WeakReference<>(context);
         this.mCallback = mCallback;
 
-        if (isShowDialog && mContext != null) {
-            this.mProgressbar = new ProgressDialog(this.mContext);
+        if (isShowDialog && context != null) {
+            this.mProgressbar = new ProgressDialog(this.mContext.get());
             this.mProgressbar.setMessage("Please! wait a minute");
             mProgressbar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgressbar.setCancelable(false);
@@ -94,8 +95,6 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
 
     /**
      * set a message to the dialog, if
-     * @param message
-     * @return
      */
     public BaseDownloadWorker setDialogMessage(String message) {
         if (mProgressbar != null) {
@@ -122,12 +121,12 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        if (!NetworkUtil.isNetworkConnected(mContext)) {//determine whether internet connection is available
+        if (!NetworkUtil.isNetworkConnected(mContext.get())) {//determine whether internet connection is available
             this.mException = new NoInternetConnectionException();
             return;
         }
 
-        if (mContext != null && mProgressbar != null) {
+        if (mContext.get() != null && mProgressbar != null) {
             mProgressbar.show();
         }
     }

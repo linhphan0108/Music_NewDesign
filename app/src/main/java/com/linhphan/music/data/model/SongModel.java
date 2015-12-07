@@ -1,6 +1,7 @@
 package com.linhphan.music.data.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by linhphan on 10/22/15.
@@ -9,7 +10,7 @@ public class SongModel implements Serializable {
     private static final long serialVersionUID = 11111L;
     private String originPath;//the information web page
     private String path;//the web category download web page
-    private String[] mDirectlyDownloadPath;
+    private ArrayList<String> mDirectlyDownloadPath;
     private String title;
     private String artist;
     private String composer;
@@ -146,17 +147,17 @@ public class SongModel implements Serializable {
         this.duration = duration;
     }
 
-    public void setDirectlyDownloadPath(String[] arr){
+    public void setDirectlyDownloadPath(ArrayList<String> arr){
         mDirectlyDownloadPath = arr;
     }
 
-    public String[] getDirectlyDownloadPath(){
+    public ArrayList<String> getDirectlyDownloadPath(){
         return mDirectlyDownloadPath;
     }
 
     public String getLastDirectlyDownloadPath(){
-        if (mDirectlyDownloadPath != null && mDirectlyDownloadPath.length > 0){
-            return mDirectlyDownloadPath[mDirectlyDownloadPath.length -1];
+        if (mDirectlyDownloadPath != null && mDirectlyDownloadPath.size() > 0){
+            return mDirectlyDownloadPath.get(mDirectlyDownloadPath.size() -1);
         }else{
             return null;
         }

@@ -27,7 +27,7 @@ public class FileDownloadWorker extends BaseDownloadWorker {
     /**
      * the notification progress will be showed if this method is called.
      */
-    public void showNotificationProgres(){
+    public void showNotificationProgress(){
         mIsShowNotificationProgress = true;
     }
 
@@ -78,7 +78,7 @@ public class FileDownloadWorker extends BaseDownloadWorker {
             bufferedOutputStream.close();
             outputStream.close();
             //rescan media files
-            AppUtil.getInstance().reScanSystemFileAt(mContext, newFile);
+            AppUtil.getInstance().reScanSystemFileAt(mContext.get(), newFile);
             return newFile.getAbsolutePath();//locate the new downloaded file
 
         } catch (MalformedURLException e) {
@@ -95,9 +95,9 @@ public class FileDownloadWorker extends BaseDownloadWorker {
         if (mIsShowNotificationProgress){
             int percent = values[0];
             if (percent < 100) {
-                showNotificationProgress(mContext, "Downloading...", values[0]);
+                showNotificationProgress(mContext.get(), "Downloading...", values[0]);
             }else{
-                showNotificationProgress(mContext, "Completed!", values[0]);
+                showNotificationProgress(mContext.get(), "Completed!", values[0]);
             }
         }else {
             super.onProgressUpdate(values);

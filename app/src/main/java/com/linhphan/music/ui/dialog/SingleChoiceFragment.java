@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.linhphan.music.R;
 
+import java.util.ArrayList;
+
 /**
  * Created by linhphan on 11/27/15.
  */
@@ -23,12 +25,12 @@ public class SingleChoiceFragment extends DialogFragment{
     private ListView mLvSingleChoice;
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
-    private String[] mListItem;
+    private ArrayList<String> mListItem;
 
-    public static DialogFragment newInstance(String[] list){
+    public static DialogFragment newInstance(ArrayList<String> list){
         SingleChoiceFragment dialog = new SingleChoiceFragment();
         Bundle bundle = new Bundle();
-        bundle.putStringArray(ARG_ITEM_LIST, list);
+        bundle.putStringArrayList(ARG_ITEM_LIST, list);
         dialog.setArguments(bundle);
         return dialog;
     }
@@ -38,7 +40,7 @@ public class SingleChoiceFragment extends DialogFragment{
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null){
-            mListItem = getArguments().getStringArray(ARG_ITEM_LIST);
+            mListItem = getArguments().getStringArrayList(ARG_ITEM_LIST);
         }
 
     }
@@ -74,15 +76,15 @@ public class SingleChoiceFragment extends DialogFragment{
 
     //=========== list view's adapter ==============================================================
     class MyAdapter extends BaseAdapter{
-        private String[] itemList;
-        public MyAdapter(String[] list) {
+        private ArrayList<String> itemList;
+        public MyAdapter(ArrayList<String> list) {
             this.itemList = list;
         }
 
         @Override
         public int getCount() {
             if (itemList != null) {
-                return itemList.length;
+                return itemList.size();
             }else{
                 return 0;
             }
@@ -90,8 +92,8 @@ public class SingleChoiceFragment extends DialogFragment{
 
         @Override
         public Object getItem(int position) {
-            if (itemList != null && itemList.length > position){
-                return itemList[position];
+            if (itemList != null && itemList.size() > position){
+                return itemList.get(position);
             }else{
                 return null;
             }
@@ -108,7 +110,7 @@ public class SingleChoiceFragment extends DialogFragment{
                 convertView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
             }
             TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
-            String path = itemList[position];
+            String path = itemList.get(position);
             String title = path.substring(path.indexOf('[')+ 1, path.indexOf(']'));
             title = title.substring(0, 3) +"-"+ title.substring(3, title.length());
             textView.setText(title);
