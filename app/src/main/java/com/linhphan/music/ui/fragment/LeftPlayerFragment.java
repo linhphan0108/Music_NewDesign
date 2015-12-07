@@ -44,7 +44,9 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
         getWidgets(getView());
 
         SongModel songModel = ContentManager.getInstance().getCurrentPlayingSong();
-        checkAndShowSongInfo(songModel);
+        if(songModel != null) {
+            checkAndShowSongInfo(songModel);
+        }
     }
 
     @Override

@@ -49,11 +49,11 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
      * @param isShowDialog if this argument is set true, then a dialog will be showed when this download worker is working.
      * @param mCallback a callback which do something after the download worker is finish or error.
      */
-    public BaseDownloadWorker(Context mContext, boolean isShowDialog, DownloadCallback mCallback) {
-        this.mContext = mContext;
+    public BaseDownloadWorker(Context context, boolean isShowDialog, DownloadCallback mCallback) {
+        this.mContext = context;
         this.mCallback = mCallback;
 
-        if (isShowDialog) {
+        if (isShowDialog && mContext != null) {
             this.mProgressbar = new ProgressDialog(this.mContext);
             this.mProgressbar.setMessage("Please! wait a minute");
             mProgressbar.setProgressStyle(ProgressDialog.STYLE_SPINNER);

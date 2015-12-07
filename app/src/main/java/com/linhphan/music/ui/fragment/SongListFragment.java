@@ -187,13 +187,18 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     @Override
     public boolean onQueryTextSubmit(String query) {
         Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
+
+        int currentDisplayedCategory = ContentManager.getInstance().getCurrentDisplayedCategory();
+        if (currentDisplayedCategory == DrawerNavigationUtil.SEARCH_CATEGORY_CODE){
+            ContentManager.getInstance().getCurrentDisplayedList().clear();
+        }
+
         mSearchKey = query.trim();
         mPageSearchIndex = 1;
         query = mSearchKey.replace(" ", "+");
         String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
         JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), true, this);
-        worker.setHorizontalProgressbar()
-                .setParser(new JSoupSearchParser())
+        worker.setParser(new JSoupSearchParser())
                 .execute(url);
         mCategoryCode = DrawerNavigationUtil.SEARCH_CATEGORY_CODE;
         mIsSearchMode = true;
@@ -220,9 +225,8 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
             Toast.makeText(getContext(), "load more songs", Toast.LENGTH_SHORT).show();
             String query = mSearchKey.replace(" ", "+");
             String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
-            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), true, this);
-            worker.setHorizontalProgressbar()
-                    .setParser(new JSoupSearchParser())
+            JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), false, this);
+            worker.setParser(new JSoupSearchParser())
                     .execute(url);
         }
     }
