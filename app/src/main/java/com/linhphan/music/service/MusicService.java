@@ -25,7 +25,6 @@ import android.widget.Toast;
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
 import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.AppUtil;
-import com.linhphan.androidboilerplate.util.ListLruCache;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupDirectlyDownloadSongParser;
 import com.linhphan.music.ui.activity.PlayerActivity;
@@ -219,12 +218,15 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             case AudioManager.AUDIOFOCUS_GAIN:
                 Logger.e("audio focus", "AUDIOFOCUS_GAIN");
                 // resume playback
+                if (mServiceState != MusicServiceState.destroy) {
+                    play();
+                }
                 break;
 
             case AudioManager.AUDIOFOCUS_LOSS:
                 // Lost focus for an unbounded amount of time: stop playback and release media player
                 Logger.e("audio focus", "AUDIOFOCUS_LOSS");
-//                release();
+                release();
                 break;
 
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
@@ -232,6 +234,8 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                 // Lost focus for a short time, but we have to stop
                 // playback. We don't release the media player because playback
                 // is likely to resume
+                pause();
+                break;
 
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                 Logger.e("audio focus", "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
@@ -306,6 +310,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         if (mp == null) {
             mp = new MediaPlayer();
         }
+        mp.reset();
         mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mp.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         mp.setOnPreparedListener(this);
@@ -389,6 +394,18 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
             mp.stop();
             mServiceState = MusicServiceState.stopped;
         }
+    }
+
+    /**
+     * stop then release music player
+     */
+    private void release(){
+        stop();
+        stopForeground();
+        MusicService.this.stopSelf();
+        Message message = mHandler.obtainMessage();
+        message.what = MessageCode.DESTROYED.ordinal();
+        mHandler.sendMessage(message);
     }
 
     public void seekTo(int percentage) {
@@ -676,12 +693,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
                 } else if (intent.getAction().equals(MusicService.NOTIFY_PREVIOUS)) {
                     pre();
                 } else if (intent.getAction().equals(MusicService.NOTIFY_REMOVE)) {
-                    stop();
-                    stopForeground();
-                    MusicService.this.stopSelf();
-                    Message message = mHandler.obtainMessage();
-                    message.what = MessageCode.DESTROYED.ordinal();
-                    mHandler.sendMessage(message);
+                    release();
 
                 } else if (intent.getAction().equals(MusicService.NOTIFY_OPEN_MAIN_ACTIVITY)) {
                     Intent i = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);// close the status bar

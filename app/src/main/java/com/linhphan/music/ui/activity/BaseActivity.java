@@ -53,14 +53,8 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Intent musicServiceIntent = new Intent(this, MusicService.class);
-        boolean isBound = bindService(musicServiceIntent, serviceConnection, BIND_AUTO_CREATE);
+        bindService(musicServiceIntent, serviceConnection, BIND_AUTO_CREATE);
         startService(musicServiceIntent);
-
-        if (isBound) {
-            Logger.d(getTag(), "binding service return true");
-        } else {
-            Logger.d(getTag(), "binding service return false");
-        }
     }
 
     @Override
