@@ -23,6 +23,7 @@ import java.net.URL;
 public class FileDownloadWorker extends BaseDownloadWorker {
 
     private boolean mIsShowNotificationProgress;
+    private int mPreviousDownloadedProgress;
 
     /**
      * the notification progress will be showed if this method is called.
@@ -39,7 +40,7 @@ public class FileDownloadWorker extends BaseDownloadWorker {
     protected Object doInBackground(String... params) {
         if (mException != null)
             return null;
-
+        mPreviousDownloadedProgress = 0;
         String path = params[0];
         String fileName = params[1];
         try {
@@ -93,11 +94,14 @@ public class FileDownloadWorker extends BaseDownloadWorker {
     @Override
     protected void onProgressUpdate(Integer... values) {
         if (mIsShowNotificationProgress){
-            int percent = values[0];
-            if (percent < 100) {
-                showNotificationProgress(mContext.get(), "Downloading...", values[0]);
-            }else{
-                showNotificationProgress(mContext.get(), "Completed!", values[0]);
+            int recentPercent = values[0];
+            if (recentPercent > mPreviousDownloadedProgress + 1) {
+                if (recentPercent < 100) {
+                    showNotificationProgress(mContext.get(), "Downloading...", recentPercent);
+                } else {
+                    showNotificationProgress(mContext.get(), "Completed!", recentPercent);
+                }
+                mPreviousDownloadedProgress = recentPercent;
             }
         }else {
             super.onProgressUpdate(values);
