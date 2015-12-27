@@ -222,7 +222,7 @@ public class SongListFragment extends BaseFragment implements AbsListView.OnItem
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (mIsSearchMode && totalItemCount > 0  && firstVisibleItem + visibleItemCount == totalItemCount){
             mPageSearchIndex++;
-            Toast.makeText(getContext(), "load more songs", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.load_more), Toast.LENGTH_SHORT).show();
             String query = mSearchKey.replace(" ", "+");
             String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), false, this);

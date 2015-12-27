@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Music</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Cài Đặt</string>
+    <string name="action_volume">Âm Thanh</string>
+    <string name="action_search">Tìm Kiếm</string>
+
+    <!--drawer navigation-->
+    <string name="openDrawer">opened</string>
+    <string name="closeDrawer">closed</string>
+    <string name="group_item_vietnam">Nhạc Việt</string>
+    <string name="group_item_english">Nhạc Anh</string>
+    <string name="group_item_korea">Nhạc Hàn</string>
+    <string name="group_item_china">Nhạc Trung</string>
+    <string name="music_type_pop">Nhạc Pop</string>
+    <string name="music_type_dance">Nhạc Dance</string>
+    <string name="music_type_rap">Nhạc Rap</string>
+    <string name="music_type_remix">Nhạc Remix</string>
+    <string name="music_type_country">Nhạc Quê Hương</string>
+    <string name="music_type_hot">Nhạc Hot</string>
+    <string name="music_type_current">Đang Chơi</string>
+    <string name="music_type_search_result">Search Result</string>
+
+
+    <string name="text_view_unknown">Unknown</string>
+    <string name="text_view_empty">Không có dữ liệu</string>
+
+    <string name="downloading">Đang Tải&#8230;</string>
+    <string name="wait_downloading">Đang Tải, Chờ tý nhé</string>
+    <string name="hide">Ẩn</string>
+    <string name="completed">Hoàn tất</string>
+    <string name="load_more">Tải thêm bài hát</string>
+</resources>

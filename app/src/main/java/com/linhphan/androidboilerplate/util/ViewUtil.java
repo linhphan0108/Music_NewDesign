@@ -31,6 +31,9 @@ public class ViewUtil {
     }
 
     public static void hideKeyBoard(Activity activity){
+        if (activity == null){
+            return;
+        }
         InputMethodManager manager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
     }

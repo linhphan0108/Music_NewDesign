@@ -134,9 +134,9 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
         fileName += url.substring(url.length()-4, url.length());
         final FileDownloadWorker fileDownloadWorker = new FileDownloadWorker(getContext(), true, this);
         fileDownloadWorker
-                .setDialogMessage("Downloading, Please wait a bit")
+                .setDialogMessage(getContext().getString(R.string.wait_downloading))
                 .setHorizontalProgressbar()
-                .setDialogCancelCallback("Hide", new DialogInterface.OnClickListener() {
+                .setDialogCancelCallback(getContext().getString(R.string.hide), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         fileDownloadWorker.showNotificationProgress();

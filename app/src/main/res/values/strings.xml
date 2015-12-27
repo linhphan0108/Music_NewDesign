@@ -9,20 +9,26 @@
     <!--drawer navigation-->
     <string name="openDrawer">opened</string>
     <string name="closeDrawer">closed</string>
-    <string name="group_item_vietnam">Nhạc Việt</string>
-    <string name="group_item_english">Nhạc Anh</string>
-    <string name="group_item_korea">Nhạc Hàn</string>
-    <string name="group_item_china">Nhạc Trung</string>
-    <string name="music_type_pop">Nhạc Trẻ</string>
-    <string name="music_type_dance">Nhạc Dance</string>
-    <string name="music_type_rap">Nhạc Rap</string>
-    <string name="music_type_remix">Nhạc Remix</string>
-    <string name="music_type_country">Nhạc Quê Hương</string>
-    <string name="music_type_hot">Nhạc Hot</string>
-    <string name="music_type_current">Đang Chơi</string>
+    <string name="group_item_vietnam">Vietnamese Music</string>
+    <string name="group_item_english">English Music</string>
+    <string name="group_item_korea">Korean Music</string>
+    <string name="group_item_china">Chinese Music</string>
+    <string name="music_type_pop">Pop</string>
+    <string name="music_type_dance">Dance</string>
+    <string name="music_type_rap">Rap</string>
+    <string name="music_type_remix">Remix</string>
+    <string name="music_type_country">Country</string>
+    <string name="music_type_hot">Hot</string>
+    <string name="music_type_current">Playing</string>
     <string name="music_type_search_result">Search Result</string>
 
 
     <string name="text_view_unknown">Unknown</string>
     <string name="text_view_empty">no data here</string>
+
+    <string name="downloading">Downloading&#8230;</string>
+    <string name="wait_downloading">Downloading, Please wait a bit</string>
+    <string name="hide">Hide</string>
+    <string name="completed">Completed</string>
+    <string name="load_more">load more songs</string>
 </resources>

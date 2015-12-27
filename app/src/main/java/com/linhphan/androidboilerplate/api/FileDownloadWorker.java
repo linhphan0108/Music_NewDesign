@@ -6,6 +6,7 @@ import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.androidboilerplate.util.FileUtil;
 import com.linhphan.androidboilerplate.util.Logger;
+import com.linhphan.music.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -96,10 +97,11 @@ public class FileDownloadWorker extends BaseDownloadWorker {
         if (mIsShowNotificationProgress){
             int recentPercent = values[0];
             if (recentPercent > mPreviousDownloadedProgress + 1) {
+                Context context = mContext.get();
                 if (recentPercent < 100) {
-                    showNotificationProgress(mContext.get(), "Downloading...", recentPercent);
+                    showNotificationProgress(context, context.getString(R.string.downloading), recentPercent);
                 } else {
-                    showNotificationProgress(mContext.get(), "Completed!", recentPercent);
+                    showNotificationProgress(context, context.getString(R.string.completed), recentPercent);
                 }
                 mPreviousDownloadedProgress = recentPercent;
             }
