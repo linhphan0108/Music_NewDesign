@@ -29,7 +29,7 @@ import com.linhphan.music.util.Utils;
 
 import me.relex.circleindicator.CircleIndicator;
 
-public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChangeListener, Handler.Callback, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class PlayerActivity extends BaseMusicActivity implements ViewPager.OnPageChangeListener, Handler.Callback, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private ViewPager mViewPager;
     private ViewPagerPlayerAdapter mAdapter;
@@ -46,7 +46,6 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player);
 
         getWidgets();
         registerEventHandler();
@@ -80,7 +79,37 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.no_sliding, R.anim.animation_sliding_down);
+        overridePendingTransition(R.anim.no_slide, R.anim.slide_exit_down);
+    }
+
+    @Override
+    protected int getActivityLayoutResource() {
+        return R.layout.activity_player;
+    }
+
+    @Override
+    protected void getWidgets() {
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mCircleIndicator = (CircleIndicator) findViewById(R.id.tab_indicator);
+        mSbLoading = (SeekBar) findViewById(R.id.sb_loading);
+        mTxtTimer = (TextView) findViewById(R.id.txt_timer);
+        mImgButtonPlay = (ImageButton) findViewById(R.id.img_btn_play);
+        mImgButtonPaused = (ImageButton) findViewById(R.id.img_btn_pause);
+        mImgButtonNext = (ImageButton) findViewById(R.id.img_btn_next);
+        mImgButtonPre = (ImageButton) findViewById(R.id.img_btn_previous);
+        mImgButtonRepeat = (ImageButton) findViewById(R.id.img_btn_repeat);
+        mImgButtonShuffle = (ImageButton) findViewById(R.id.img_btn_shuffle);
+    }
+
+    @Override
+    protected void registerEventHandler() {
+        mImgButtonPlay.setOnClickListener(this);
+        mImgButtonPaused.setOnClickListener(this);
+        mSbLoading.setOnSeekBarChangeListener(this);
+        mImgButtonNext.setOnClickListener(this);
+        mImgButtonPre.setOnClickListener(this);
+        mImgButtonRepeat.setOnClickListener(this);
+        mImgButtonShuffle.setOnClickListener(this);
     }
 
     //========= view pager callback ================================================================
@@ -213,28 +242,7 @@ public class PlayerActivity extends BaseActivity implements ViewPager.OnPageChan
         }
     }
 
-    private void getWidgets() {
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mCircleIndicator = (CircleIndicator) findViewById(R.id.tab_indicator);
-        mSbLoading = (SeekBar) findViewById(R.id.sb_loading);
-        mTxtTimer = (TextView) findViewById(R.id.txt_timer);
-        mImgButtonPlay = (ImageButton) findViewById(R.id.img_btn_play);
-        mImgButtonPaused = (ImageButton) findViewById(R.id.img_btn_pause);
-        mImgButtonNext = (ImageButton) findViewById(R.id.img_btn_next);
-        mImgButtonPre = (ImageButton) findViewById(R.id.img_btn_previous);
-        mImgButtonRepeat = (ImageButton) findViewById(R.id.img_btn_repeat);
-        mImgButtonShuffle = (ImageButton) findViewById(R.id.img_btn_shuffle);
-    }
 
-    private void registerEventHandler() {
-        mImgButtonPlay.setOnClickListener(this);
-        mImgButtonPaused.setOnClickListener(this);
-        mSbLoading.setOnSeekBarChangeListener(this);
-        mImgButtonNext.setOnClickListener(this);
-        mImgButtonPre.setOnClickListener(this);
-        mImgButtonRepeat.setOnClickListener(this);
-        mImgButtonShuffle.setOnClickListener(this);
-    }
 
     private void setupViewPager() {
         mAdapter = new ViewPagerPlayerAdapter(getSupportFragmentManager());

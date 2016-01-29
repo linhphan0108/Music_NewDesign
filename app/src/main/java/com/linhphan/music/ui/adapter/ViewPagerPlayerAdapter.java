@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.linhphan.music.R;
-import com.linhphan.music.ui.fragment.BaseFragment;
+import com.linhphan.music.ui.fragment.BaseMusicFragment;
 import com.linhphan.music.ui.fragment.CenterPlayerFragment;
 import com.linhphan.music.ui.fragment.LeftPlayerFragment;
 import com.linhphan.music.ui.fragment.SongListFragment;
@@ -29,18 +29,18 @@ public class ViewPagerPlayerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                mLeftPlayerInstance = BaseFragment.newInstance(LeftPlayerFragment.class, null);
+                mLeftPlayerInstance = BaseMusicFragment.newInstance(LeftPlayerFragment.class, null);
                 return mLeftPlayerInstance;
 
             case 1:
-                mCentralPlayerInstance = BaseFragment.newInstance(CenterPlayerFragment.class, null);
+                mCentralPlayerInstance = BaseMusicFragment.newInstance(CenterPlayerFragment.class, null);
                 return mCentralPlayerInstance;
 
             case 2:
                 Bundle bundle = new Bundle();
                 bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, ContentManager.getInstance().getCurrentPlayingCategory());
                 bundle.putInt(SongListFragment.ARGUMENT_KEY_LAYOUT_RESOURCE_ID, R.layout.song_item_white_solid);
-                mRightPlayerInstance =  BaseFragment.newInstance(SongListFragment.class, bundle);
+                mRightPlayerInstance =  BaseMusicFragment.newInstance(SongListFragment.class, bundle);
                 return mRightPlayerInstance;
 
             default:

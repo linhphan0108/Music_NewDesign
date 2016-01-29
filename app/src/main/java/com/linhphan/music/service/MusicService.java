@@ -22,8 +22,8 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.linhphan.androidboilerplate.api.BaseDownloadWorker;
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
-import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupDirectlyDownloadSongParser;
@@ -45,7 +45,7 @@ import java.util.ArrayList;
 /**
  * Created by linhphan on 10/22/15.
  */
-public class MusicService extends Service implements DownloadCallback, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
+public class MusicService extends Service implements BaseDownloadWorker.DownloadCallback, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, AudioManager.OnAudioFocusChangeListener {
 
     public static final String NOTIFY_PREVIOUS = "uit.linh.online.music.previous";
@@ -175,9 +175,8 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     //================== AsyncTask callback ========================================================
-
     @Override
-    public void onDownloadSuccessfully(Object data) {
+    public void onSuccessfully(Object data, int requestCode, int responseCode) {
         if (data instanceof ArrayList) {
             @SuppressWarnings("unchecked")
             ArrayList<String> urls = (ArrayList<String>) data;
@@ -191,7 +190,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
     }
 
     @Override
-    public void onDownloadFailed(Exception e) {
+    public void onFailed(Exception e, int requestCode, int responseCode) {
         if (e instanceof NoInternetConnectionException) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -252,7 +251,7 @@ public class MusicService extends Service implements DownloadCallback, MediaPlay
         return getClass().getName();
     }
 
-    public void setupHandler(Handler handler) {
+    public void setHandler(Handler handler) {
         this.mHandler = handler;
         ContentManager contentManager = ContentManager.getInstance();
         Logger.d(getTag(), "the current position song: " + contentManager.getCurrentPlayingSongPosition());

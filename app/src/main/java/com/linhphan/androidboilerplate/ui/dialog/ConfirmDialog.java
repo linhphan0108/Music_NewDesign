@@ -50,7 +50,7 @@ public class ConfirmDialog extends DialogFragment {
 
     /**
      * set up callback listeners to the dialog fragment
-     * @param callback the callback mHandler
+     * @param callback the callback handler
      */
     public void registerCallback(ConfirmDialogCallback callback){
         this.callback = callback;

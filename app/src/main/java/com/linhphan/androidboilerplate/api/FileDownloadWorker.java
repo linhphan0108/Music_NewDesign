@@ -2,7 +2,6 @@ package com.linhphan.androidboilerplate.api;
 
 import android.content.Context;
 
-import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.AppUtil;
 import com.linhphan.androidboilerplate.util.FileUtil;
 import com.linhphan.androidboilerplate.util.Logger;
@@ -26,6 +25,12 @@ public class FileDownloadWorker extends BaseDownloadWorker {
     private boolean mIsShowNotificationProgress;
     private int mPreviousDownloadedProgress;
 
+    //========= constructors =======================================================================
+    public FileDownloadWorker(Context mContext, boolean isShowDialog, DownloadCallback mCallback) {
+        super(mContext, isShowDialog, mCallback);
+    }
+
+    //========= setters and getters ================================================================
     /**
      * the notification progress will be showed if this method is called.
      */
@@ -33,17 +38,17 @@ public class FileDownloadWorker extends BaseDownloadWorker {
         mIsShowNotificationProgress = true;
     }
 
-    public FileDownloadWorker(Context mContext, boolean isShowDialog, DownloadCallback mCallback) {
-        super(mContext,isShowDialog, mCallback);
-    }
-
+    //========== overridden methods ================================================================
     @Override
     protected Object doInBackground(String... params) {
         if (mException != null)
             return null;
-        mPreviousDownloadedProgress = 0;
-        String path = params[0];
-        String fileName = params[1];
+        String path;
+        String fileName = "default";
+        path = params[0];
+        if (params.length >= 2) {
+            fileName = params[1];
+        }
         try {
             URL url = new URL(path);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -70,8 +75,17 @@ public class FileDownloadWorker extends BaseDownloadWorker {
             int count;
             while ((count = inputStream.read(buffer)) != -1) {
                 total += count;
-                // publishing the progress....
-                publishProgress((int)(total*100/contentLength));
+
+                int percent = (int) (total * 100 / contentLength);
+                if (mProgressbar.isShowing()) {// publishing the progress....
+                    publishProgress(percent);
+                } else {//show the progress in notification bar.
+                    if (percent < 100) {
+                        showNotificationProgress(mContext.get(), "Downloading...", percent);
+                    } else {
+                        showNotificationProgress(mContext.get(), "Completed!", percent);
+                    }
+                }
                 bufferedOutputStream.write(buffer, 0, count);
             }
 

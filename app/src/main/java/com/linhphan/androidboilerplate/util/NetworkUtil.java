@@ -9,12 +9,25 @@ import android.net.NetworkInfo;
  */
 public class NetworkUtil {
 
+    /**
+     * determine whether user has a available network connection;
+     * @return true if network is available otherwise return false;
+     */
     public static boolean isNetworkConnected(Context context){
-        if (context == null){
-            Logger.e("network util", "context is null when checking network state");
-            return false;}
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
         return info != null && info.isConnectedOrConnecting();
+    }
+
+    public static boolean isWifiConnected(Context context){
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        return info != null && info.isConnectedOrConnecting() && info.getType() == ConnectivityManager.TYPE_WIFI;
+    }
+
+    public static boolean isBlueToothConnected(Context context){
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        return info != null && info.isConnectedOrConnecting() && info.getType() == ConnectivityManager.TYPE_BLUETOOTH;
     }
 }

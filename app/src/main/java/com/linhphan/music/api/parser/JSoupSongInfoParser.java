@@ -1,5 +1,6 @@
 package com.linhphan.music.api.parser;
 
+import com.linhphan.androidboilerplate.api.BaseDownloadWorker;
 import com.linhphan.androidboilerplate.api.Parser.IParser;
 import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.util.ContentManager;
@@ -12,7 +13,7 @@ import org.jsoup.select.Elements;
  */
 public class JSoupSongInfoParser implements IParser {
     @Override
-    public Object parse(Object data) {
+    public Object parse(Object data, BaseDownloadWorker.ResponseCodeHolder responseCode) {
         SongModel songModel = null;
         if (data instanceof Element){
             Element root = (Element) data;

@@ -50,8 +50,11 @@ public class FileUtil {
         OutputStream outputStream;
 
         File dir = new File(DestinationDir);
-        if (!dir.exists())
-            dir.mkdirs();
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                return null;
+            }
+        }
 
         try {
             inputStream = new BufferedInputStream(new FileInputStream(sourceDir + fileName));

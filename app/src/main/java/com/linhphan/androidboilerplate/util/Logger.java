@@ -4,14 +4,13 @@ import android.util.Log;
 
 import com.linhphan.music.BuildConfig;
 
-
 /**
  * Created by linhphan on 11/11/15.
  */
 public class Logger {
 
     public static void i(String tag, String msg){
-        if (BuildConfig .DEBUG){
+        if (BuildConfig.DEBUG){
             Log.i(tag, msg);
         }
     }

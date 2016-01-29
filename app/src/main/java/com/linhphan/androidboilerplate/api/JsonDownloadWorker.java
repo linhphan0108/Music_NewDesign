@@ -2,7 +2,6 @@ package com.linhphan.androidboilerplate.api;
 
 import android.content.Context;
 
-import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;
 
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.io.IOException;
  */
 public class JsonDownloadWorker extends BaseDownloadWorker {
 
-    public JsonDownloadWorker(Context mContext, boolean isShowDialog, DownloadCallback mCallback) {
+    public JsonDownloadWorker(Context mContext, boolean isShowDialog,DownloadCallback mCallback) {
         super(mContext, isShowDialog, mCallback);
     }
 
@@ -31,7 +30,7 @@ public class JsonDownloadWorker extends BaseDownloadWorker {
             }
             Logger.i(getClass().getName(), "got data from server: " + data);
             if (mParser != null)
-                return mParser.parse(data);
+                return mParser.parse(data, mResponseCode);
             else
                 return data;
         } catch (IOException e) {

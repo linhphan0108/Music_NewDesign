@@ -28,7 +28,7 @@ import com.linhphan.music.data.model.SongModel;
  * Use the {@link ControllerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+public class ControllerFragment extends BaseMusicFragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,26 +58,10 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_controller, container, false);
-    }
-
+    //================== overridden methods ========================================================
     @Override
     public void onStart() {
         super.onStart();
-        getWidgets(getView());
-        registerEventHandlers();
         getAndDisplayCurrentSongInfo();
     }
 
@@ -99,7 +83,35 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
         mListener = null;
     }
 
-    //=============== click event of views is handled here
+    @Override
+    protected int getFragmentLayoutResource() {
+        return R.layout.fragment_controller;
+    }
+
+    @Override
+    protected void init() {
+
+    }
+
+    @Override
+    protected void getWidgets(View root) {
+        if (root == null) return;
+        mSbLoading = (SeekBar) root.findViewById(R.id.sb_loading);
+        mTxtDuration = (TextView) root.findViewById(R.id.txt_duration);
+        mTxtCurrentTitle = (TextView) root.findViewById(R.id.txt_current_song_title);
+        mTxtCurrentArtistName = (TextView) root.findViewById(R.id.txt_current_artist);
+        mImgButtonPlay = (ImageButton) root.findViewById(R.id.img_btn_play);
+        mImgButtonPaused = (ImageButton) root.findViewById(R.id.img_btn_pause);
+        mFrmSongInfo = (FrameLayout) root.findViewById(R.id.frame_layout_song_info);
+    }
+
+    @Override
+    protected void registerEventHandler() {
+
+    }
+
+    //========== implemented methods ===============================================================
+    //click event of views is handled here
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -114,12 +126,12 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
             case R.id.frame_layout_song_info:
                 Intent intent = new Intent(getActivity(), PlayerActivity.class);
                 getContext().startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.animation_sliding_up, R.anim.no_sliding);
+                getActivity().overridePendingTransition(R.anim.slide_enter_up, R.anim.no_slide);
                 break;
         }
     }
 
-    //=============== SeekBar callback handlers ====================================================
+    // SeekBar callback handlers
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
@@ -134,20 +146,7 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
     public void onStopTrackingTouch(SeekBar seekBar) {
         mListener.onControlSeekTo(seekBar.getProgress());
     }
-    //==============================================================================================
-
-
-    private void getWidgets(View root) {
-        if (root == null) return;
-        mSbLoading = (SeekBar) root.findViewById(R.id.sb_loading);
-        mTxtDuration = (TextView) root.findViewById(R.id.txt_duration);
-        mTxtCurrentTitle = (TextView) root.findViewById(R.id.txt_current_song_title);
-        mTxtCurrentArtistName = (TextView) root.findViewById(R.id.txt_current_artist);
-        mImgButtonPlay = (ImageButton) root.findViewById(R.id.img_btn_play);
-        mImgButtonPaused = (ImageButton) root.findViewById(R.id.img_btn_pause);
-        mFrmSongInfo = (FrameLayout) root.findViewById(R.id.frame_layout_song_info);
-    }
-
+    //============ other methods ===================================================================
     private void registerEventHandlers() {
         mSbLoading.setOnSeekBarChangeListener(this);
         mImgButtonPaused.setOnClickListener(this);
@@ -155,7 +154,7 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
         mFrmSongInfo.setOnClickListener(this);
     }
 
-    private void getAndDisplayCurrentSongInfo(){
+    private void getAndDisplayCurrentSongInfo() {
         ContentManager contentManager = ContentManager.getInstance();
         SongModel songModel = contentManager.getCurrentPlayingSong();
         if (songModel == null) return;
@@ -179,6 +178,7 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
 
     /**
      * update paused or playing buttons
+     *
      * @param paused true if media player is paused
      */
     public void updatePausedOrPlayingButton(boolean paused) {
@@ -191,12 +191,13 @@ public class ControllerFragment extends BaseFragment implements SeekBar.OnSeekBa
         }
     }
 
+    //========= inner classes and interfaces =======================================================
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

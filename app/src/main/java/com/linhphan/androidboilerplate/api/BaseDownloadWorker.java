@@ -9,11 +9,9 @@ import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 
 import com.linhphan.androidboilerplate.api.Parser.IParser;
-import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.androidboilerplate.util.NetworkUtil;
 import com.linhphan.music.R;
-import com.linhphan.music.util.NoInternetConnectionException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -34,10 +32,14 @@ import java.util.Map;
  */
 public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     protected final WeakReference<Context> mContext;
+
     protected Method mType = Method.GET;//the method of request whether POST or GET, default value is GET
     protected Map<String, String> mParams;
-    protected DownloadCallback mCallback;
     protected IParser mParser;
+
+    private DownloadCallback mCallback;
+    private int mRequestCode = DownloadCallback.UNKNOWN_CODE;
+    protected ResponseCodeHolder mResponseCode = new ResponseCodeHolder();
 
     //progress dialog
     protected ProgressDialog mProgressbar;
@@ -45,6 +47,7 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     //exception
     protected Exception mException;
 
+    //================== constructors ==============================================================
     /**
      * constructs an AsyncTask download worker. this will initialize a progress bar dialog with a STYLE_SPINNER if isShowDialog is set true
      * @param isShowDialog if this argument is set true, then a dialog will be showed when this download worker is working.
@@ -62,6 +65,12 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
         }
     }
 
+    //================= setters and getters ========================================================
+    public BaseDownloadWorker setRequestCode(int requestCode){
+        this.mRequestCode = requestCode;
+        return this;
+    }
+
     public BaseDownloadWorker setType(Method type) {
         this.mType = type;
         return this;
@@ -74,6 +83,77 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
 
     public BaseDownloadWorker setParser(IParser jsonParser) {
         mParser = jsonParser;
+        return this;
+    }
+
+    //================== overridden methods ========================================================
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        if (!NetworkUtil.isNetworkConnected(mContext.get())) {//determine whether internet connection is available
+            this.mException = new NoInternetConnectionException();
+            return;
+        }
+
+        if (mContext.get() != null && mProgressbar != null) {
+            mProgressbar.show();
+        }
+    }
+
+    /**
+     *this method should be overridden in it's sub classes
+     */
+    @Override
+    protected Object doInBackground(String... params) {
+        return null;
+    }
+
+
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        if (mException == null)
+            mCallback.onSuccessfully(o, mRequestCode, mResponseCode.getValue());
+        else {
+            mCallback.onFailed(mException, mRequestCode, mResponseCode.getValue());
+        }
+        if (mProgressbar != null && mProgressbar.isShowing())
+            mProgressbar.dismiss();
+
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+        if (mProgressbar != null && mProgressbar.isShowing())
+            mProgressbar.setProgress(values[0]);
+    }
+
+    @Override
+    protected void onCancelled(Object o) {
+        if (mProgressbar != null && mProgressbar.isShowing())
+            mProgressbar.dismiss();
+        super.onCancelled(o);
+    }
+
+    @Override
+    protected void onCancelled() {
+        if (mProgressbar != null && mProgressbar.isShowing())
+            mProgressbar.dismiss();
+        super.onCancelled();
+    }
+
+    //================== other methods =============================================================
+    /**
+     * the progressbar will be cancelable when user touches anywhere outside the dialog if this method is called.
+     * default is false.
+     * @return the current instance.
+     */
+    public BaseDownloadWorker setDialogCancelable(){
+        if (mProgressbar != null){
+            mProgressbar.setCancelable(true);
+        }
         return this;
     }
 
@@ -115,46 +195,6 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
         mProgressbar.setProgress(0);
 
         return this;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-        if (!NetworkUtil.isNetworkConnected(mContext.get())) {//determine whether internet connection is available
-            this.mException = new NoInternetConnectionException();
-            return;
-        }
-
-        if (mContext.get() != null && mProgressbar != null) {
-            mProgressbar.show();
-        }
-    }
-
-    @Override
-    protected Object doInBackground(String... params) {
-        return null;
-    }
-
-
-    @Override
-    protected void onPostExecute(Object o) {
-        super.onPostExecute(o);
-        if (mException == null)
-            mCallback.onDownloadSuccessfully(o);
-        else {
-            mCallback.onDownloadFailed(mException);
-        }
-        if (mProgressbar != null && mProgressbar.isShowing())
-            mProgressbar.dismiss();
-
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
-        if (mProgressbar != null && mProgressbar.isShowing())
-            mProgressbar.setProgress(values[0]);
     }
 
     /**
@@ -288,7 +328,7 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     protected void showNotificationProgress(Context context, String contentText, int percent){
         int notId = 898989;
         Notification notification = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_download)
+                .setSmallIcon(R.mipmap.ic_music_launcher)
                 .setContentText(contentText)
                 .setProgress(100, percent, false)
                 .build();
@@ -298,5 +338,49 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
 
     protected String getTag() {
         return getClass().getName();
+    }
+
+    //=========== inner classes ====================================================================
+    public enum Method {
+        GET, POST
+    }
+
+    /**
+     * this class will be used to instance an object which is passed to an parser as a parameter to get the response code from server.
+     */
+    public class ResponseCodeHolder {
+        private int value = DownloadCallback.UNKNOWN_CODE;
+
+        public ResponseCodeHolder() {
+        }
+
+        public ResponseCodeHolder(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+    }
+
+    public interface DownloadCallback {
+        public static final int UNKNOWN_CODE = 1000;
+        public static final int RESPONSE_CODE_SUCCESSFULLY = 10000;
+        public static final int RESPONSE_Code_UNKNOWN_REQUEST = 11000;
+        public static final int RESPONSE_CODE_MISSING_PARAMS = 12000;
+
+        void onSuccessfully(Object data, int requestCode, int responseCode);
+        void onFailed(Exception e, int requestCode, int responseCode);
+    }
+
+    public class NoInternetConnectionException extends Exception {
+        @Override
+        public String getMessage() {
+            return "No internet connection available";
+        }
     }
 }

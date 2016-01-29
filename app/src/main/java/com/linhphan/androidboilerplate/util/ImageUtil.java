@@ -22,7 +22,9 @@ public class ImageUtil {
     public static String storeBitmap(Bitmap bitmap, String dir, String name) {
         File directory = new File(dir);
         if (directory.isDirectory()) {
-            directory.mkdirs();
+            if(!directory.mkdirs()){
+                return null;
+            }
         }
 
         File file = new File(directory + name);

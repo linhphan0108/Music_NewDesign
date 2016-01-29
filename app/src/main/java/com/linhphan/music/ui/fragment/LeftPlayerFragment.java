@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.linhphan.androidboilerplate.api.BaseDownloadWorker;
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
-import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.ViewUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupSongInfoParser;
@@ -19,12 +19,13 @@ import com.linhphan.music.util.ContentManager;
 import com.linhphan.music.util.NoInternetConnectionException;
 import com.squareup.picasso.Picasso;
 
-public class LeftPlayerFragment extends BaseFragment implements DownloadCallback {
+public class LeftPlayerFragment extends BaseMusicFragment implements BaseDownloadWorker.DownloadCallback {
 
     private TextView txtTitle, txtArtists, txtComposer, txtAlbum, txtYear, txtViewed, txtDownloaded;
     private EditText edtLyrics;
     private ImageView imgCover;
 
+    //========== overridden methods ================================================================
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,20 +54,18 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
         super.onDetach();
     }
 
-    //============ AsyncTask download callback =====================================================
     @Override
-    public void onDownloadSuccessfully(Object data) {
-        showSongInfo((SongModel) data);
+    protected int getFragmentLayoutResource() {
+        return 0;
     }
 
     @Override
-    public void onDownloadFailed(Exception e) {
-        if (e instanceof NoInternetConnectionException)
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-    }
-    //====
+    protected void init() {
 
-    private void getWidgets(View root) {
+    }
+
+    @Override
+    protected void getWidgets(View root) {
         imgCover = (ImageView) root.findViewById(R.id.img_cover);
         txtTitle = (TextView) root.findViewById(R.id.txt_title);
         txtArtists = (TextView) root.findViewById(R.id.txt_artists);
@@ -78,6 +77,25 @@ public class LeftPlayerFragment extends BaseFragment implements DownloadCallback
         edtLyrics = (EditText) root.findViewById(R.id.edt_lyrics);
     }
 
+    @Override
+    protected void registerEventHandler() {
+
+    }
+
+    //============ implemented methods  ============================================================
+
+    @Override
+    public void onSuccessfully(Object data, int requestCode, int responseCode) {
+        showSongInfo((SongModel) data);
+    }
+
+    @Override
+    public void onFailed(Exception e, int requestCode, int responseCode) {
+        if (e instanceof NoInternetConnectionException)
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    //========= other methods ======================================================================
     private void showSongInfo(SongModel songModel) {
         if (songModel == null) return;
 

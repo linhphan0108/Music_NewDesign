@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.linhphan.music.R;
-import com.linhphan.music.ui.fragment.BaseFragment;
+import com.linhphan.music.ui.fragment.BaseMusicFragment;
 import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.androidboilerplate.util.Logger;
@@ -26,7 +26,7 @@ import com.linhphan.music.ui.fragment.ControllerFragment;
 import com.linhphan.music.ui.fragment.SongListFragment;
 import com.linhphan.music.data.model.SongModel;
 
-public class HomeActivity extends BaseActivity implements Handler.Callback, ControllerFragment.OnFragmentInteractionListener,
+public class HomeActivity extends BaseMusicActivity implements Handler.Callback, ControllerFragment.OnFragmentInteractionListener,
         View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
@@ -39,14 +39,13 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
     private ControllerFragment mControllerFragment;
 
 
+    //=========== overridden methods ===============================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
 
         setupToolbar();//setup toolbar
         setupNavigationView();
-        getAllWidget();
         registerEventHandler();
 
         mBaseHandler = new Handler(this);
@@ -56,7 +55,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
             int categoryCode = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
             Bundle bundle = new Bundle();
             bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, categoryCode);
-            mContentFragment = (SongListFragment) BaseFragment.newInstance(SongListFragment.class, bundle);
+            mContentFragment = (SongListFragment) BaseMusicFragment.instantiate(this, SongListFragment.class.getName());
             openContentFragment(mContentFragment);
             isNewCreated = true;
 
@@ -107,11 +106,11 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-
+    protected int getActivityLayoutResource() {
+        return R.layout.activity_home;
     }
 
+    //============= implemented methods ============================================================
     //called is a view is clicked
     @Override
     public void onClick(View v) {
@@ -119,7 +118,6 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
     }
 
     //called when an item in drawer navigation is selected.
-    //==============================================================================================
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         drawerLayout.closeDrawers();
@@ -127,7 +125,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         Bundle bundle = new Bundle();
         int categoryCode = DrawerNavigationUtil.getCategoryCode(menuItem.getItemId());
         bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, categoryCode);
-        mContentFragment = (SongListFragment) BaseFragment.newInstance(SongListFragment.class, bundle);
+        mContentFragment = (SongListFragment) BaseMusicFragment.instantiate(this, SongListFragment.class.getName());
         openContentFragment(mContentFragment);
 
         Utils.putIntToSharedPreferences(this, Constants.SELECTED_MENU_ITEM_KEY, menuItem.getItemId());
@@ -135,7 +133,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         return true;
     }
 
-    //================ ControllerFragment callback =================================================
+    //ControllerFragment callback
     @Override
     public void onControlSeekTo(int position) {
         seekTo(position);
@@ -151,7 +149,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         pause();
     }
 
-    //========================= handler's callback =================================================
+    //handler's callback
     @Override
     public boolean handleMessage(Message msg) {
         if (msg.what == MessageCode.SONG_CHANGED.ordinal()) {
@@ -197,8 +195,7 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         }
         return false;
     }
-    //==============================================================================================
-
+    //==================== other methods ===========================================================
     private void setupToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -224,12 +221,6 @@ public class HomeActivity extends BaseActivity implements Handler.Callback, Cont
         };
         drawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
-    }
-
-    private void getAllWidget() {
-    }
-
-    private void registerEventHandler() {
     }
 
     private void openContentFragment(Fragment fragment) {

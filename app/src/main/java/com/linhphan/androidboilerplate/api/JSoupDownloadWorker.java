@@ -2,7 +2,6 @@ package com.linhphan.androidboilerplate.api;
 
 import android.content.Context;
 
-import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;
 
 import org.jsoup.Jsoup;
@@ -24,8 +23,6 @@ public class JSoupDownloadWorker extends BaseDownloadWorker {
         if (mException != null)
             return null;
 
-        if (params.length <= 0) return null;
-
         String url = params[0];
         if (url == null || url.isEmpty()) return null;
 
@@ -33,7 +30,7 @@ public class JSoupDownloadWorker extends BaseDownloadWorker {
         Object result = null;
         try {
             Document document = Jsoup.connect(url).get();
-            result = mParser.parse(document);
+            result = mParser.parse(document, mResponseCode);
         } catch (IOException e) {
             e.printStackTrace();
         }

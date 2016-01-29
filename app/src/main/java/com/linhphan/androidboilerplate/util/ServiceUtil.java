@@ -9,17 +9,5 @@ import android.content.Context;
  */
 public class ServiceUtil {
 
-    /**
-     * determine whether the special service is running or not
-     * @param serviceClassName the name of service class
-     * @return true if the special service is running otherwise return false
-     */
-    public static boolean isServiceRunning(Context context, Class serviceClassName){
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
-            if (service.getClass().getName().equals(serviceClassName))
-                return true;
-        }
-        return false;
-    }
+
 }

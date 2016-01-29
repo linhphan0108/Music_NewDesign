@@ -1,5 +1,6 @@
 package com.linhphan.music.api.parser;
 
+import com.linhphan.androidboilerplate.api.BaseDownloadWorker;
 import com.linhphan.androidboilerplate.api.Parser.IParser;
 import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.util.UrlProvider;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  */
 public class JSoupSearchParser implements IParser {
     @Override
-    public Object parse(Object data) {
+    public Object parse(Object data, BaseDownloadWorker.ResponseCodeHolder responseCode) {
         ArrayList<SongModel> links = null;
         if (data instanceof Document){
             Document document = (Document) data;

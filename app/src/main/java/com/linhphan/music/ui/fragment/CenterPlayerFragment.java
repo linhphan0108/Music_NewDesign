@@ -12,8 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.linhphan.androidboilerplate.api.BaseDownloadWorker;
 import com.linhphan.androidboilerplate.api.FileDownloadWorker;
-import com.linhphan.androidboilerplate.callback.DownloadCallback;
 import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.androidboilerplate.util.TextUtil;
 import com.linhphan.music.R;
@@ -24,7 +24,7 @@ import com.linhphan.music.util.ContentManager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CenterPlayerFragment extends BaseFragment implements View.OnClickListener, DownloadCallback, AdapterView.OnItemClickListener{
+public class CenterPlayerFragment extends BaseMusicFragment implements View.OnClickListener, BaseDownloadWorker.DownloadCallback, AdapterView.OnItemClickListener{
 
     private CircleImageView mCrlImgRotation;
     private Animation mRotationAnimation;
@@ -32,27 +32,11 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
 
     private boolean isRotated = false;
 
-    public CenterPlayerFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_player_center, container, false);
-    }
-
+    //================ overridden methods ==========================================================
     @Override
     public void onStart() {
         super.onStart();
         getWidgets(getView());
-        registerEventListener();
         loadAnimation();
     }
 
@@ -72,7 +56,28 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
         super.onDetach();
     }
 
-    //================ all click events will be handled ============================================
+    @Override
+    protected int getFragmentLayoutResource() {
+        return R.layout.fragment_player_center;
+    }
+
+    @Override
+    protected void init() {
+
+    }
+    @Override
+    protected void getWidgets(View root) {
+        mCrlImgRotation = (CircleImageView) root.findViewById(R.id.img_rotation);
+        mBtnDownload = (ImageButton) root.findViewById(R.id.btn_download);
+    }
+
+    @Override
+    protected void registerEventHandler() {
+        mBtnDownload.setOnClickListener(this);
+    }
+
+    //============== implemented methods ===========================================================
+    // all click events will be handled
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -82,9 +87,9 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
         }
     }
 
-    //================== async download callbacks ==================================================
+    // async download callbacks
     @Override
-    public void onDownloadSuccessfully(Object data) {
+    public void onSuccessfully(Object data, int requestCode, int responseCode) {
         if (data != null && data instanceof String){
             Logger.d(getClass().getName(), "file is stored at "+ String.valueOf(data));
             Toast.makeText(getContext(), "downloaded file was stored at "+ String.valueOf(data), Toast.LENGTH_SHORT).show();
@@ -92,22 +97,28 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
     }
 
     @Override
-    public void onDownloadFailed(Exception e) {
+    public void onFailed(Exception e, int requestCode, int responseCode) {
         e.printStackTrace();
     }
 
-    //============== private methods ===============================================================
-    private void getWidgets(View root) {
-        mCrlImgRotation = (CircleImageView) root.findViewById(R.id.img_rotation);
-        mBtnDownload = (ImageButton) root.findViewById(R.id.btn_download);
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ContentManager contentManager = ContentManager.getInstance();
+        SongModel songModel = contentManager.getCurrentPlayingSong();
+        String directLink = songModel.getDirectlyDownloadPath().get(position);
+        DownloadFile(directLink);
+
+        Fragment fragment = getFragmentManager().findFragmentByTag(SingleChoiceFragment.class.getName());
+        if (fragment instanceof SingleChoiceFragment){
+            SingleChoiceFragment singleChoiceFragment = (SingleChoiceFragment) fragment;
+            singleChoiceFragment.dismiss();
+        }
     }
 
-    private void registerEventListener(){
-        mBtnDownload.setOnClickListener(this);
-    }
-
+    //============== other methods ===============================================================
     private void loadAnimation() {
-        mRotationAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.animation_rotation);
+        mRotationAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
     }
 
     public void startRotationAnimation() {
@@ -151,19 +162,5 @@ public class CenterPlayerFragment extends BaseFragment implements View.OnClickLi
         SingleChoiceFragment dialog = (SingleChoiceFragment) SingleChoiceFragment.newInstance(songModel.getDirectlyDownloadPath());
         dialog.setOnItemClickListener(this);
         dialog.show(getFragmentManager(), SingleChoiceFragment.class.getName());
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ContentManager contentManager = ContentManager.getInstance();
-        SongModel songModel = contentManager.getCurrentPlayingSong();
-        String directLink = songModel.getDirectlyDownloadPath().get(position);
-        DownloadFile(directLink);
-
-        Fragment fragment = getFragmentManager().findFragmentByTag(SingleChoiceFragment.class.getName());
-        if (fragment instanceof SingleChoiceFragment){
-            SingleChoiceFragment singleChoiceFragment = (SingleChoiceFragment) fragment;
-            singleChoiceFragment.dismiss();
-        }
     }
 }

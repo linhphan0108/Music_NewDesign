@@ -1,69 +1,54 @@
 package com.linhphan.music.ui.activity;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.media.AudioManager;
+import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 
+import com.linhphan.androidboilerplate.ui.activity.BaseActivity;
 import com.linhphan.androidboilerplate.util.AppUtil;
-import com.linhphan.androidboilerplate.util.Logger;
 import com.linhphan.music.R;
 import com.linhphan.music.service.MusicService;
+import com.linhphan.music.ui.MusicApplication;
 import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.RepeatMode;
 import com.linhphan.music.util.UserSetting;
-import com.linhphan.music.util.Utils;
 
 /**
  * Created by linhphan on 11/18/15.
  */
-public class BaseActivity extends AppCompatActivity {
+public class BaseMusicActivity extends BaseActivity implements MusicApplication.OnServiceConnection{
 
     protected MusicService mMusicSrv;
-    private boolean isServiceBound;
+    private MusicApplication musicApplication;
     protected Handler mBaseHandler;
 
-    protected ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            if (mMusicSrv == null)
-                mMusicSrv = ((MusicService.MusicBinder) service).getMusicService();
-            mMusicSrv.onBind();
-            mMusicSrv.setupHandler(mBaseHandler);
-            isServiceBound = true;
-            Logger.d(getTag(), "service is connected");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Logger.d(getTag(), "service is disconnected");
-            isServiceBound = false;
-            mMusicSrv.onUnbind();
-        }
-    };
+    //=============== overridden methods ===========================================================
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Intent musicServiceIntent = new Intent(this, MusicService.class);
-        bindService(musicServiceIntent, serviceConnection, BIND_AUTO_CREATE);
-        startService(musicServiceIntent);
+
+        musicApplication.setOnServiceConnectionCallback(this);
+        musicApplication.setHandler(mBaseHandler);
+        mMusicSrv = musicApplication.acquireBinding();
     }
 
     @Override
     protected void onPause() {
-        if (mMusicSrv != null) {
-            mMusicSrv.onUnbind();
-            unbindService(serviceConnection);
-        }
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        musicApplication.releaseBinding();
+        super.onStop();
     }
 
     @Override
@@ -74,18 +59,10 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId()) {
             case R.id.action_volume:
                 AppUtil.getInstance().openVolumeSystem(this);
@@ -95,8 +72,34 @@ public class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected int getActivityLayoutResource() {
+        return 0;
+    }
+
+    @Override
+    protected void init() {
+        musicApplication = (MusicApplication) getApplication();
+    }
+
+    @Override
+    protected void getWidgets() {
+    }
+
+    @Override
+    protected void registerEventHandler() {
+
+    }
+
+    //============ implemented methods =============================================================
+    @Override
+    public void onServiceConnected(MusicService musicService) {
+        mMusicSrv = musicService;
+    }
+
+    //============ other methods ===================================================================
     protected String getTag() {
-        return getClass().getName();
+        return this.getClass().getName();
     }
 
     protected void setTitle(String title) {
@@ -140,11 +143,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public boolean isMediaPlayerPlaying() {
-        if (mMusicSrv != null) {
-            return mMusicSrv.isPlaying();
-        }else{
-            return false;
-        }
+        return mMusicSrv != null && mMusicSrv.isPlaying();
     }
 
     protected RepeatMode onRepeatButtonClicked() {

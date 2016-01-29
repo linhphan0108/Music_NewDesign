@@ -3,7 +3,7 @@ package com.linhphan.androidboilerplate.util;
 import java.util.Arrays;
 
 /**
- * Created by linhphan on 11/27/15.
+ * Created by linhphan on 11/24/15.
  */
 public class TextUtil {
     private static char[] SPECIAL_CHARACTERS = { ' ', '!', '"', '#', '$', '%',
@@ -18,8 +18,6 @@ public class TextUtil {
             'Ọ', 'ọ', 'Ỏ', 'ỏ', 'Ố', 'ố', 'Ồ', 'ồ', 'Ổ', 'ổ', 'Ỗ', 'ỗ', 'Ộ',
             'ộ', 'Ớ', 'ớ', 'Ờ', 'ờ', 'Ở', 'ở', 'Ỡ', 'ỡ', 'Ợ', 'ợ', 'Ụ', 'ụ',
             'Ủ', 'ủ', 'Ứ', 'ứ', 'Ừ', 'ừ', 'Ử', 'ử', 'Ữ', 'ữ', 'Ự', 'ự', };
-
-
 
 
     private static char[] REPLACEMENTS = { '-', '\0', '\0', '\0', '\0', '\0',
@@ -37,8 +35,6 @@ public class TextUtil {
             'U', 'u', };
 
 
-
-
     private static char removeAccent(char ch){
         int index = Arrays.binarySearch(SPECIAL_CHARACTERS, ch);
         if(index >0){
@@ -47,8 +43,6 @@ public class TextUtil {
             return ch;
         }
     }
-
-
 
 
     /**

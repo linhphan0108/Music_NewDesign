@@ -3,6 +3,7 @@ package com.linhphan.music.api.parser;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.linhphan.androidboilerplate.api.BaseDownloadWorker;
 import com.linhphan.androidboilerplate.api.Parser.IParser;
 import com.linhphan.androidboilerplate.util.ListLruCache;
 import com.linhphan.androidboilerplate.util.Logger;
@@ -20,13 +21,14 @@ public class JSoupDirectlyDownloadSongParser implements IParser {
     private Context mContext;
     private String mKey;
 
+
     public JSoupDirectlyDownloadSongParser(Context context, String url) {
         this.mContext = context;
         this.mKey = url;
     }
 
     @Override
-    public Object parse(Object data) {
+    public Object parse(Object data, BaseDownloadWorker.ResponseCodeHolder responseCode) {
         ArrayList<String> arr = new ArrayList<>();
         if (data instanceof Document) {
             Document document = (Document) data;
