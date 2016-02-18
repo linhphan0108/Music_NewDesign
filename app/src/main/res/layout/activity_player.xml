@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.linhphan.music.ui.activity.PlayerActivity">
+    tools:context="com.linhphan.music.ui.activity.PlayerActivity"
+    android:background="@android:color/white">
 
     <include
         android:id="@+id/toolbar"
@@ -51,6 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_btn_shuffle"
+                android:scaleType="centerInside"
                 android:src="@drawable/ic_action_shuffle_disable"
                 android:background="@drawable/bg_media_button_controller"
                 android:layout_marginRight="10dp"
@@ -62,6 +64,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/img_btn_previous"
                 android:src="@drawable/ic_previous"
+                android:scaleType="centerInside"
                 android:background="@drawable/bg_media_button_controller"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"/>
@@ -77,6 +80,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/img_btn_pause"
                     android:src="@drawable/ic_pause"
+                    android:scaleType="centerInside"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:background="@drawable/bg_media_button_controller"
@@ -88,6 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/img_btn_play"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_button_play"
                     android:background="@drawable/bg_media_button_controller"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
@@ -110,6 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_btn_next"
+                android:scaleType="centerInside"
                 android:src="@drawable/ic_next"
                 android:background="@drawable/bg_media_button_controller"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
@@ -120,6 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_btn_repeat"
+                android:scaleType="centerInside"
                 android:src="@drawable/ic_button_repeat_all"
                 android:background="@drawable/bg_media_button_controller" />
 

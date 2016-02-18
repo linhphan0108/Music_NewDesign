@@ -107,7 +107,9 @@ public class ControllerFragment extends BaseMusicFragment implements SeekBar.OnS
 
     @Override
     protected void registerEventHandler() {
-
+        mImgButtonPlay.setOnClickListener(this);
+        mImgButtonPaused.setOnClickListener(this);
+        mFrmSongInfo.setOnClickListener(this);
     }
 
     //========== implemented methods ===============================================================

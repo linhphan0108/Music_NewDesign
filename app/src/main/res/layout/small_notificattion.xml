@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:id="@+id/ll_root_small_notification">
 
 
     <LinearLayout
@@ -60,6 +61,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/img_btn_play"
             android:src="@drawable/ic_button_play"
+            android:scaleType="centerInside"
             android:background="@drawable/bg_media_button_controller"
             android:visibility="gone" />
 
@@ -69,6 +71,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/img_btn_pause"
             android:src="@drawable/ic_pause"
+            android:scaleType="centerInside"
             android:background="@drawable/bg_media_button_controller" />
 
 
@@ -77,6 +80,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/img_btn_next"
             android:src="@drawable/ic_single_next"
+            android:scaleType="centerInside"
             android:background="@drawable/bg_media_button_controller"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin" />

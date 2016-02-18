@@ -110,7 +110,7 @@ public class FileDownloadWorker extends BaseDownloadWorker {
     protected void onProgressUpdate(Integer... values) {
         if (mIsShowNotificationProgress){
             int recentPercent = values[0];
-            if (recentPercent > mPreviousDownloadedProgress + 1) {
+            if (recentPercent > mPreviousDownloadedProgress + 2 || recentPercent == 100) {
                 Context context = mContext.get();
                 if (recentPercent < 100) {
                     showNotificationProgress(context, context.getString(R.string.downloading), recentPercent);

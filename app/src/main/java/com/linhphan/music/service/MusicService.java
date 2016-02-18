@@ -253,6 +253,7 @@ public class MusicService extends Service implements BaseDownloadWorker.Download
 
     public void setHandler(Handler handler) {
         this.mHandler = handler;
+        mIsBound = true;
         ContentManager contentManager = ContentManager.getInstance();
         Logger.d(getTag(), "the current position song: " + contentManager.getCurrentPlayingSongPosition());
         retrieveElapseTimePeriodically();
@@ -629,6 +630,7 @@ public class MusicService extends Service implements BaseDownloadWorker.Download
 
         PendingIntent pOpen = PendingIntent.getBroadcast(getApplicationContext(), 0, openMainActivity, PendingIntent.FLAG_UPDATE_CURRENT);
         view.setOnClickPendingIntent(R.id.img_notification, pOpen);
+        view.setOnClickPendingIntent(R.id.ll_root_small_notification, pOpen);
     }
 
     public void stopForeground() {
