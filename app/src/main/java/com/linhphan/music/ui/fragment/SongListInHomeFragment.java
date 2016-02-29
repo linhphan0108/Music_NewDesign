@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.linhphan.androidboilerplate.api.BaseDownloadWorker;
 import com.linhphan.androidboilerplate.api.JSoupDownloadWorker;
+import com.linhphan.androidboilerplate.ui.activity.BaseActivity;
 import com.linhphan.androidboilerplate.util.ViewUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupSearchParser;
@@ -70,18 +71,23 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        boolean isOpenPlayerActivity = false;
+        BaseActivity activity = getOwnerActivity();
+        if (activity instanceof HomeActivity){
+            HomeActivity homeActivity = (HomeActivity) activity;
+            if (!homeActivity.isCurrentSongNotNull()){
+                   isOpenPlayerActivity = true;
+            }
+        }
         super.onItemClick(parent, view, position, id);
         // store the playing category
         if (mCategoryCode != DrawerNavigationUtil.SEARCH_CATEGORY_CODE)
             Utils.putIntToSharedPreferences(getContext(), Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, mCategoryCode);
 
         //== go to player activity
-        if (!(getActivity() instanceof PlayerActivity)) {//if the hosting activity of this fragment isn't PlayerActivity then go to it
-            BaseMusicActivity activity = (BaseMusicActivity) getActivity();
-            if (!activity.isMediaPlayerPlaying()) {//if the music is playing then do nothing
-                Intent intent = new Intent(getActivity(), PlayerActivity.class);
-                activity.startActivityForResult(intent, Constants.REQUEST_CODE_OPEN_PLAYER_ACTIVITY);
-            }
+        if (isOpenPlayerActivity){
+            Intent intent = new Intent(getActivity(), PlayerActivity.class);
+            activity.startActivityForResult(intent, Constants.REQUEST_CODE_OPEN_PLAYER_ACTIVITY);
         }
     }
 
@@ -193,10 +199,10 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
         int scrollY = getScrollY(view);
         HomeActivity homeActivity = getOwnerActivity();
         if (scrollY - mListViewCurrentPosInPixel > 20) {
-            homeActivity.showControlFragment();
+            homeActivity.hideControlFragment();
 
         } else if (scrollY - mListViewCurrentPosInPixel < 20){
-            homeActivity.hideControlFragment();
+            homeActivity.showControlFragment();
         }
     }
 

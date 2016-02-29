@@ -90,13 +90,15 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
 
         navigationView.setCheckedItem(selectedMenuItem);
         setTitle(DrawerNavigationUtil.getTitle(this, categoryCode));
+
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && isMediaPlayerPlaying()) {
-            showControlFragment();
+        if (hasFocus) {
+            checkToShowOrHideControllerFragment();
+
         }
     }
 
@@ -239,9 +241,9 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
                 .commit();
     }
 
-    public void showControlFragment() {
-        if (Math.abs(mFlControllers.getTranslationY()) < mFlControllers.getHeight()) {
-            mFlControllers.clearAnimation();
+    public void hideControlFragment() {
+        if (!isCurrentSongNotNull() || Math.abs(mFlControllers.getTranslationY()) < mFlControllers.getHeight()) {
+            mFlControllers.animate().cancel();
             mFlControllers.animate()
                     .translationY(mFlControllers.getHeight())
                     .alpha(0)
@@ -254,9 +256,7 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
 
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            if (mFlControllers.getVisibility() != View.GONE) {
-                                mFlControllers.setVisibility(View.GONE);
-                            }
+                            Logger.e(getTag(), "hide translation y : "+ mFlControllers.getTranslationY());
                         }
 
                         @Override
@@ -272,9 +272,9 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
         }
     }
 
-    public void hideControlFragment() {
-        if (Math.abs(mFlControllers.getTranslationY()) == mFlControllers.getHeight()) {
-            mFlControllers.clearAnimation();
+    public void showControlFragment() {
+        if (isCurrentSongNotNull() && Math.abs(mFlControllers.getTranslationY()) == mFlControllers.getHeight()) {
+            mFlControllers.animate().cancel();
             mFlControllers.animate()
                     .translationY(0)
                     .alpha(100)
@@ -287,9 +287,7 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
 
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            if (mFlControllers.getVisibility() != View.VISIBLE) {
-                                mFlControllers.setVisibility(View.VISIBLE);
-                            }
+                            Logger.e(getTag(), "translation y : "+ mFlControllers.getTranslationY());
                         }
 
                         @Override
@@ -302,6 +300,25 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
 
                         }
                     });
+        }
+    }
+
+
+    private void checkToShowOrHideControllerFragment(){
+        if (isCurrentSongNotNull()){
+            showControlFragment();
+        }else{
+            hideControlFragment();
+        }
+    }
+
+    public boolean isCurrentSongNotNull(){
+        ContentManager contentManager = ContentManager.getInstance();
+        SongModel songModel = contentManager.getCurrentPlayingSong();
+        if (songModel != null){
+            return true;
+        }else{
+            return false;
         }
     }
 }

@@ -38,12 +38,6 @@ public abstract class BaseActivity extends AppCompatActivity{
         super.setContentView(layoutResID);
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.no_slide, R.anim.slide_exit_down);
-    }
-
     //==================== implemented methods =====================================================
 
 
