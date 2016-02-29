@@ -5,30 +5,27 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer"
     tools:context=".MainActivity"
-    android:background="@android:color/white">
+    android:background="@drawable/bg_02">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/bg_02">
+        android:orientation="vertical">
         <include
             android:id="@+id/toolbar"
             layout="@layout/toolbar"/>
 
         <FrameLayout
-            android:id="@+id/controllers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone">
-        </FrameLayout>
-
-        <FrameLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar"
-            android:layout_above="@id/controllers">
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"/>
+
+        <FrameLayout
+            android:id="@+id/controllers"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_alignParentBottom="true"
+            android:visibility="visible">
         </FrameLayout>
     </RelativeLayout>
 

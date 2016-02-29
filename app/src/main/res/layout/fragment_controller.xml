@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context="com.linhphan.music.ui.fragment.ControllerFragment">
 
@@ -9,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <SeekBar
             android:id="@+id/sb_loading"
             android:layout_width="0dp"
@@ -49,25 +51,32 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:orientation="vertical">
+                android:paddingRight="5dp">
 
 
                 <TextView
                     android:id="@+id/txt_current_song_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:singleLine="true"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textSize="18sp"
+                    android:textColor="@color/PrimaryColor"
+                    android:textStyle="bold" />
 
 
                 <TextView
                     android:id="@+id/txt_current_artist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:singleLine="true"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textSize="14sp"
+                    android:textColor="@color/PrimaryColor" />
 
 
             </LinearLayout>
@@ -93,10 +102,10 @@
                 android:id="@+id/img_btn_pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"
                 android:layout_marginEnd="@dimen/abc_action_bar_overflow_padding_end_material"
-                android:src="@drawable/ic_pause"
+                android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"
                 android:background="@drawable/bg_media_button_controller"
+                android:src="@drawable/ic_pause"
                 android:visibility="gone" />
 
 
@@ -104,8 +113,8 @@
                 android:id="@+id/img_btn_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"
                 android:layout_marginEnd="@dimen/abc_action_bar_overflow_padding_end_material"
+                android:layout_marginRight="@dimen/abc_action_bar_overflow_padding_end_material"
                 android:background="@drawable/bg_media_button_controller"
                 android:src="@drawable/ic_button_play" />
 

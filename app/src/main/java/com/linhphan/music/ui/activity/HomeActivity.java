@@ -1,5 +1,6 @@
 package com.linhphan.music.ui.activity;
 
+import android.animation.Animator;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
@@ -32,6 +33,7 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
+    private FrameLayout mFlControllers;
 
     private boolean isNewCreated = false;
 
@@ -108,6 +110,13 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
     @Override
     protected int getActivityLayoutResource() {
         return R.layout.activity_home;
+    }
+
+    @Override
+    protected void getWidgets() {
+        super.getWidgets();
+
+        mFlControllers = (FrameLayout) findViewById(R.id.controllers);
     }
 
     //============= implemented methods ============================================================
@@ -231,16 +240,68 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
     }
 
     public void showControlFragment() {
-        final FrameLayout frControllers = (FrameLayout) findViewById(R.id.controllers);
-        if (frControllers.getVisibility() != View.VISIBLE) {
-            frControllers.setVisibility(View.VISIBLE);
+        if (Math.abs(mFlControllers.getTranslationY()) < mFlControllers.getHeight()) {
+            mFlControllers.clearAnimation();
+            mFlControllers.animate()
+                    .translationY(mFlControllers.getHeight())
+                    .alpha(0)
+                    .setDuration(200)
+                    .setListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            if (mFlControllers.getVisibility() != View.GONE) {
+                                mFlControllers.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
         }
     }
 
-    private void hideControlFragment() {
-        final FrameLayout frControllers = (FrameLayout) findViewById(R.id.controllers);
-        if (frControllers.getVisibility() != View.INVISIBLE) {
-            frControllers.setVisibility(View.INVISIBLE);
+    public void hideControlFragment() {
+        if (Math.abs(mFlControllers.getTranslationY()) == mFlControllers.getHeight()) {
+            mFlControllers.clearAnimation();
+            mFlControllers.animate()
+                    .translationY(0)
+                    .alpha(100)
+                    .setDuration(200)
+                    .setListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            if (mFlControllers.getVisibility() != View.VISIBLE) {
+                                mFlControllers.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
         }
     }
 }

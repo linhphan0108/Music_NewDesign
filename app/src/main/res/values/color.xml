@@ -6,5 +6,7 @@
     <color name="color_accent">#4f80a9</color>
     <color name="color_black_transparent">#905d626c</color>
 
+    <color name="pink">#63008e</color>
+    <color name="white">#fff</color>
 
 </resources>

@@ -19,6 +19,7 @@ import com.linhphan.androidboilerplate.util.ViewUtil;
 import com.linhphan.music.R;
 import com.linhphan.music.api.parser.JSoupSearchParser;
 import com.linhphan.music.ui.activity.BaseMusicActivity;
+import com.linhphan.music.ui.activity.HomeActivity;
 import com.linhphan.music.ui.activity.PlayerActivity;
 import com.linhphan.music.ui.adapter.SongListAdapter;
 import com.linhphan.music.api.parser.JSoupSongListParser;
@@ -43,6 +44,9 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
     private int mPageSearchIndex = -1;
     private boolean mIsSearchMode = false;
 
+    //used to detect whether the list view is scroll up or down
+    private int mListViewCurrentPosInPixel;
+
     //========== overridden methods ================================================================
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,9 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
                     .execute(url);
         }
         mAdapter = new SongListAdapter(getActivity(), R.layout.song_item_black_transparent, songList);
+
+        //perform search view can be implemented in this fragment.
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -95,6 +102,12 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
 
     }
 
+    @Override
+    protected void registerEventHandler() {
+        super.registerEventHandler();
+        mListView.setOnScrollListener(this);
+    }
+
     //============= implemented methods ============================================================
     // get song list callback
     @Override
@@ -103,21 +116,21 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
         ArrayList<SongModel> songList = (ArrayList<SongModel>) data;
         if (songList == null || songList.size() <= 0) return;
         ContentManager contentManager = ContentManager.getInstance();
-        if (mIsSearchMode){
+        if (mIsSearchMode) {
             ArrayList<SongModel> currentDisplayedList = contentManager.getCurrentDisplayedList();
             int currentDisplayedCategory = contentManager.getCurrentDisplayedCategory();
-            if (currentDisplayedList.size() > 0 && currentDisplayedCategory == DrawerNavigationUtil.SEARCH_CATEGORY_CODE){
+            if (currentDisplayedList.size() > 0 && currentDisplayedCategory == DrawerNavigationUtil.SEARCH_CATEGORY_CODE) {
                 int firstVisiblePosition = mListView.getFirstVisiblePosition();
                 contentManager.getCurrentDisplayedList().addAll(songList);
                 mAdapter.resetList(contentManager.getCurrentDisplayedList());
                 mListView.setSelection(firstVisiblePosition);
 
-            }else{
+            } else {
                 contentManager.setCurrentDisplayed(songList, mCategoryCode);
                 mAdapter.resetList(songList);
             }
 
-        }else {
+        } else {
             contentManager.setCurrentDisplayed(songList, mCategoryCode);
             mAdapter.resetList(songList);
         }
@@ -135,14 +148,15 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
         Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
 
         int currentDisplayedCategory = ContentManager.getInstance().getCurrentDisplayedCategory();
-        if (currentDisplayedCategory == DrawerNavigationUtil.SEARCH_CATEGORY_CODE){
+        if (currentDisplayedCategory == DrawerNavigationUtil.SEARCH_CATEGORY_CODE) {
             ContentManager.getInstance().getCurrentDisplayedList().clear();
         }
 
         mSearchKey = query.trim();
         mPageSearchIndex = 1;
         query = mSearchKey.replace(" ", "+");
-        String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
+//        String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
+        String url = UrlProvider.SEARCH_PATH + query + "&page=" + String.valueOf(mPageSearchIndex);
         JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), true, this);
         worker.setParser(new JSoupSearchParser())
                 .execute(url);
@@ -161,23 +175,33 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
     // list view's scroll event callback
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-
+        mListViewCurrentPosInPixel = getScrollY(view);
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (mIsSearchMode && totalItemCount > 0  && firstVisibleItem + visibleItemCount == totalItemCount){
+        if (mIsSearchMode && totalItemCount > 0 && firstVisibleItem + visibleItemCount == totalItemCount) {
             mPageSearchIndex++;
             Toast.makeText(getContext(), getContext().getString(R.string.load_more), Toast.LENGTH_SHORT).show();
             String query = mSearchKey.replace(" ", "+");
-            String url = UrlProvider.SEARCH_PATH + Uri.encode(query) +"&page="+ String.valueOf(mPageSearchIndex);
+            String url = UrlProvider.SEARCH_PATH + Uri.encode(query) + "&page=" + String.valueOf(mPageSearchIndex);
             JSoupDownloadWorker worker = new JSoupDownloadWorker(getContext(), false, this);
             worker.setParser(new JSoupSearchParser())
                     .execute(url);
         }
+
+        int scrollY = getScrollY(view);
+        HomeActivity homeActivity = getOwnerActivity();
+        if (scrollY - mListViewCurrentPosInPixel > 20) {
+            homeActivity.showControlFragment();
+
+        } else if (scrollY - mListViewCurrentPosInPixel < 20){
+            homeActivity.hideControlFragment();
+        }
     }
 
     //=========== other methods ====================================================================
+
     /**
      * The default content for this Fragment has a TextView that is shown when
      * the list is empty. If you would like to change the text, call this method
@@ -210,5 +234,24 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
         int firstItemVisible = mListView.getFirstVisiblePosition();
         int lastItemVisible = mListView.getChildCount();
         return (position >= firstItemVisible) && (position <= lastItemVisible);
+    }
+
+    private int getScrollY(AbsListView view) {
+        View c = view.getChildAt(0);
+        if (c == null)
+            return 0;
+        int firstVisiblePosition = view.getFirstVisiblePosition();
+        return firstVisiblePosition * c.getHeight();
+
+    }
+
+    private boolean isEndList(AbsListView view, int visibleItemCount, int totalItemCount) {
+        final int lastItem = view.getFirstVisiblePosition() + visibleItemCount;
+        return lastItem == totalItemCount;
+    }
+
+    private boolean isHeader(AbsListView view) {
+        final int firstItem = view.getFirstVisiblePosition();
+        return firstItem == 0;
     }
 }
