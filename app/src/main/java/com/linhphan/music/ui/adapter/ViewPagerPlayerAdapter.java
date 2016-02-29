@@ -9,7 +9,8 @@ import com.linhphan.music.R;
 import com.linhphan.music.ui.fragment.BaseMusicFragment;
 import com.linhphan.music.ui.fragment.CenterPlayerFragment;
 import com.linhphan.music.ui.fragment.LeftPlayerFragment;
-import com.linhphan.music.ui.fragment.SongListFragment;
+import com.linhphan.music.ui.fragment.SongListInHomeFragment;
+import com.linhphan.music.ui.fragment.SongListInPlayerFragment;
 import com.linhphan.music.util.ContentManager;
 
 /**
@@ -37,10 +38,7 @@ public class ViewPagerPlayerAdapter extends FragmentPagerAdapter {
                 return mCentralPlayerInstance;
 
             case 2:
-                Bundle bundle = new Bundle();
-                bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, ContentManager.getInstance().getCurrentPlayingCategory());
-                bundle.putInt(SongListFragment.ARGUMENT_KEY_LAYOUT_RESOURCE_ID, R.layout.song_item_white_solid);
-                mRightPlayerInstance =  BaseMusicFragment.newInstance(SongListFragment.class, bundle);
+                mRightPlayerInstance =  BaseMusicFragment.newInstance(SongListInPlayerFragment.class, null);
                 return mRightPlayerInstance;
 
             default:

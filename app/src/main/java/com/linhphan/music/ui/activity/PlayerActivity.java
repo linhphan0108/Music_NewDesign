@@ -19,7 +19,8 @@ import com.linhphan.music.data.model.SongModel;
 import com.linhphan.music.ui.adapter.ViewPagerPlayerAdapter;
 import com.linhphan.music.ui.fragment.CenterPlayerFragment;
 import com.linhphan.music.ui.fragment.LeftPlayerFragment;
-import com.linhphan.music.ui.fragment.SongListFragment;
+import com.linhphan.music.ui.fragment.SongListInHomeFragment;
+import com.linhphan.music.ui.fragment.SongListInPlayerFragment;
 import com.linhphan.music.util.Constants;
 import com.linhphan.music.util.ContentManager;
 import com.linhphan.music.util.MessageCode;
@@ -157,7 +158,7 @@ public class PlayerActivity extends BaseMusicActivity implements ViewPager.OnPag
             }
 
             //set new selected item in list view
-            SongListFragment rightPlayerFragment = (SongListFragment) mAdapter.getRightPlayerFragment();
+            SongListInPlayerFragment rightPlayerFragment = (SongListInPlayerFragment) mAdapter.getRightPlayerFragment();
             if (rightPlayerFragment != null) {
                 rightPlayerFragment.setSelectedItem(contentManager.getCurrentPlayingSongPosition());
             }

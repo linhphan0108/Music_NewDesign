@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,16 +29,13 @@ import com.linhphan.music.util.DrawerNavigationUtil;
 import com.linhphan.music.util.NoInternetConnectionException;
 import com.linhphan.music.util.UrlProvider;
 import com.linhphan.music.data.model.SongModel;
-import com.linhphan.music.service.MusicService;
 import com.linhphan.music.util.Utils;
 
 import java.util.ArrayList;
 
-public class SongListFragment extends BaseMusicFragment implements AbsListView.OnItemClickListener, AbsListView.OnScrollListener, SearchView.OnQueryTextListener, BaseDownloadWorker.DownloadCallback {
+public class SongListInHomeFragment extends BaseSongListFragment implements AbsListView.OnScrollListener, SearchView.OnQueryTextListener, BaseDownloadWorker.DownloadCallback {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARGUMENT_KEY_MENU_ITEM_ID = "ARGUMENT_KEY_MENU_ITEM_ID";
-    public static final String ARGUMENT_KEY_LAYOUT_RESOURCE_ID = "ARGUMENT_KEY_LAYOUT_RESOURCE_ID";
 
     private int mCategoryCode = DrawerNavigationUtil.DEFAULT_CATEGORY_CODE;
     private SearchView mSearchView;
@@ -47,26 +43,13 @@ public class SongListFragment extends BaseMusicFragment implements AbsListView.O
     private int mPageSearchIndex = -1;
     private boolean mIsSearchMode = false;
 
-    /**
-     * The fragment's ListView/GridView.
-     */
-    private ListView mListView;
-
-    /**
-     * The Adapter which will be used to populate the ListView/GridView with
-     * Views.
-     */
-    private SongListAdapter mAdapter;
-
     //========== overridden methods ================================================================
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int layoutResource = R.layout.song_item_black_transparent;
         if (getArguments() != null) {
             mCategoryCode = getArguments().getInt(ARGUMENT_KEY_MENU_ITEM_ID, DrawerNavigationUtil.DEFAULT_CATEGORY_CODE);
-            layoutResource = getArguments().getInt(ARGUMENT_KEY_LAYOUT_RESOURCE_ID, R.layout.song_item_black_transparent);
         }
         ArrayList<SongModel> songList = ContentManager.getInstance().getSongListByCategoryCode(mCategoryCode);
         if (songList == null || songList.size() <= 0) {
@@ -75,28 +58,12 @@ public class SongListFragment extends BaseMusicFragment implements AbsListView.O
             worker.setParser(new JSoupSongListParser())
                     .execute(url);
         }
-        mAdapter = new SongListAdapter(getActivity(), layoutResource, songList);
+        mAdapter = new SongListAdapter(getActivity(), R.layout.song_item_black_transparent, songList);
     }
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        setHasOptionsMenu(true);//to access action bar's menu
-//        return inflater.inflate(, container, false);
-//    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        BaseMusicActivity mainActivity = (BaseMusicActivity) getActivity();
-        if (mainActivity == null) return;
-
-        MusicService musicService = mainActivity.getBoundServiceInstance();
-        if (musicService == null) return;
-
-        ContentManager contentManager = ContentManager.getInstance();
-        contentManager.setupCurrentPlayingFromDisplayed();
-        musicService.play(position);
-
+        super.onItemClick(parent, view, position, id);
         // store the playing category
         if (mCategoryCode != DrawerNavigationUtil.SEARCH_CATEGORY_CODE)
             Utils.putIntToSharedPreferences(getContext(), Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, mCategoryCode);
@@ -124,32 +91,10 @@ public class SongListFragment extends BaseMusicFragment implements AbsListView.O
     }
 
     @Override
-    protected int getFragmentLayoutResource() {
-        return R.layout.fragment_song_list;
-    }
-
-    @Override
     protected void init() {
 
     }
 
-    @Override
-    protected void getWidgets(View root) {
-        // Set the adapter
-        mListView = (ListView) root.findViewById(R.id.listView);
-        mListView.setEmptyView(root.findViewById(R.id.txt_empty));
-        mListView.setAdapter(mAdapter);
-
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
-
-        setSelectedItem(ContentManager.getInstance().getCurrentPlayingSongPosition());
-    }
-
-    @Override
-    protected void registerEventHandler() {
-        mListView.setOnScrollListener(this);
-    }
     //============= implemented methods ============================================================
     // get song list callback
     @Override

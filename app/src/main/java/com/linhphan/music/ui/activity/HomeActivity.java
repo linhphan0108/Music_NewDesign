@@ -23,7 +23,7 @@ import com.linhphan.music.util.DrawerNavigationUtil;
 import com.linhphan.music.util.MessageCode;
 import com.linhphan.music.util.Utils;
 import com.linhphan.music.ui.fragment.ControllerFragment;
-import com.linhphan.music.ui.fragment.SongListFragment;
+import com.linhphan.music.ui.fragment.SongListInHomeFragment;
 import com.linhphan.music.data.model.SongModel;
 
 public class HomeActivity extends BaseMusicActivity implements Handler.Callback, ControllerFragment.OnFragmentInteractionListener,
@@ -35,7 +35,7 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
 
     private boolean isNewCreated = false;
 
-    private SongListFragment mContentFragment;
+    private SongListInHomeFragment mContentFragment;
     private ControllerFragment mControllerFragment;
 
 
@@ -54,8 +54,8 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
         if (savedInstanceState == null) {
             int categoryCode = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
             Bundle bundle = new Bundle();
-            bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, categoryCode);
-            mContentFragment = (SongListFragment) BaseMusicFragment.instantiate(this, SongListFragment.class.getName());
+            bundle.putInt(SongListInHomeFragment.ARGUMENT_KEY_MENU_ITEM_ID, categoryCode);
+            mContentFragment = (SongListInHomeFragment) BaseMusicFragment.instantiate(this, SongListInHomeFragment.class.getName());
             openContentFragment(mContentFragment);
             isNewCreated = true;
 
@@ -124,8 +124,8 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
 
         Bundle bundle = new Bundle();
         int categoryCode = DrawerNavigationUtil.getCategoryCode(menuItem.getItemId());
-        bundle.putInt(SongListFragment.ARGUMENT_KEY_MENU_ITEM_ID, categoryCode);
-        mContentFragment = (SongListFragment) BaseMusicFragment.instantiate(this, SongListFragment.class.getName());
+        bundle.putInt(SongListInHomeFragment.ARGUMENT_KEY_MENU_ITEM_ID, categoryCode);
+        mContentFragment = (SongListInHomeFragment) BaseMusicFragment.instantiate(this, SongListInHomeFragment.class.getName(), bundle);
         openContentFragment(mContentFragment);
 
         Utils.putIntToSharedPreferences(this, Constants.SELECTED_MENU_ITEM_KEY, menuItem.getItemId());
