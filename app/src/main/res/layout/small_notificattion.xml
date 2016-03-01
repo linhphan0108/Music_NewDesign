@@ -17,9 +17,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/img_notification"
-            android:src="@mipmap/ic_music_launcher"
+            android:src="@mipmap/ic_launcher"
             android:background="@drawable/bg_media_button_controller"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerInside" />
     </LinearLayout>
 
 

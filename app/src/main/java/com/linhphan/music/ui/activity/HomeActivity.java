@@ -73,22 +73,24 @@ public class HomeActivity extends BaseMusicActivity implements Handler.Callback,
     protected void onResume() {
         super.onResume();
         //== set selected item in drawer navigation
-        int selectedMenuItem = -1;
-        int categoryCode;
-        if (isNewCreated) {
+        int selectedMenuItem;
+        ContentManager contentManager = ContentManager.getInstance();
+        int categoryCode = contentManager.getCurrentDisplayedCategory();
+        if (categoryCode == -1){
+            categoryCode = contentManager.getCurrentPlayingCategory();
+        }
+        if (categoryCode == -1){
             categoryCode = Utils.getIntFromSharedPreferences(this, Utils.SHARED_PREFERENCES_KEY_CURRENT_PLAYING_CATEGORY, 0);
-            selectedMenuItem = DrawerNavigationUtil.getMenuItemId(categoryCode);
-            isNewCreated = false;
-        } else {
-            categoryCode = ContentManager.getInstance().getCurrentDisplayedCategory();
-            if (categoryCode == DrawerNavigationUtil.SEARCH_CATEGORY_CODE) {
-                selectedMenuItem = DrawerNavigationUtil.getMenuItemId(DrawerNavigationUtil.CURRENT_CATEGORY_CODE);
-            } else {
-                selectedMenuItem = DrawerNavigationUtil.getMenuItemId(categoryCode);
-            }
         }
 
-        navigationView.setCheckedItem(selectedMenuItem);
+        if (categoryCode == DrawerNavigationUtil.SEARCH_CATEGORY_CODE){
+            for (int i=0; i<navigationView.getMenu().size(); i++){
+                navigationView.getMenu().getItem(i).setChecked(false);
+            }
+        }else {
+            selectedMenuItem = DrawerNavigationUtil.getMenuItemId(categoryCode);
+            navigationView.setCheckedItem(selectedMenuItem);
+        }
         setTitle(DrawerNavigationUtil.getTitle(this, categoryCode));
 
     }

@@ -561,7 +561,7 @@ public class MusicService extends Service implements BaseDownloadWorker.Download
         SongModel currentSong = contentManager.getCurrentPlayingSong();
         if (currentSong == null) return;
         Notification notification = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_music_launcher)//the icon will be displayed on status bar
+                .setSmallIcon(R.mipmap.ic_launcher)//the icon will be displayed on status bar
                 .setContentTitle(currentSong.getTitle()).build();
 
         //== normal content view for notification

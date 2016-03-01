@@ -222,7 +222,8 @@ public class SongListInHomeFragment extends BaseSongListFragment implements AbsL
     }
 
     public void setSelectedItem(int position) {
-        if (mCategoryCode == ContentManager.getInstance().getCurrentPlayingCategory()) {
+        if (mCategoryCode == ContentManager.getInstance().getCurrentPlayingCategory()
+                || mCategoryCode == DrawerNavigationUtil.getCategoryCode(R.id.menu_item_current_playing)) {
             mListView.setItemChecked(position, true);
             if (!isItemVisible(position))
                 mListView.setSelection(position);

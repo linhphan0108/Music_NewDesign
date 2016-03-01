@@ -328,7 +328,7 @@ public class BaseDownloadWorker extends AsyncTask<String, Integer, Object> {
     protected void showNotificationProgress(Context context, String contentText, int percent){
         int notId = 898989;
         Notification notification = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_music_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentText(contentText)
                 .setProgress(100, percent, false)
                 .build();

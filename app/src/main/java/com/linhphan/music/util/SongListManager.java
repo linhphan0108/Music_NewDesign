@@ -15,6 +15,7 @@ public class SongListManager {
 
     public SongListManager() {
         mSongList = new ArrayList<>();
+        mCategoryCode = -1;
     }
 
     public SongListManager(ArrayList<SongModel> mSongList, int category) {
